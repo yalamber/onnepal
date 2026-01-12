@@ -6,8 +6,10 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MarkdownContent } from '@/components/markdown-content';
 import { UpvoteButton } from '@/components/posts/upvote-button';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { formatDate, timeAgo } from '@/lib/utils';
-import { ArrowLeft, Eye, Calendar } from 'lucide-react';
+import { ArrowLeft, Eye, Calendar, Clock, AlertTriangle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,12 +75,9 @@ export default async function PostPage({ params }: PostPageProps) {
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-6">
                 {tags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full"
-                  >
+                  <Badge key={tag.id} variant="secondary">
                     {tag.name}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             )}
@@ -88,19 +87,21 @@ export default async function PostPage({ params }: PostPageProps) {
         </article>
 
         {post.status === 'pending' && (
-          <div className="mt-8 bg-yellow-50 border border-yellow-200 p-4 rounded-md">
-            <p className="text-yellow-800">
+          <Alert className="mt-8 border-yellow-500 bg-yellow-50">
+            <Clock className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-800">
               <strong>Status:</strong> This post is pending moderation review.
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
         )}
 
         {post.status === 'rejected' && (
-          <div className="mt-8 bg-red-50 border border-red-200 p-4 rounded-md">
-            <p className="text-red-800">
+          <Alert variant="destructive" className="mt-8">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
               <strong>Status:</strong> This post was rejected by moderators.
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
         )}
       </div>
     </main>

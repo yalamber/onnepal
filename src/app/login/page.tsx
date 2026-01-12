@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 
@@ -30,6 +32,8 @@ export default function LoginPage() {
       const data = (await res.json()) as { error?: string };
 
       if (res.ok) {
+        // Dispatch auth change event to update navbar
+        window.dispatchEvent(new Event('auth-change'));
         router.push('/');
         router.refresh();
       } else {
@@ -65,16 +69,16 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
-                <div className="bg-red-50 border-2 border-red-200 text-red-700 p-4 rounded-lg flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm font-medium">{error}</p>
-                </div>
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
 
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
+                <Label htmlFor="email" className="text-sm font-semibold">
                   Email Address
-                </label>
+                </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
@@ -90,9 +94,9 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
+                <Label htmlFor="password" className="text-sm font-semibold">
                   Password
-                </label>
+                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input

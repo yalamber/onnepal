@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertCircle, Info } from 'lucide-react';
 
 export default function SubmitPostPage() {
   const router = useRouter();
@@ -56,12 +59,17 @@ export default function SubmitPostPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {error && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">{error}</div>}
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium mb-2">
-                  Title <span className="text-red-500">*</span>
-                </label>
+              <div className="space-y-2">
+                <Label htmlFor="title">
+                  Title <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="title"
                   type="text"
@@ -72,13 +80,13 @@ export default function SubmitPostPage() {
                   maxLength={200}
                   placeholder="Enter a descriptive title for your story"
                 />
-                <p className="text-xs text-gray-500 mt-1">Minimum 10 characters, maximum 200</p>
+                <p className="text-xs text-muted-foreground">Minimum 10 characters, maximum 200</p>
               </div>
 
-              <div>
-                <label htmlFor="excerpt" className="block text-sm font-medium mb-2">
+              <div className="space-y-2">
+                <Label htmlFor="excerpt">
                   Excerpt (optional)
-                </label>
+                </Label>
                 <Textarea
                   id="excerpt"
                   value={excerpt}
@@ -87,13 +95,13 @@ export default function SubmitPostPage() {
                   placeholder="A brief summary of your story (shown in post previews)"
                   className="min-h-[80px]"
                 />
-                <p className="text-xs text-gray-500 mt-1">Maximum 300 characters</p>
+                <p className="text-xs text-muted-foreground">Maximum 300 characters</p>
               </div>
 
-              <div>
-                <label htmlFor="content" className="block text-sm font-medium mb-2">
-                  Content <span className="text-red-500">*</span>
-                </label>
+              <div className="space-y-2">
+                <Label htmlFor="content">
+                  Content <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
                   id="content"
                   value={content}
@@ -103,11 +111,11 @@ export default function SubmitPostPage() {
                   placeholder="Tell your story... (supports Markdown)"
                   className="min-h-[400px]"
                 />
-                <p className="text-xs text-gray-500 mt-1">Minimum 100 characters. Markdown formatting supported.</p>
+                <p className="text-xs text-muted-foreground">Minimum 100 characters. Markdown formatting supported.</p>
               </div>
 
               <div className="flex gap-4">
-                <Button type="submit" disabled={loading} className="flex-1">
+                <Button type="submit" disabled={loading} variant="primary" className="flex-1">
                   {loading ? 'Submitting...' : 'Submit for Review'}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => router.back()}>
@@ -115,11 +123,14 @@ export default function SubmitPostPage() {
                 </Button>
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-md text-sm text-blue-800">
-                <strong>Note:</strong> Your post will be submitted for moderation review. Once approved by our
-                moderators, it will be published and visible to the community. You&apos;ll be able to see your pending posts
-                in your dashboard.
-              </div>
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Note:</strong> Your post will be submitted for moderation review. Once approved by our
+                  moderators, it will be published and visible to the community. You&apos;ll be able to see your pending posts
+                  in your dashboard.
+                </AlertDescription>
+              </Alert>
             </form>
           </CardContent>
         </Card>

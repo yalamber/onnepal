@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { timeAgo } from '@/lib/utils';
 
@@ -118,8 +119,8 @@ export default function ModerationPage() {
                     <p className="text-gray-700 line-clamp-6">{post.content.substring(0, 500)}...</p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Reason (optional for approve, required for reject)</label>
+                  <div className="space-y-2">
+                    <Label>Reason (optional for approve, required for reject)</Label>
                     <Textarea
                       value={reason[post.id] || ''}
                       onChange={(e) => setReason({ ...reason, [post.id]: e.target.value })}
@@ -132,7 +133,7 @@ export default function ModerationPage() {
                     <Button
                       onClick={() => handleAction(post.id, 'approve')}
                       disabled={actionLoading === post.id}
-                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                     >
                       {actionLoading === post.id ? 'Processing...' : 'Approve & Publish'}
                     </Button>

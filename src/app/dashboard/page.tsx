@@ -2,8 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { PostCard } from '@/components/posts/post-card';
+import { PenSquare, Shield } from 'lucide-react';
 
 interface User {
   id: string;
@@ -96,19 +101,26 @@ export default function DashboardPage() {
               <CardTitle>Profile</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <p>
-                  <strong>Username:</strong> {user.username}
-                </p>
-                <p>
-                  <strong>Display Name:</strong> {user.displayName || 'Not set'}
-                </p>
-                <p>
-                  <strong>Email:</strong> {user.email}
-                </p>
-                <p>
-                  <strong>Role:</strong> {user.role}
-                </p>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Username</p>
+                  <p className="font-medium">{user.username}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Display Name</p>
+                  <p className="font-medium">{user.displayName || 'Not set'}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium">{user.email}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Role</p>
+                  <Badge variant="secondary" className="capitalize">{user.role}</Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -118,16 +130,21 @@ export default function DashboardPage() {
               <CardTitle>Stats</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <p>
-                  <strong>Total Posts:</strong> {posts.length}
-                </p>
-                <p>
-                  <strong>Published:</strong> {posts.filter((p) => p.post.status === 'published').length}
-                </p>
-                <p>
-                  <strong>Pending:</strong> {posts.filter((p) => p.post.status === 'pending').length}
-                </p>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Posts</p>
+                  <p className="text-2xl font-bold">{posts.length}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Published</p>
+                  <p className="text-2xl font-bold text-green-600">{posts.filter((p) => p.post.status === 'published').length}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Pending</p>
+                  <p className="text-2xl font-bold text-yellow-600">{posts.filter((p) => p.post.status === 'pending').length}</p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -138,13 +155,19 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <a href="/submit" className="block text-orange-600 hover:underline">
-                  Submit New Post
-                </a>
+                <Link href="/submit" className="block">
+                  <Button variant="outline" className="w-full justify-start gap-2">
+                    <PenSquare className="w-4 h-4" />
+                    Submit New Post
+                  </Button>
+                </Link>
                 {(user.role === 'moderator' || user.role === 'admin') && (
-                  <a href="/moderate" className="block text-orange-600 hover:underline">
-                    Moderation Queue
-                  </a>
+                  <Link href="/moderate" className="block">
+                    <Button variant="outline" className="w-full justify-start gap-2">
+                      <Shield className="w-4 h-4" />
+                      Moderation Queue
+                    </Button>
+                  </Link>
                 )}
               </div>
             </CardContent>

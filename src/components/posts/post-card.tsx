@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { UpvoteButton } from './upvote-button';
 import { timeAgo, truncate } from '@/lib/utils';
-import { ArrowUp, Eye, User } from 'lucide-react';
+import { ArrowUp, Eye } from 'lucide-react';
 
 interface PostCardProps {
   post: {
@@ -41,9 +42,11 @@ export function PostCard({ post, author, showUpvote = true }: PostCardProps) {
 
       <CardContent>
         <div className="flex items-center gap-2 text-sm">
-          <div className="w-6 h-6 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-            <User className="w-3 h-3 text-white" />
-          </div>
+          <Avatar className="h-6 w-6">
+            <AvatarFallback className="bg-gradient-to-br from-orange-400 to-red-500 text-white text-xs">
+              {(author.displayName || author.username).charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           <Link
             href={`/users/${author.username}`}
             className="font-medium text-slate-700 hover:text-orange-600 transition-colors truncate"

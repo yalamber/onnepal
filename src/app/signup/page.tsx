@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Lock, User, AlertCircle, UserCircle } from 'lucide-react';
 
@@ -32,6 +34,8 @@ export default function SignupPage() {
       const data = (await res.json()) as { error?: string };
 
       if (res.ok) {
+        // Dispatch auth change event to update navbar
+        window.dispatchEvent(new Event('auth-change'));
         router.push('/');
         router.refresh();
       } else {
@@ -67,16 +71,16 @@ export default function SignupPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
-                <div className="bg-red-50 border-2 border-red-200 text-red-700 p-4 rounded-lg flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm font-medium">{error}</p>
-                </div>
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
 
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
+                <Label htmlFor="email" className="text-sm font-semibold">
                   Email Address
-                </label>
+                </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
@@ -92,9 +96,9 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="username" className="block text-sm font-semibold text-slate-700">
+                <Label htmlFor="username" className="text-sm font-semibold">
                   Username
-                </label>
+                </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
@@ -109,13 +113,13 @@ export default function SignupPage() {
                     className="pl-11"
                   />
                 </div>
-                <p className="text-xs text-slate-500">Only letters, numbers, and underscores allowed</p>
+                <p className="text-xs text-muted-foreground">Only letters, numbers, and underscores allowed</p>
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="displayName" className="block text-sm font-semibold text-slate-700">
-                  Display Name <span className="text-slate-400 font-normal">(optional)</span>
-                </label>
+                <Label htmlFor="displayName" className="text-sm font-semibold">
+                  Display Name <span className="text-muted-foreground font-normal">(optional)</span>
+                </Label>
                 <div className="relative">
                   <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
@@ -130,9 +134,9 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
+                <Label htmlFor="password" className="text-sm font-semibold">
                   Password
-                </label>
+                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
@@ -146,7 +150,7 @@ export default function SignupPage() {
                     className="pl-11"
                   />
                 </div>
-                <p className="text-xs text-slate-500">Minimum 8 characters required</p>
+                <p className="text-xs text-muted-foreground">Minimum 8 characters required</p>
               </div>
 
               <Button

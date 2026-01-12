@@ -1,27 +1,22 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils';
+import * as React from "react"
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+import { cn } from "@/lib/utils"
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ className, ...props }, ref) => {
+const Textarea = React.forwardRef<
+  HTMLTextAreaElement,
+  React.ComponentProps<"textarea">
+>(({ className, ...props }, ref) => {
   return (
     <textarea
       className={cn(
-        'flex min-h-[120px] w-full rounded-lg border-2 border-slate-200 bg-white px-4 py-3 text-sm transition-colors',
-        'placeholder:text-slate-400',
-        'focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 focus:border-transparent',
-        'hover:border-slate-300',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-50',
-        'resize-y',
+        "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
         className
       )}
       ref={ref}
       {...props}
     />
-  );
-});
+  )
+})
+Textarea.displayName = "Textarea"
 
-Textarea.displayName = 'Textarea';
-
-export { Textarea };
+export { Textarea }

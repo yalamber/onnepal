@@ -3,7 +3,17 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { Menu, X, FileText, Shield, User, LogOut, LayoutDashboard, PenSquare } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { Menu, FileText, Shield, User, LogOut, LayoutDashboard, PenSquare } from 'lucide-react';
 
 interface User {
   id: string;
@@ -15,10 +25,9 @@ interface User {
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
+  const fetchUser = () => {
     fetch('/api/auth/me')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -26,13 +35,28 @@ export function Navbar() {
         setUser(userData?.user || null);
       })
       .catch(() => setUser(null));
+  };
+
+  useEffect(() => {
+    // Fetch user on mount
+    fetchUser();
+
+    // Listen for auth changes
+    const handleAuthChange = () => {
+      fetchUser();
+    };
 
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('auth-change', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('auth-change', handleAuthChange);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -90,47 +114,38 @@ export function Navbar() {
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="font-medium text-sm">{user.displayName || user.username}</span>
-                </button>
-
-                {userMenuOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setUserMenuOpen(false)}
-                    />
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">{user.displayName || user.username}</p>
-                        <p className="text-xs text-gray-500">{user.role}</p>
-                      </div>
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-sm"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <LayoutDashboard className="w-4 h-4" />
-                        Dashboard
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-sm w-full text-left text-red-600"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                      </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2 px-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-gradient-to-br from-orange-400 to-red-500 text-white">
+                        {(user.displayName || user.username).charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="font-medium text-sm">{user.displayName || user.username}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-white">
+                  <DropdownMenuLabel>
+                    <div>
+                      <p className="text-sm font-medium">{user.displayName || user.username}</p>
+                      <p className="text-xs text-muted-foreground">{user.role}</p>
                     </div>
-                  </>
-                )}
-              </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 <Link href="/login">
@@ -139,7 +154,7 @@ export function Navbar() {
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white">
+                  <Button variant="primary" size="sm">
                     Get Started
                   </Button>
                 </Link>
@@ -148,81 +163,81 @@ export function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="w-6 h-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72">
+              <div className="flex flex-col gap-4 mt-8">
+                <Link
+                  href="/posts"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <FileText className="w-4 h-4" />
+                  All Stories
+                </Link>
+                {user && (
+                  <>
+                    <Link
+                      href="/submit"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <PenSquare className="w-4 h-4" />
+                      Submit Story
+                    </Link>
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </Link>
+                    {(user.role === 'moderator' || user.role === 'admin') && (
+                      <Link
+                        href="/moderate"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Shield className="w-4 h-4" />
+                        Moderate
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-destructive w-full text-left"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </>
+                )}
+                {!user && (
+                  <div className="space-y-2 pt-2">
+                    <Link href="/login" className="block" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full">
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href="/signup" className="block" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="primary" className="w-full">
+                        Get Started
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-white">
-          <div className="px-4 py-4 space-y-3">
-            <Link
-              href="/posts"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <FileText className="w-4 h-4" />
-              All Stories
-            </Link>
-            {user && (
-              <>
-                <Link
-                  href="/submit"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <PenSquare className="w-4 h-4" />
-                  Submit Story
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
-                {(user.role === 'moderator' || user.role === 'admin') && (
-                  <Link
-                    href="/moderate"
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Shield className="w-4 h-4" />
-                    Moderate
-                  </Link>
-                )}
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-red-600 w-full text-left"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
-              </>
-            )}
-            {!user && (
-              <div className="space-y-2 pt-2">
-                <Link href="/login" className="block" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/signup" className="block" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white">
-                    Get Started
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </nav>
   );
 }
