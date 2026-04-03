@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getR2Bucket, getCloudflareEnv } from '@/lib/cloudflare';
 import { getSession } from '@/lib/auth/session';
-import { nanoid } from 'nanoid';
-
 // POST /api/upload - Upload image to R2
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     // Generate unique filename
     const ext = file.name.split('.').pop();
-    const filename = `${nanoid()}.${ext}`;
+    const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`;
     const key = `images/${filename}`;
 
     // Upload to R2

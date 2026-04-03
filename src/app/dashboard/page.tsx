@@ -3,195 +3,154 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { PostCard } from '@/components/posts/post-card';
-import { PenSquare, Shield } from 'lucide-react';
+import {
+  ExternalLink, LinkIcon, Megaphone, ShoppingBag, Settings,
+  Eye, Loader2, MousePointer
+} from 'lucide-react';
 
-interface User {
+interface UserData {
   id: string;
   email: string;
-  username: string;
-  displayName: string | null;
-  role: string;
-  createdAt: Date;
-}
-
-interface PostWithAuthor {
-  post: {
-    id: string;
-    slug: string;
-    title: string;
-    excerpt: string | null;
-    status: string;
-    upvoteCount: number;
-    viewCount: number;
-    createdAt: number | Date;
-  };
-  author: {
-    username: string;
-    displayName: string | null;
-  };
+  subdomain: string | null;
+  businessName: string | null;
+  isPublished: boolean;
+  onboardingStep: number;
 }
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
+  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const fetchUser = async () => {
-    try {
-      const res = await fetch('/api/auth/me');
-      if (!res.ok) {
-        router.push('/login');
-        return;
-      }
-      const data = (await res.json()) as { user: User };
-      setUser(data.user);
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      router.push('/login');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUserPosts = async () => {
-    try {
-      // Note: You'll need to create this endpoint
-      const res = await fetch('/api/users/me/posts');
-      if (res.ok) {
-        const data = (await res.json()) as { posts: PostWithAuthor[] };
-        setPosts(data.posts || []);
-      }
-    } catch (error) {
-      console.error('Error fetching user posts:', error);
-    }
-  };
+  const [stats, setStats] = useState({ links: 0, products: 0, announcements: 0 });
 
   useEffect(() => {
-    fetchUser();
-    fetchUserPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
+          router.push('/login');
+          return;
+        }
+        const data: { user: UserData } = await res.json();
+        if (data.user.onboardingStep < 4) {
+          router.push('/onboarding');
+          return;
+        }
+        setUser(data.user);
+
+        // Fetch counts
+        const [linksRes, productsRes, announcementsRes] = await Promise.all([
+          fetch('/api/business/links'),
+          fetch('/api/business/products'),
+          fetch('/api/business/announcements'),
+        ]);
+        const linksData = await linksRes.json() as { links?: unknown[] };
+        const productsData = await productsRes.json() as { products?: unknown[] };
+        const announcementsData = await announcementsRes.json() as { announcements?: unknown[] };
+        setStats({
+          links: linksData.links?.length || 0,
+          products: productsData.products?.length || 0,
+          announcements: announcementsData.announcements?.length || 0,
+        });
+      } catch {
+        router.push('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [router]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
+
+  const siteUrl = `https://${user.subdomain}.onnepal.com`;
 
   return (
-    <main className="min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
-
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-muted-foreground">Username</p>
-                  <p className="font-medium">{user.username}</p>
-                </div>
-                <Separator />
-                <div>
-                  <p className="text-sm text-muted-foreground">Display Name</p>
-                  <p className="font-medium">{user.displayName || 'Not set'}</p>
-                </div>
-                <Separator />
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium">{user.email}</p>
-                </div>
-                <Separator />
-                <div>
-                  <p className="text-sm text-muted-foreground">Role</p>
-                  <Badge variant="secondary" className="capitalize">{user.role}</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Stats</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Posts</p>
-                  <p className="text-2xl font-bold">{posts.length}</p>
-                </div>
-                <Separator />
-                <div>
-                  <p className="text-sm text-muted-foreground">Published</p>
-                  <p className="text-2xl font-bold text-green-600">{posts.filter((p) => p.post.status === 'published').length}</p>
-                </div>
-                <Separator />
-                <div>
-                  <p className="text-sm text-muted-foreground">Pending</p>
-                  <p className="text-2xl font-bold text-yellow-600">{posts.filter((p) => p.post.status === 'pending').length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Link href="/submit" className="block">
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <PenSquare className="w-4 h-4" />
-                    Submit New Post
-                  </Button>
-                </Link>
-                {(user.role === 'moderator' || user.role === 'admin') && (
-                  <Link href="/moderate" className="block">
-                    <Button variant="outline" className="w-full justify-start gap-2">
-                      <Shield className="w-4 h-4" />
-                      Moderation Queue
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-500 text-sm mt-1">{user.businessName}</p>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Posts</CardTitle>
-            <CardDescription>All posts you&apos;ve submitted to OnNepal</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {posts.length === 0 ? (
-              <p className="text-gray-500 py-8 text-center">You haven&apos;t submitted any posts yet.</p>
-            ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {posts.map(({ post, author }) => (
-                  <PostCard key={post.id} post={post} author={author} showUpvote={false} />
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <a
+          href={siteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="outline" size="sm" className="gap-2">
+            <Eye className="h-4 w-4" />
+            View site
+            <ExternalLink className="h-3 w-3" />
+          </Button>
+        </a>
       </div>
-    </main>
+
+      {/* Site URL card */}
+      <Card className="mb-8 bg-gradient-to-r from-orange-500 to-red-600 text-white border-0">
+        <CardContent className="py-6">
+          <p className="text-orange-100 text-sm mb-1">Your page is live at</p>
+          <a
+            href={siteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xl font-mono font-bold hover:underline flex items-center gap-2"
+          >
+            {user.subdomain}.onnepal.com
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        </CardContent>
+      </Card>
+
+      {/* Quick actions */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {[
+          { href: '/dashboard/links', icon: LinkIcon, label: 'Links', count: stats.links },
+          { href: '/dashboard/products', icon: ShoppingBag, label: 'Products', count: stats.products },
+          { href: '/dashboard/announcements', icon: Megaphone, label: 'Announcements', count: stats.announcements },
+          { href: '/dashboard/settings', icon: Settings, label: 'Settings', count: null },
+        ].map((item) => (
+          <Link key={item.href} href={item.href}>
+            <Card className="hover:border-orange-200 hover:shadow-md transition-all cursor-pointer h-full">
+              <CardContent className="py-6 flex flex-col items-center text-center">
+                <item.icon className="h-8 w-8 text-orange-500 mb-3" />
+                <p className="font-semibold text-gray-900">{item.label}</p>
+                {item.count !== null && (
+                  <p className="text-2xl font-bold text-gray-900 mt-1">{item.count}</p>
+                )}
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
+      {/* Quick tips */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <MousePointer className="h-5 w-5 text-orange-500" />
+            Quick tips
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li>Add your social links to help customers find you on every platform</li>
+            <li>Upload products to showcase what you offer</li>
+            <li>Post announcements to keep customers updated about offers and events</li>
+            <li>Share your link ({user.subdomain}.onnepal.com) on social media and business cards</li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

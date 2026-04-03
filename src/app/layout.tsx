@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OnNepal - Citizen Journalism Portal for Nepal",
-  description: "A community-driven platform for sharing stories and news about Nepal",
+  title: "OnNepal - Create Your Business Page",
+  description: "Get a free mini website for your business. Claim your subdomain and share your business with the world.",
 };
 
 export default function RootLayout({

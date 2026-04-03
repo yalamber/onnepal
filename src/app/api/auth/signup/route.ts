@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getD1Database, getCloudflareEnv } from '@/lib/cloudflare';
-import { createUser, getUserByEmail, getUserByUsername } from '@/lib/db/queries/users';
+import { createUser, getUserByEmail, isSubdomainTaken } from '@/lib/db/queries/users';
 import { hashPassword } from '@/lib/auth/password';
 import { generateToken } from '@/lib/auth/jwt';
 import { setAuthCookie } from '@/lib/auth/session';
-import { signupSchema } from '@/lib/validators/auth';
+import { signupWithSubdomainSchema } from '@/lib/validators/business';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate input
-    const validation = signupSchema.safeParse(body);
+    const validation = signupWithSubdomainSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid input', details: validation.error.flatten() },
@@ -20,58 +19,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, username, password, displayName } = validation.data;
+    const { email, password, businessName, subdomain } = validation.data;
 
-    // Get database
     const d1 = await getD1Database();
     const db = getDb(d1);
 
-    // Check if email already exists
     const existingEmail = await getUserByEmail(db, email);
     if (existingEmail) {
       return NextResponse.json({ error: 'Email already in use' }, { status: 400 });
     }
 
-    // Check if username already exists
-    const existingUsername = await getUserByUsername(db, username);
-    if (existingUsername) {
-      return NextResponse.json({ error: 'Username already taken' }, { status: 400 });
+    const subdomainTaken = await isSubdomainTaken(db, subdomain);
+    if (subdomainTaken) {
+      return NextResponse.json({ error: 'This name is already taken' }, { status: 400 });
     }
 
-    // Hash password
     const passwordHash = await hashPassword(password);
 
-    // Create user
-    const userId = await createUser(db, {
+    const user = await createUser(db, {
       email,
-      username,
       passwordHash,
-      displayName,
+      businessName,
+      subdomain,
     });
 
-    // Generate JWT token
     const env = await getCloudflareEnv();
     const token = generateToken(
       {
-        userId,
+        userId: user.id,
         email,
-        username,
-        role: 'user',
+        subdomain: user.subdomain,
       },
       env.JWT_SECRET
     );
 
-    // Set auth cookie
     await setAuthCookie(token);
 
     return NextResponse.json(
       {
         success: true,
         user: {
-          id: userId,
+          id: user.id,
           email,
-          username,
-          displayName: displayName || username,
+          businessName,
+          subdomain: user.subdomain,
         },
       },
       { status: 201 }

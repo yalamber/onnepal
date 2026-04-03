@@ -1,160 +1,128 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Button } from './ui/button';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { Avatar, AvatarFallback } from './ui/avatar';
-import { Menu, FileText, Shield, User, LogOut, LayoutDashboard, PenSquare } from 'lucide-react';
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, LayoutDashboard, LogOut, ExternalLink, User } from 'lucide-react';
 
-interface User {
+interface UserData {
   id: string;
-  username: string;
-  displayName: string | null;
-  role: string;
+  email: string;
+  businessName: string | null;
+  subdomain: string | null;
+  onboardingStep: number;
 }
 
 export function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  const fetchUser = () => {
-    fetch('/api/auth/me')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        const userData = data as { user: User } | null;
-        setUser(userData?.user || null);
-      })
-      .catch(() => setUser(null));
-  };
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isSitePage = pathname.startsWith('/site/');
 
   useEffect(() => {
-    // Fetch user on mount
+    if (isSitePage) return;
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json() as { user: UserData };
+          setUser(data.user);
+        }
+      } catch {}
+    };
+
     fetchUser();
 
-    // Listen for auth changes
-    const handleAuthChange = () => {
-      fetchUser();
-    };
-
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    const handleAuthChange = () => fetchUser();
     window.addEventListener('auth-change', handleAuthChange);
 
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('auth-change', handleAuthChange);
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [isSitePage]);
+
+  if (isSitePage) return null;
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     setUser(null);
-    window.location.href = '/';
+    window.dispatchEvent(new Event('auth-change'));
+    router.push('/');
   };
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-white'
-      } border-b border-gray-200`}
+      className={`sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b transition-shadow ${
+        isScrolled ? 'shadow-sm' : ''
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform">
-                <span className="text-white font-bold text-sm">ON</span>
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                OnNepal
-              </span>
-            </Link>
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
+              OnNepal
+            </span>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-1">
-              <Link href="/posts">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <FileText className="w-4 h-4" />
-                  All Stories
-                </Button>
-              </Link>
-              {user && (
-                <Link href="/submit">
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <PenSquare className="w-4 h-4" />
-                    Submit
-                  </Button>
-                </Link>
-              )}
-              {user && (user.role === 'moderator' || user.role === 'admin') && (
-                <Link href="/moderate">
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <Shield className="w-4 h-4" />
-                    Moderate
-                  </Button>
-                </Link>
-              )}
-            </div>
-          </div>
-
-          {/* Desktop Auth */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-4">
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2 px-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-gradient-to-br from-orange-400 to-red-500 text-white">
-                        {(user.displayName || user.username).charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium text-sm">{user.displayName || user.username}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white">
-                  <DropdownMenuLabel>
-                    <div>
-                      <p className="text-sm font-medium">{user.displayName || user.username}</p>
-                      <p className="text-xs text-muted-foreground">{user.role}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
-                      <LayoutDashboard className="w-4 h-4" />
+              <>
+                {user.subdomain && (
+                  <a
+                    href={`https://${user.subdomain}.onnepal.com`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+                  >
+                    {user.subdomain}.onnepal.com
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <User className="h-4 w-4" />
+                      {user.businessName || user.email}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
                       Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             ) : (
               <>
                 <Link href="/login">
                   <Button variant="ghost" size="sm">
-                    Login
+                    Log in
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button variant="primary" size="sm">
+                  <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
                     Get Started
                   </Button>
                 </Link>
@@ -162,80 +130,60 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="w-6 h-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-72">
-              <div className="flex flex-col gap-4 mt-8">
-                <Link
-                  href="/posts"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <FileText className="w-4 h-4" />
-                  All Stories
-                </Link>
-                {user && (
-                  <>
-                    <Link
-                      href="/submit"
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <PenSquare className="w-4 h-4" />
-                      Submit Story
-                    </Link>
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <LayoutDashboard className="w-4 h-4" />
-                      Dashboard
-                    </Link>
-                    {(user.role === 'moderator' || user.role === 'admin') && (
+          {/* Mobile menu */}
+          <div className="md:hidden">
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-72">
+                <div className="flex flex-col gap-4 mt-8">
+                  {user ? (
+                    <>
+                      <p className="text-sm font-medium px-2">
+                        {user.businessName || user.email}
+                      </p>
                       <Link
-                        href="/moderate"
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-foreground"
-                        onClick={() => setMobileMenuOpen(false)}
+                        href="/dashboard"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-2 px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
                       >
-                        <Shield className="w-4 h-4" />
-                        Moderate
+                        <LayoutDashboard className="h-4 w-4" />
+                        Dashboard
                       </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent text-destructive w-full text-left"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Logout
-                    </button>
-                  </>
-                )}
-                {!user && (
-                  <div className="space-y-2 pt-2">
-                    <Link href="/login" className="block" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full">
-                        Login
-                      </Button>
-                    </Link>
-                    <Link href="/signup" className="block" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="primary" className="w-full">
-                        Get Started
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setMobileOpen(false);
+                        }}
+                        className="flex items-center gap-2 px-2 py-2 text-sm hover:bg-gray-100 rounded-md text-red-600"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Log out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        onClick={() => setMobileOpen(false)}
+                        className="px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                      >
+                        Log in
+                      </Link>
+                      <Link href="/signup" onClick={() => setMobileOpen(false)}>
+                        <Button className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white">
+                          Get Started
+                        </Button>
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>

@@ -3,13 +3,12 @@ import jwt from 'jsonwebtoken';
 export interface TokenPayload {
   userId: string;
   email: string;
-  username: string;
-  role: 'user' | 'moderator' | 'admin';
+  subdomain: string | null;
 }
 
 export function generateToken(payload: TokenPayload, secret: string): string {
   return jwt.sign(payload, secret, {
-    expiresIn: '7d', // Token expires in 7 days
+    expiresIn: '7d',
   });
 }
 

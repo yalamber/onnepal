@@ -1,164 +1,145 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 
-// Users table
+// Users table (business owners)
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   email: text('email').notNull().unique(),
   username: text('username').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
-  displayName: text('display_name'),
-  bio: text('bio'),
-  avatarUrl: text('avatar_url'),
-  role: text('role', { enum: ['user', 'moderator', 'admin'] }).notNull().default('user'),
-  isBanned: integer('is_banned', { mode: 'boolean' }).notNull().default(false),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-});
-
-// Posts/Articles table
-export const posts = sqliteTable('posts', {
-  id: text('id').primaryKey(),
-  authorId: text('author_id').notNull().references(() => users.id),
-  title: text('title').notNull(),
-  slug: text('slug').notNull().unique(),
-  content: text('content').notNull(),
-  excerpt: text('excerpt'),
+  // Business profile fields
+  subdomain: text('subdomain').unique(),
+  businessName: text('business_name'),
+  businessCategory: text('business_category'),
+  description: text('description'),
+  logoUrl: text('logo_url'),
   coverImageUrl: text('cover_image_url'),
-  status: text('status', { enum: ['pending', 'approved', 'rejected', 'published'] })
-    .notNull()
-    .default('pending'),
-  upvoteCount: integer('upvote_count').notNull().default(0),
-  viewCount: integer('view_count').notNull().default(0),
-  featuredAt: integer('featured_at', { mode: 'timestamp' }),
+  phone: text('phone'),
+  address: text('address'),
+  businessHours: text('business_hours'), // JSON string
+  primaryColor: text('primary_color').default('#ea580c'), // orange-600
+  accentColor: text('accent_color').default('#dc2626'), // red-600
+  isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
+  onboardingStep: integer('onboarding_step').notNull().default(0), // 0-4
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-  publishedAt: integer('published_at', { mode: 'timestamp' }),
-});
+}, (table) => ([
+  index('users_subdomain_idx').on(table.subdomain),
+]));
 
-// Upvotes table
-export const upvotes = sqliteTable(
-  'upvotes',
-  {
-    userId: text('user_id').notNull().references(() => users.id),
-    postId: text('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  },
-  (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.postId] }),
-  })
-);
-
-// Moderation actions table
-export const moderationActions = sqliteTable('moderation_actions', {
+// Social links table
+export const socialLinks = sqliteTable('social_links', {
   id: text('id').primaryKey(),
-  postId: text('post_id').notNull().references(() => posts.id),
-  moderatorId: text('moderator_id').notNull().references(() => users.id),
-  action: text('action', { enum: ['approve', 'reject', 'flag'] }).notNull(),
-  reason: text('reason'),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  platform: text('platform', {
+    enum: [
+      'facebook', 'instagram', 'tiktok', 'youtube', 'whatsapp', 'viber',
+      'twitter', 'linkedin', 'website', 'email', 'phone', 'custom'
+    ]
+  }).notNull(),
+  url: text('url').notNull(),
+  label: text('label'),
+  displayOrder: integer('display_order').notNull().default(0),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-});
+}, (table) => ([
+  index('social_links_user_idx').on(table.userId),
+]));
 
-// Tags table
-export const tags = sqliteTable('tags', {
+// Announcements table
+export const announcements = sqliteTable('announcements', {
   id: text('id').primaryKey(),
-  name: text('name').notNull().unique(),
-  slug: text('slug').notNull().unique(),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-});
-
-// Post tags junction table
-export const postTags = sqliteTable(
-  'post_tags',
-  {
-    postId: text('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
-    tagId: text('tag_id').notNull().references(() => tags.id, { onDelete: 'cascade' }),
-  },
-  (table) => ({
-    pk: primaryKey({ columns: [table.postId, table.tagId] }),
-  })
-);
-
-// Comments table (bonus feature for engagement)
-export const comments = sqliteTable('comments', {
-  id: text('id').primaryKey(),
-  postId: text('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
-  authorId: text('author_id').notNull().references(() => users.id),
-  content: text('content').notNull(),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  parentId: text('parent_id').references((): any => comments.id),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  content: text('content'),
+  isPinned: integer('is_pinned', { mode: 'boolean' }).notNull().default(false),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-});
+}, (table) => ([
+  index('announcements_user_idx').on(table.userId),
+]));
+
+// Products table
+export const products = sqliteTable('products', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description'),
+  price: text('price'), // stored as text to handle "Rs. 500" or "Contact for price"
+  imageUrl: text('image_url'),
+  category: text('category'),
+  isAvailable: integer('is_available', { mode: 'boolean' }).notNull().default(true),
+  displayOrder: integer('display_order').notNull().default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('products_user_idx').on(table.userId),
+]));
+
+// CTA buttons table
+export const ctaButtons = sqliteTable('cta_buttons', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  label: text('label').notNull(),
+  url: text('url').notNull(),
+  style: text('style', { enum: ['primary', 'secondary', 'outline'] }).notNull().default('primary'),
+  displayOrder: integer('display_order').notNull().default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('cta_buttons_user_idx').on(table.userId),
+]));
+
+// Page views table (basic analytics)
+export const pageViews = sqliteTable('page_views', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  referrer: text('referrer'),
+  viewedAt: integer('viewed_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('page_views_user_idx').on(table.userId),
+  index('page_views_viewed_at_idx').on(table.viewedAt),
+]));
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
-  posts: many(posts),
-  upvotes: many(upvotes),
-  moderationActions: many(moderationActions),
-  comments: many(comments),
+  socialLinks: many(socialLinks),
+  announcements: many(announcements),
+  products: many(products),
+  ctaButtons: many(ctaButtons),
+  pageViews: many(pageViews),
 }));
 
-export const postsRelations = relations(posts, ({ one, many }) => ({
-  author: one(users, {
-    fields: [posts.authorId],
-    references: [users.id],
-  }),
-  upvotes: many(upvotes),
-  moderationActions: many(moderationActions),
-  postTags: many(postTags),
-  comments: many(comments),
-}));
-
-export const upvotesRelations = relations(upvotes, ({ one }) => ({
+export const socialLinksRelations = relations(socialLinks, ({ one }) => ({
   user: one(users, {
-    fields: [upvotes.userId],
+    fields: [socialLinks.userId],
     references: [users.id],
   }),
-  post: one(posts, {
-    fields: [upvotes.postId],
-    references: [posts.id],
-  }),
 }));
 
-export const tagsRelations = relations(tags, ({ many }) => ({
-  postTags: many(postTags),
-}));
-
-export const postTagsRelations = relations(postTags, ({ one }) => ({
-  post: one(posts, {
-    fields: [postTags.postId],
-    references: [posts.id],
-  }),
-  tag: one(tags, {
-    fields: [postTags.tagId],
-    references: [tags.id],
-  }),
-}));
-
-export const commentsRelations = relations(comments, ({ one, many }) => ({
-  post: one(posts, {
-    fields: [comments.postId],
-    references: [posts.id],
-  }),
-  author: one(users, {
-    fields: [comments.authorId],
+export const announcementsRelations = relations(announcements, ({ one }) => ({
+  user: one(users, {
+    fields: [announcements.userId],
     references: [users.id],
   }),
-  parent: one(comments, {
-    fields: [comments.parentId],
-    references: [comments.id],
-  }),
-  replies: many(comments),
 }));
 
-export const moderationActionsRelations = relations(moderationActions, ({ one }) => ({
-  post: one(posts, {
-    fields: [moderationActions.postId],
-    references: [posts.id],
+export const productsRelations = relations(products, ({ one }) => ({
+  user: one(users, {
+    fields: [products.userId],
+    references: [users.id],
   }),
-  moderator: one(users, {
-    fields: [moderationActions.moderatorId],
+}));
+
+export const ctaButtonsRelations = relations(ctaButtons, ({ one }) => ({
+  user: one(users, {
+    fields: [ctaButtons.userId],
+    references: [users.id],
+  }),
+}));
+
+export const pageViewsRelations = relations(pageViews, ({ one }) => ({
+  user: one(users, {
+    fields: [pageViews.userId],
     references: [users.id],
   }),
 }));
