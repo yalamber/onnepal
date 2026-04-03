@@ -66,7 +66,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -97,9 +97,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Site URL card */}
-      <Card className="mb-8 bg-gradient-to-r from-orange-500 to-red-600 text-white border-0">
+      <Card className="mb-8 bg-gray-950 text-white border-0">
         <CardContent className="py-6">
-          <p className="text-orange-100 text-sm mb-1">Your page is live at</p>
+          <p className="text-gray-400 text-sm mb-1">Your page is live at</p>
           <a
             href={siteUrl}
             target="_blank"
@@ -121,9 +121,9 @@ export default function DashboardPage() {
           { href: '/dashboard/settings', icon: Settings, label: 'Settings', count: null },
         ].map((item) => (
           <Link key={item.href} href={item.href}>
-            <Card className="hover:border-orange-200 hover:shadow-md transition-all cursor-pointer h-full">
+            <Card className="hover:border-gray-300 transition-colors cursor-pointer h-full">
               <CardContent className="py-6 flex flex-col items-center text-center">
-                <item.icon className="h-8 w-8 text-orange-500 mb-3" />
+                <item.icon className="h-8 w-8 text-indigo-500 mb-3" />
                 <p className="font-semibold text-gray-900">{item.label}</p>
                 {item.count !== null && (
                   <p className="text-2xl font-bold text-gray-900 mt-1">{item.count}</p>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <MousePointer className="h-5 w-5 text-orange-500" />
+            <MousePointer className="h-5 w-5 text-indigo-500" />
             Quick tips
           </CardTitle>
         </CardHeader>

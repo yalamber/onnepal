@@ -74,7 +74,7 @@ export default function SettingsPage() {
   if (loading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -98,7 +98,7 @@ export default function SettingsPage() {
             href={`https://${profile.subdomain}.onnepal.com`}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-orange-600 hover:underline flex items-center gap-1"
+            className="font-mono text-indigo-600 hover:underline flex items-center gap-1"
           >
             {profile.subdomain}.onnepal.com <ExternalLink className="h-3 w-3" />
           </a>
@@ -176,12 +176,12 @@ export default function SettingsPage() {
               <div className="flex items-center gap-2 mt-1">
                 <input
                   type="color"
-                  value={profile.primaryColor || '#ea580c'}
+                  value={profile.primaryColor || '#5B5BD6'}
                   onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })}
                   className="w-10 h-10 rounded border cursor-pointer"
                 />
                 <Input
-                  value={profile.primaryColor || '#ea580c'}
+                  value={profile.primaryColor || '#5B5BD6'}
                   onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })}
                   className="flex-1 font-mono text-sm"
                 />
@@ -192,12 +192,12 @@ export default function SettingsPage() {
               <div className="flex items-center gap-2 mt-1">
                 <input
                   type="color"
-                  value={profile.accentColor || '#dc2626'}
+                  value={profile.accentColor || '#3E3EA6'}
                   onChange={(e) => setProfile({ ...profile, accentColor: e.target.value })}
                   className="w-10 h-10 rounded border cursor-pointer"
                 />
                 <Input
-                  value={profile.accentColor || '#dc2626'}
+                  value={profile.accentColor || '#3E3EA6'}
                   onChange={(e) => setProfile({ ...profile, accentColor: e.target.value })}
                   className="flex-1 font-mono text-sm"
                 />
@@ -212,7 +212,7 @@ export default function SettingsPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+          className="bg-indigo-600 text-white hover:bg-indigo-700"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4 mr-1" /> Save Changes</>}
         </Button>

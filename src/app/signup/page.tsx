@@ -13,7 +13,7 @@ export default function SignupPage() {
   return (
     <Suspense fallback={
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     }>
       <SignupForm />
@@ -86,7 +86,7 @@ function SignupForm() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-orange-50 via-white to-red-50">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-white">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Create your business page</CardTitle>
@@ -171,7 +171,7 @@ function SignupForm() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white"
+              className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
               disabled={loading || subdomainStatus !== 'available'}
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create my page'}
@@ -180,7 +180,7 @@ function SignupForm() {
 
           <p className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="text-orange-600 hover:underline">
+            <Link href="/login" className="text-indigo-600 hover:underline">
               Log in
             </Link>
           </p>

@@ -81,7 +81,7 @@ export default function LinksPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -130,7 +130,7 @@ export default function LinksPage() {
             <Button
               onClick={addLink}
               disabled={adding || !newLink.url.trim()}
-              className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+              className="bg-indigo-600 text-white hover:bg-indigo-700"
             >
               {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4 mr-1" /> Add</>}
             </Button>
@@ -146,7 +146,7 @@ export default function LinksPage() {
           links.map((link) => (
             <div
               key={link.id}
-              className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100"
+              className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200"
             >
               <GripVertical className="h-5 w-5 text-gray-300 cursor-grab" />
               <div className="flex-1 min-w-0">

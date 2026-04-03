@@ -64,7 +64,7 @@ export default function AnnouncementsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -81,7 +81,7 @@ export default function AnnouncementsPage() {
         <Button
           onClick={() => setShowForm(!showForm)}
           size="sm"
-          className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+          className="bg-indigo-600 text-white hover:bg-indigo-700"
         >
           <Plus className="h-4 w-4 mr-1" /> New
         </Button>
@@ -110,7 +110,7 @@ export default function AnnouncementsPage() {
             </label>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={addItem} disabled={adding || !form.title.trim()} className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+              <Button onClick={addItem} disabled={adding || !form.title.trim()} className="bg-indigo-600 text-white hover:bg-indigo-700">
                 {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Post'}
               </Button>
             </div>
@@ -126,8 +126,8 @@ export default function AnnouncementsPage() {
           </div>
         ) : (
           items.map((item) => (
-            <div key={item.id} className="flex items-start gap-3 p-4 bg-white rounded-xl border border-gray-100">
-              {item.isPinned && <Pin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />}
+            <div key={item.id} className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200">
+              {item.isPinned && <Pin className="h-4 w-4 text-indigo-500 mt-1 flex-shrink-0" />}
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-gray-900">{item.title}</p>
                 {item.content && <p className="text-xs text-gray-400 mt-1">{item.content}</p>}

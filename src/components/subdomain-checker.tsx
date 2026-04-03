@@ -62,7 +62,7 @@ export function SubdomainChecker() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      <div className="flex items-stretch gap-0 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+      <div className="flex items-stretch gap-0 bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="flex-1 flex items-center">
           <Input
             type="text"
@@ -77,7 +77,7 @@ export function SubdomainChecker() {
         <Button
           onClick={handleClaim}
           disabled={status !== 'available'}
-          className="h-14 px-6 rounded-none bg-gradient-to-r from-orange-500 to-red-600 text-white hover:from-orange-600 hover:to-red-700 disabled:opacity-50"
+          className="h-14 px-6 rounded-none bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
         >
           {status === 'checking' ? (
             <Loader2 className="h-5 w-5 animate-spin" />
