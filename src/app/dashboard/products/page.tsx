@@ -65,7 +65,7 @@ export default function ProductsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -82,7 +82,7 @@ export default function ProductsPage() {
         <Button
           onClick={() => setShowForm(!showForm)}
           size="sm"
-          className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+          className="bg-indigo-600 text-white hover:bg-indigo-700"
         >
           <Plus className="h-4 w-4 mr-1" /> Add Product
         </Button>
@@ -112,7 +112,7 @@ export default function ProductsPage() {
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={addProduct} disabled={adding || !form.name.trim()} className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+              <Button onClick={addProduct} disabled={adding || !form.name.trim()} className="bg-indigo-600 text-white hover:bg-indigo-700">
                 {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Add Product'}
               </Button>
             </div>
@@ -128,11 +128,11 @@ export default function ProductsPage() {
           </div>
         ) : (
           products.map((product) => (
-            <div key={product.id} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
+            <div key={product.id} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200">
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-gray-900">{product.name}</p>
                 {product.description && <p className="text-xs text-gray-400 truncate">{product.description}</p>}
-                {product.price && <p className="text-sm font-semibold text-orange-600 mt-1">{product.price}</p>}
+                {product.price && <p className="text-sm font-semibold text-indigo-600 mt-1">{product.price}</p>}
               </div>
               <Button variant="ghost" size="icon" onClick={() => deleteProduct(product.id)} className="text-gray-400 hover:text-red-500">
                 <Trash2 className="h-4 w-4" />

@@ -5,12 +5,12 @@ export default function HomePage() {
   return (
     <main>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight">
+      <section className="relative overflow-hidden bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-gray-900 tracking-tight">
             Your business.
             <br />
-            <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
+            <span className="text-indigo-600">
               One link.
             </span>
           </h1>
@@ -27,7 +27,7 @@ export default function HomePage() {
       {/* Features */}
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h2 className="text-2xl font-semibold text-center text-gray-900 mb-12">
             Everything your business needs
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -65,9 +65,9 @@ export default function HomePage() {
             ].map((feature) => (
               <div
                 key={feature.title}
-                className="p-6 rounded-xl border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all"
+                className="p-6 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
               >
-                <feature.icon className="h-10 w-10 text-orange-500 mb-4" />
+                <feature.icon className="h-10 w-10 text-indigo-500 mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
                 <p className="text-gray-600 text-sm">{feature.description}</p>
               </div>
@@ -77,12 +77,12 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-orange-500 to-red-600">
+      <section className="py-20 bg-gray-950">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-6">
             Ready to get started?
           </h2>
-          <p className="text-orange-100 text-lg mb-8">
+          <p className="text-gray-400 text-lg mb-8">
             Join hundreds of Nepali businesses already using OnNepal to connect with their customers.
           </p>
           <SubdomainChecker />

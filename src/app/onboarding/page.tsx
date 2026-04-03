@@ -124,7 +124,7 @@ export default function OnboardingPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -138,7 +138,7 @@ export default function OnboardingPage() {
             <div
               key={s}
               className={`h-2 w-16 rounded-full ${
-                s <= step ? 'bg-gradient-to-r from-orange-500 to-red-600' : 'bg-gray-200'
+                s <= step ? 'bg-indigo-600' : 'bg-gray-200'
               }`}
             />
           ))}
@@ -151,7 +151,7 @@ export default function OnboardingPage() {
               <CardTitle className="text-2xl">Welcome, {user?.businessName}!</CardTitle>
               <CardDescription>
                 Your page will be at{' '}
-                <span className="font-mono text-orange-600">{user?.subdomain}.onnepal.com</span>
+                <span className="font-mono text-indigo-600">{user?.subdomain}.onnepal.com</span>
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
               </p>
               <Button
                 onClick={() => setStep(2)}
-                className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                className="bg-indigo-600 text-white hover:bg-indigo-700"
               >
                 Let&apos;s go <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
@@ -184,9 +184,9 @@ export default function OnboardingPage() {
                       key={cat}
                       type="button"
                       onClick={() => setCategory(cat)}
-                      className={`px-3 py-2 text-xs rounded-lg border transition-all ${
+                      className={`px-3 py-2 text-xs rounded-lg border transition-colors ${
                         category === cat
-                          ? 'border-orange-500 bg-orange-50 text-orange-700'
+                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
                 <Button
                   onClick={saveProfile}
                   disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                  className="flex-1 bg-indigo-600 text-white hover:bg-indigo-700"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4 ml-1" /></>}
                 </Button>
@@ -303,7 +303,7 @@ export default function OnboardingPage() {
                 <Button
                   onClick={saveLinks}
                   disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                  className="flex-1 bg-indigo-600 text-white hover:bg-indigo-700"
                 >
                   {saving ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

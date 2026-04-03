@@ -79,7 +79,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
   const accent = business.accentColor;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Cover / Header */}
       <div
         className="relative h-48 sm:h-56"
@@ -89,7 +89,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
             : `linear-gradient(135deg, ${primary}, ${accent})`,
         }}
       >
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       <div className="max-w-2xl mx-auto px-4 -mt-16 relative z-10 pb-20">
@@ -99,17 +99,17 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
             <img
               src={business.logoUrl}
               alt={business.businessName || ''}
-              className="w-28 h-28 rounded-full border-4 border-white shadow-lg mx-auto object-cover bg-white"
+              className="w-28 h-28 rounded-full border-4 border-white mx-auto object-cover bg-white"
             />
           ) : (
             <div
-              className="w-28 h-28 rounded-full border-4 border-white shadow-lg mx-auto flex items-center justify-center text-white text-3xl font-bold"
+              className="w-28 h-28 rounded-full border-4 border-white mx-auto flex items-center justify-center text-white text-3xl font-bold"
               style={{ background: `linear-gradient(135deg, ${primary}, ${accent})` }}
             >
               {business.businessName?.charAt(0) || '?'}
             </div>
           )}
-          <h1 className="mt-4 text-2xl sm:text-3xl font-bold text-gray-900">
+          <h1 className="mt-4 text-2xl sm:text-3xl font-semibold text-gray-900">
             {business.businessName}
           </h1>
           {business.businessCategory && (
@@ -134,11 +134,11 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
                 href={cta.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`block w-full text-center py-3 px-6 rounded-xl font-semibold text-lg transition-all hover:scale-[1.02] ${
+                className={`block w-full text-center py-3 px-6 rounded-lg font-semibold text-lg transition-colors hover:opacity-90 ${
                   cta.style === 'primary'
-                    ? 'text-white shadow-md'
+                    ? 'text-white'
                     : cta.style === 'secondary'
-                    ? 'text-white shadow-md opacity-80'
+                    ? 'text-white opacity-80'
                     : 'border-2 bg-white'
                 }`}
                 style={
@@ -165,7 +165,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all"
+                    className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
                   >
                     <Icon className="h-5 w-5 text-gray-600" />
                     <span className="font-medium text-gray-900">
@@ -187,10 +187,10 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
               {announcements.map((item) => (
                 <div
                   key={item.id}
-                  className="p-4 bg-white rounded-xl border border-gray-100"
+                  className="p-4 bg-white rounded-lg border border-gray-200"
                 >
                   <div className="flex items-start gap-2">
-                    {item.isPinned && <Pin className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />}
+                    {item.isPinned && <Pin className="h-4 w-4 text-indigo-500 mt-1 flex-shrink-0" />}
                     <div>
                       <h3 className="font-semibold text-gray-900">{item.title}</h3>
                       {item.content && (
@@ -212,7 +212,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-xl border border-gray-100 overflow-hidden"
+                  className="bg-white rounded-lg border border-gray-200 overflow-hidden"
                 >
                   {product.imageUrl && (
                     <img
@@ -242,7 +242,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         {(business.phone || business.address || business.businessHours) && (
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact</h2>
-            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+            <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-3">
               {business.phone && (
                 <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-gray-700 hover:text-gray-900">
                   <Phone className="h-5 w-5 text-gray-400" />
