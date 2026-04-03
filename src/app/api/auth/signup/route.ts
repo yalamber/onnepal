@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { getD1Database, getCloudflareEnv } from '@/lib/cloudflare';
+import { getD1Database, getJwtSecret } from '@/lib/cloudflare';
 import { createUser, getUserByEmail, isSubdomainTaken } from '@/lib/db/queries/users';
 import { hashPassword } from '@/lib/auth/password';
 import { generateToken } from '@/lib/auth/jwt';
@@ -43,14 +43,13 @@ export async function POST(request: NextRequest) {
       subdomain,
     });
 
-    const env = await getCloudflareEnv();
     const token = generateToken(
       {
         userId: user.id,
         email,
         subdomain: user.subdomain,
       },
-      env.JWT_SECRET
+      getJwtSecret()
     );
 
     await setAuthCookie(token);

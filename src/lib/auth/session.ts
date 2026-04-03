@@ -1,9 +1,10 @@
 import { cookies } from 'next/headers';
 import { verifyToken, type TokenPayload } from './jwt';
+import { getJwtSecret } from '@/lib/cloudflare';
 
 const AUTH_COOKIE_NAME = 'auth_token';
 
-export async function getSession(jwtSecret: string): Promise<TokenPayload | null> {
+export async function getSession(): Promise<TokenPayload | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
 
@@ -11,7 +12,7 @@ export async function getSession(jwtSecret: string): Promise<TokenPayload | null
     return null;
   }
 
-  return verifyToken(token, jwtSecret);
+  return verifyToken(token, getJwtSecret());
 }
 
 export async function setAuthCookie(token: string) {

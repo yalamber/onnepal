@@ -24,7 +24,15 @@
       "WebFetch(domain:vinext.io)",
       "Bash(PATH=\"/opt/homebrew/bin:$PATH\" npm run build)",
       "Bash(PATH=\"/opt/homebrew/bin:$PATH\" npm install -D @tailwindcss/vite)",
-      "Bash(PATH=\"/opt/homebrew/bin:$PATH\" grep -r \"getCloudflareEnv\\\\|getPlatformContext\\\\|cloudflare/bindings\\\\|getBindings\\\\|process.env.DB\\\\|globalThis\" /Users/yalamber/Projects/onnepal/.claude/worktrees/busy-satoshi/node_modules/@cloudflare/vite-plugin/dist/ --include=\"*.mjs\" -l)"
+      "Bash(PATH=\"/opt/homebrew/bin:$PATH\" grep -r \"getCloudflareEnv\\\\|getPlatformContext\\\\|cloudflare/bindings\\\\|getBindings\\\\|process.env.DB\\\\|globalThis\" /Users/yalamber/Projects/onnepal/.claude/worktrees/busy-satoshi/node_modules/@cloudflare/vite-plugin/dist/ --include=\"*.mjs\" -l)",
+      "Bash(git push:*)",
+      "Bash(git stash:*)",
+      "Bash(git rebase:*)",
+      "Bash(PATH=\"/opt/homebrew/bin:$PATH\" npx vinext deploy --skip-build)",
+      "mcp__f5f24856-59e7-4c2c-bc7c-1b1b927b7aff__accounts_list",
+      "mcp__f5f24856-59e7-4c2c-bc7c-1b1b927b7aff__workers_get_worker",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

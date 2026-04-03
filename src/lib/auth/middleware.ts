@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from './jwt';
+import { getJwtSecret } from '@/lib/cloudflare';
 
 export interface RequestWithSession extends NextRequest {
   session?: {
@@ -19,12 +20,7 @@ export function requireAuth(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-
-    const session = verifyToken(authCookie, jwtSecret);
+    const session = verifyToken(authCookie, getJwtSecret());
 
     if (!session) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });

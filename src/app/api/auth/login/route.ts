@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getDb } from '@/lib/db';
-import { getD1Database, getCloudflareEnv } from '@/lib/cloudflare';
+import { getD1Database, getJwtSecret } from '@/lib/cloudflare';
 import { getUserByEmail } from '@/lib/db/queries/users';
 import { verifyPassword } from '@/lib/auth/password';
 import { generateToken } from '@/lib/auth/jwt';
@@ -39,14 +39,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const env = await getCloudflareEnv();
     const token = generateToken(
       {
         userId: user.id,
         email: user.email,
         subdomain: user.subdomain,
       },
-      env.JWT_SECRET
+      getJwtSecret()
     );
 
     await setAuthCookie(token);

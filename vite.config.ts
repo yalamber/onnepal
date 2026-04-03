@@ -1,5 +1,5 @@
-import vinext from "vinext";
 import { defineConfig } from "vite";
+import vinext from "vinext";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -11,4 +11,9 @@ export default defineConfig({
       viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: ["cloudflare:workers"],
+    },
+  },
 });

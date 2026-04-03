@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getR2Bucket, getCloudflareEnv } from '@/lib/cloudflare';
+import { getR2Bucket } from '@/lib/cloudflare';
 import { getSession } from '@/lib/auth/session';
 // POST /api/upload - Upload image to R2
 export async function POST(request: NextRequest) {
   try {
-    const env = await getCloudflareEnv();
-    const session = await getSession(env.JWT_SECRET);
+    const session = await getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

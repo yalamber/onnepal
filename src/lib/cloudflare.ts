@@ -1,19 +1,13 @@
-import type { CloudflareEnv } from '@/types/cloudflare';
+import { env } from "cloudflare:workers";
 
-export async function getCloudflareEnv(): Promise<CloudflareEnv> {
-  // In Cloudflare Workers, bindings are available on the global scope
-  // via the env passed to the fetch handler. With vinext + @cloudflare/vite-plugin,
-  // bindings are accessible as global properties.
-  const env = (globalThis as unknown as { DB: D1Database; IMAGES: R2Bucket; JWT_SECRET: string });
-  return env as unknown as CloudflareEnv;
+export function getD1Database(): D1Database {
+  return (env as { DB: D1Database }).DB;
 }
 
-export async function getD1Database(): Promise<D1Database> {
-  const env = await getCloudflareEnv();
-  return env.DB;
+export function getR2Bucket(): R2Bucket {
+  return (env as { IMAGES: R2Bucket }).IMAGES;
 }
 
-export async function getR2Bucket(): Promise<R2Bucket> {
-  const env = await getCloudflareEnv();
-  return env.IMAGES;
+export function getJwtSecret(): string {
+  return (env as { JWT_SECRET: string }).JWT_SECRET;
 }

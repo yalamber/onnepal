@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { getD1Database, getCloudflareEnv } from '@/lib/cloudflare';
+import { getD1Database } from '@/lib/cloudflare';
 import { reorderProducts } from '@/lib/db/queries/products';
 import { getSession } from '@/lib/auth/session';
 import { reorderSchema } from '@/lib/validators/business';
 
 export async function PUT(request: Request) {
   try {
-    const env = await getCloudflareEnv();
-    const session = await getSession(env.JWT_SECRET);
+    const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

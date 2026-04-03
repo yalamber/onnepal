@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { getD1Database, getCloudflareEnv } from '@/lib/cloudflare';
+import { getD1Database } from '@/lib/cloudflare';
 import { getAnnouncements, createAnnouncement } from '@/lib/db/queries/announcements';
 import { getSession } from '@/lib/auth/session';
 import { announcementSchema } from '@/lib/validators/business';
 
 export async function GET() {
   try {
-    const env = await getCloudflareEnv();
-    const session = await getSession(env.JWT_SECRET);
+    const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -26,8 +25,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const env = await getCloudflareEnv();
-    const session = await getSession(env.JWT_SECRET);
+    const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
