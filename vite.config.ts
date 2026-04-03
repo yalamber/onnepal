@@ -7,6 +7,8 @@ export default defineConfig({
   plugins: [
     vinext(),
     tailwindcss(),
-    cloudflare(),
+    cloudflare({
+      viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+    }),
   ],
 });
