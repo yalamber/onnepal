@@ -6,9 +6,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,8 +18,8 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
+    setError('');
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -29,121 +28,79 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = (await res.json()) as { error?: string };
-
-      if (res.ok) {
-        // Dispatch auth change event to update navbar
-        window.dispatchEvent(new Event('auth-change'));
-        router.push('/');
-        router.refresh();
-      } else {
+      const data = await res.json() as { error?: string; success?: boolean; user?: { onboardingStep: number } };
+      if (!res.ok) {
         setError(data.error || 'Login failed');
+        return;
+      }
+
+      window.dispatchEvent(new Event('auth-change'));
+
+      // Redirect based on onboarding state
+      if (data.user && data.user.onboardingStep < 4) {
+        router.push('/onboarding');
+      } else {
+        router.push('/dashboard');
       }
     } catch {
-      setError('An error occurred. Please try again.');
+      setError('Something went wrong');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-orange-50 via-white to-red-50">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <Link href="/" className="flex items-center justify-center gap-2 mb-8 group">
-          <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform">
-            <span className="text-white font-bold">ON</span>
-          </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-            OnNepal
-          </span>
-        </Link>
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-orange-50 via-white to-red-50">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Welcome back</CardTitle>
+          <CardDescription>Log in to manage your business page</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+              />
+            </div>
 
-        <Card className="shadow-xl border-2">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-            <CardDescription className="text-base">
-              Login to your OnNepal account to continue
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Your password"
+                required
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-semibold">
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="you@example.com"
-                    className="pl-11"
-                  />
-                </div>
-              </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-semibold">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    placeholder="••••••••"
-                    className="pl-11"
-                  />
-                </div>
-              </div>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white"
+              disabled={loading}
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Log in'}
+            </Button>
+          </form>
 
-              <Button
-                type="submit"
-                variant="primary"
-                className="w-full text-base font-semibold"
-                disabled={loading}
-                size="lg"
-              >
-                {loading ? 'Logging in...' : 'Login'}
-              </Button>
-
-              <div className="text-center pt-4 border-t">
-                <p className="text-sm text-slate-600">
-                  Don&apos;t have an account?{' '}
-                  <Link href="/signup" className="font-semibold text-orange-600 hover:text-orange-700 hover:underline">
-                    Sign up for free
-                  </Link>
-                </p>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        <p className="text-center text-sm text-slate-500 mt-6">
-          By continuing, you agree to our{' '}
-          <Link href="/terms" className="underline hover:text-slate-700">
-            Terms
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="underline hover:text-slate-700">
-            Privacy Policy
-          </Link>
-        </p>
-      </div>
+          <p className="text-center text-sm text-gray-500 mt-6">
+            Don&apos;t have an account?{' '}
+            <Link href="/signup" className="text-orange-600 hover:underline">
+              Get started
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -4,187 +4,150 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**OnNepal.com** is a lightweight citizen journalism portal focused on Nepal. The platform enables users to post articles and stories about Nepal, with a community-driven upvote system that determines which content gets featured on the homepage. The platform includes basic moderation capabilities to ensure content quality.
+**OnNepal.com** is a business link-sharing platform for Nepal. Businesses register a subdomain (`businessname.onnepal.com`) and get a mini single-page website with social links, products, announcements, contact details, and CTAs. Think Linktree meets Carrd, localized for Nepal.
 
 ### Core Features
-- **User-Generated Content**: Users can create and publish articles/posts about Nepal
-- **Upvote System**: Community voting determines content visibility and homepage featuring
-- **Featured Content**: Articles with sufficient upvotes appear on the homepage
-- **Basic Moderation**: Content moderation system to maintain quality and appropriateness
-- **Lightweight Design**: Optimized for performance and accessibility
+- **Subdomain-based pages**: Each business gets `name.onnepal.com`
+- **Social links**: Connect Facebook, Instagram, WhatsApp, TikTok, etc.
+- **Product showcase**: Display products with images, prices, descriptions
+- **Announcements**: Share news, offers, updates (pinnable, expirable)
+- **CTA buttons**: Configurable call-to-action buttons (Order, Book, Call)
+- **Contact info**: Phone, address, business hours
+- **Brand customization**: Primary/accent colors per business
+- **Onboarding wizard**: 3-step setup gets page live in minutes
 
 ### Technical Foundation
-This is a Next.js 15.4 application configured for deployment on Cloudflare Pages using OpenNext for Cloudflare Workers. The project uses the App Router architecture with TypeScript, React 19, and Tailwind CSS v4.
+Next.js 15.4 on Cloudflare Workers via OpenNext. App Router, TypeScript, React 19, Tailwind CSS v4. Subdomain routing via Next.js middleware.
 
 ## Tech Stack
 
 - **Framework**: Next.js 15.4.6 with App Router
 - **Runtime**: React 19.1.0
+- **ORM**: Drizzle ORM with Cloudflare D1 (SQLite)
 - **Styling**: Tailwind CSS v4 with PostCSS
-- **Deployment**: Cloudflare Pages/Workers via @opennextjs/cloudflare
+- **Validation**: Zod v4
+- **Deployment**: Cloudflare Workers via @opennextjs/cloudflare
+- **Storage**: Cloudflare R2 for images
+- **Auth**: JWT with httpOnly cookies, bcryptjs
 - **Language**: TypeScript 5
-- **Fonts**: Geist Sans and Geist Mono (via next/font)
 
 ## Project Structure
 
-- `src/app/` - Next.js App Router pages and layouts
-  - `layout.tsx` - Root layout with font configuration
-  - `page.tsx` - Homepage component
-  - `globals.css` - Global styles and Tailwind directives
-- `next.config.ts` - Next.js configuration with OpenNext Cloudflare dev support
-- `open-next.config.ts` - OpenNext Cloudflare-specific configuration
-- `wrangler.jsonc` - Cloudflare Workers configuration
-- Path alias: `@/*` maps to `./src/*`
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── auth/          # signup, login, logout, me
+│   │   ├── subdomain/     # check availability
+│   │   ├── business/      # profile, links, announcements, products, ctas, publish
+│   │   ├── site/          # public page data API
+│   │   └── upload/        # R2 image upload
+│   ├── site/[subdomain]/  # Public business page (server component)
+│   ├── onboarding/        # 3-step setup wizard
+│   ├── dashboard/         # Management hub
+│   │   ├── links/         # Social links CRUD
+│   │   ├── products/      # Products CRUD
+│   │   ├── announcements/ # Announcements CRUD
+│   │   └── settings/      # Profile, colors, business info
+│   ├── login/             # Login page
+│   ├── signup/            # Signup with subdomain claim
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Landing page with subdomain checker
+│   └── globals.css
+├── components/
+│   ├── navbar.tsx           # Main navigation (hidden on subdomain pages)
+│   ├── subdomain-checker.tsx # Real-time subdomain availability input
+│   ├── business-page.tsx    # Public page renderer
+│   └── ui/                  # Shadcn/Radix UI primitives
+├── lib/
+│   ├── auth/
+│   │   ├── jwt.ts           # Token generation/verification
+│   │   ├── session.ts       # Cookie management
+│   │   ├── middleware.ts    # Route protection HOF
+│   │   └── password.ts      # bcryptjs hashing
+│   ├── db/
+│   │   ├── schema.ts        # Drizzle table definitions
+│   │   ├── index.ts         # DB initialization
+│   │   └── queries/
+│   │       ├── users.ts     # User/business CRUD
+│   │       ├── links.ts     # Social links CRUD
+│   │       ├── announcements.ts
+│   │       ├── products.ts
+│   │       ├── ctas.ts
+│   │       └── analytics.ts # Page view tracking
+│   ├── validators/
+│   │   ├── business.ts      # Zod schemas for all business data
+│   │   └── subdomain.ts     # Subdomain validation + reserved names
+│   ├── cloudflare.ts        # Context/binding accessors
+│   └── utils.ts             # Utility functions
+├── middleware.ts             # Subdomain routing
+└── types/
+    └── cloudflare.ts        # CloudflareEnv type
+```
 
 ## Common Commands
 
-### Development
 ```bash
-npm run dev          # Start Next.js dev server on localhost:3000
+npm run dev          # Start dev server on localhost:3000
+npm run build        # Build for production
+npm run deploy       # Build and deploy to Cloudflare
+npm run db:generate  # Generate Drizzle migration from schema
+npm run lint         # Run ESLint
 ```
 
-### Build & Deploy
-```bash
-npm run build        # Build Next.js application for production
-npm run deploy       # Build and deploy to Cloudflare Pages
-npm run preview      # Build and preview locally before deployment
-```
+## Subdomain Routing
 
-### Code Quality
-```bash
-npm run lint         # Run ESLint (next/core-web-vitals + next/typescript configs)
-```
+`src/middleware.ts` intercepts all requests, extracts subdomain from `Host` header, and rewrites to `/site/[subdomain]`. Reserved names (www, api, admin, etc.) pass through to main app.
 
-### Cloudflare Type Generation
-```bash
-npm run cf-typegen   # Generate Cloudflare environment types in cloudflare-env.d.ts
-```
+**Local dev**: Use `mybusiness.localhost:3000` to test subdomain pages.
 
-## Cloudflare-Specific Configuration
+**Production DNS**: Requires wildcard CNAME `*.onnepal.com -> onnepal.com` in Cloudflare DNS.
 
-### OpenNext Integration
-- The project uses `@opennextjs/cloudflare` adapter for Workers deployment
-- `initOpenNextCloudflareForDev()` is called in `next.config.ts` to enable `getCloudflareContext()` during local development
-- Built output goes to `.open-next/` directory
+## Database Schema
 
-### Wrangler Configuration
-- Worker entry: `.open-next/worker.js`
-- Static assets binding: `ASSETS` (from `.open-next/assets`)
-- Compatibility date: `2025-03-01`
-- Compatibility flags: `nodejs_compat`, `global_fetch_strictly_public`
-- Observability is enabled
+- `users` - Business owners (includes profile: subdomain, businessName, category, colors, etc.)
+- `social_links` - Platform links (facebook, instagram, whatsapp, etc.) with ordering
+- `announcements` - Pinnable, expirable business announcements
+- `products` - Product showcase with pricing and ordering
+- `cta_buttons` - Call-to-action buttons (primary/secondary/outline styles)
+- `page_views` - Basic analytics (view timestamps + referrers)
 
-### Caching
-The project has commented-out R2 incremental cache configuration in `open-next.config.ts`. To enable:
-1. Uncomment the `incrementalCache` option
-2. Import `r2IncrementalCache` from `@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache`
-3. See https://opennext.js.org/cloudflare/caching for details
-
-## TypeScript Configuration
-
-- Target: ES2017
-- Module resolution: bundler
-- Strict mode enabled
-- Cloudflare environment types are included via `./cloudflare-env.d.ts`
-- Path aliases configured for `@/*` imports
-
-## Key Architectural Notes
-
-- **App Router**: Uses Next.js App Router (not Pages Router)
-- **Server Components**: By default, components in `src/app/` are React Server Components
-- **Font Optimization**: Uses `next/font` for automatic font optimization and loading
-- **Cloudflare Context**: Use `getCloudflareContext()` to access Cloudflare bindings, environment variables, and request context in API routes and server components
-- **Static Assets**: Managed through Wrangler's assets binding
-
-## ESLint Configuration
-
-Uses flat config format (`eslint.config.mjs`) with:
-- `next/core-web-vitals`
-- `next/typescript`
-
-## Database Setup & Migrations
-
-OnNepal uses Drizzle ORM with Cloudflare D1 (SQLite):
-
-### Initial Setup
-1. Create D1 database: `wrangler d1 create onnepal-db`
-2. Update `wrangler.jsonc` with database ID
-3. Generate migrations: `npm run db:generate`
-4. Apply to D1: `wrangler d1 execute onnepal-db --file=./drizzle/0000_initial.sql`
-
-### Schema Location
-- Schema definition: `src/lib/db/schema.ts`
-- Database queries: `src/lib/db/queries/` (organized by entity)
-- Drizzle config: `drizzle.config.ts`
-
-### Adding New Tables/Columns
-1. Modify `src/lib/db/schema.ts`
-2. Run `npm run db:generate` to create migration
-3. Apply migration with `wrangler d1 execute`
-
-### Key Database Tables
-- `users` - User accounts with roles (user, moderator, admin)
-- `posts` - Articles with status (pending, approved, rejected, published)
-- `upvotes` - Vote tracking (composite primary key: userId + postId)
-- `moderation_actions` - Audit log for moderation decisions
-- `tags` - Content categorization
-- `post_tags` - Many-to-many relationship
-- `comments` - Nested comments (optional feature)
+All tables indexed on `user_id` foreign key.
 
 ## Authentication Flow
 
-Uses JWT-based authentication with httpOnly cookies:
+1. **Signup**: Email + password + business name + subdomain claim → JWT cookie
+2. **Login**: Email + password → JWT cookie, redirect based on onboarding step
+3. **Session**: `getSession()` reads JWT from `auth_token` httpOnly cookie
+4. **Token payload**: `{ userId, email, subdomain }`
 
-1. **Signup/Login**: `/api/auth/signup` or `/api/auth/login`
-   - Password hashed with bcrypt
-   - JWT token generated and set in httpOnly cookie
-   - Token payload: userId, email, username, role
+## User Flow
 
-2. **Session Management**:
-   - `getSession()` in server components/API routes
-   - Token expires after 7 days
-   - Logout clears cookie: `/api/auth/logout`
+1. Landing page → subdomain checker → signup with subdomain claim
+2. Onboarding wizard (3 steps): Welcome → Business details → Social links → Publish
+3. Dashboard → manage links, products, announcements, settings
+4. Public page live at `subdomain.onnepal.com`
 
-3. **Protected Routes**:
-   - Check session in page components
-   - Redirect to `/login` if unauthorized
-   - Moderator/admin routes check role
+## Onboarding Steps
 
-## Content Moderation Workflow
+Track via `users.onboardingStep` (0-4):
+- 0: Not started
+- 1: Account created (redirect to onboarding)
+- 2: Business details saved
+- 3: Links added
+- 4: Complete (site published, redirect to dashboard)
 
-1. User submits post → status: `pending`
-2. Appears in `/moderate` for moderators/admins
-3. Moderator approves → status: `published`, sets publishedAt
-4. Moderator rejects → status: `rejected`
-5. Auto-approve trusted users (future feature)
+## Cloudflare Configuration
 
-## Upvote & Featured Posts Algorithm
-
-- Users upvote posts via `/api/posts/[slug]/upvote`
-- Duplicate votes prevented by composite PK in upvotes table
-- Featured posts query: `status='published'` ordered by upvoteCount DESC
-- Future enhancement: Time-decay scoring (newer posts weighted higher)
-
-## Image Upload (R2)
-
-- Endpoint: `/api/upload`
-- Validates: file type, size (5MB max)
-- Stores in R2 with unique filename
-- Returns URL for use in posts
-- Note: Configure R2 custom domain or public access for production
+- **D1**: `onnepal-db` database bound as `DB`
+- **R2**: `onnepal-images` bucket bound as `IMAGES`
+- **Routes**: `*.onnepal.com` and `onnepal.com/*`
+- **Secret**: `JWT_SECRET` (set via `wrangler secret put JWT_SECRET`)
 
 ## Development Workflow
 
-1. Make schema changes in `src/lib/db/schema.ts`
-2. Generate migration: `npm run db:generate`
-3. Test locally with `npm run dev`
-4. Apply to production D1 before deploying
+1. Modify schema in `src/lib/db/schema.ts`
+2. Run `npm run db:generate`
+3. Apply migration: `wrangler d1 execute onnepal-db --file=./drizzle/XXXX.sql`
+4. Test locally with `npm run dev`
 5. Deploy: `npm run deploy`
-
-## Important Notes
-
-- All API routes use Edge runtime for Cloudflare Workers
-- `getCloudflareContext()` provides access to D1, R2, KV bindings
-- Server components must use `export const runtime = 'edge'`
-- JWT_SECRET must be set as Wrangler secret for production
-- First admin user must be created manually via D1 SQL

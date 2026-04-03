@@ -19,9 +19,21 @@
 		"enabled": true
 	},
 	/**
+	 * Routes for wildcard subdomain support
+	 * Requires wildcard DNS: *.onnepal.com CNAME onnepal.com
+	 */
+	"routes": [
+		{
+			"pattern": "*.onnepal.com",
+			"zone_name": "onnepal.com"
+		},
+		{
+			"pattern": "onnepal.com/*",
+			"zone_name": "onnepal.com"
+		}
+	],
+	/**
 	 * D1 Database Binding
-	 * Run: wrangler d1 create onnepal-db
-	 * Then add the database_id below
 	 */
 	"d1_databases": [
 		{
@@ -32,21 +44,13 @@
 	],
 	/**
 	 * R2 Storage Binding for images
-	 * Run: wrangler r2 bucket create onnepal-images
 	 */
 	"r2_buckets": [
 		{
 			"binding": "IMAGES",
 			"bucket_name": "onnepal-images"
 		}
-	],
-	/**
-	 * Environment Variables
-	 */
-	"vars": {
-		"UPVOTE_THRESHOLD_FOR_FEATURE": "10",
-		"POSTS_PER_PAGE": "20"
-	}
+	]
 	/**
 	 * Note: Use secrets for sensitive data like JWT_SECRET
 	 * Run: wrangler secret put JWT_SECRET

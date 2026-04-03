@@ -13,13 +13,10 @@ export async function GET() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Get database
     const d1 = await getD1Database();
     const db = getDb(d1);
 
-    // Get user from database
     const user = await getUserById(db, session.userId);
-
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -28,11 +25,19 @@ export async function GET() {
       user: {
         id: user.id,
         email: user.email,
-        username: user.username,
-        displayName: user.displayName,
-        bio: user.bio,
-        avatarUrl: user.avatarUrl,
-        role: user.role,
+        subdomain: user.subdomain,
+        businessName: user.businessName,
+        businessCategory: user.businessCategory,
+        description: user.description,
+        logoUrl: user.logoUrl,
+        coverImageUrl: user.coverImageUrl,
+        phone: user.phone,
+        address: user.address,
+        businessHours: user.businessHours,
+        primaryColor: user.primaryColor,
+        accentColor: user.accentColor,
+        isPublished: user.isPublished,
+        onboardingStep: user.onboardingStep,
         createdAt: user.createdAt,
       },
     });

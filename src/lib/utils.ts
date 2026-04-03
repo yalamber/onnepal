@@ -52,13 +52,3 @@ export function truncate(text: string, maxLength: number): string {
   return text.slice(0, maxLength) + '...';
 }
 
-export function calculateFeaturedScore(upvotes: number, createdAt: Date | number): number {
-  const now = Date.now();
-  const then = typeof createdAt === 'number' ? createdAt : createdAt.getTime();
-  const ageInDays = (now - then) / (1000 * 60 * 60 * 24);
-
-  // Score formula: higher upvotes and recency boost the score
-  // Prevents older posts from staying featured forever
-  const recencyBonus = 1 / (ageInDays + 1);
-  return upvotes * 1.5 + recencyBonus * 10;
-}
