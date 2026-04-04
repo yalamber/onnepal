@@ -65,7 +65,7 @@ export default function ProductsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -77,12 +77,12 @@ export default function ProductsPage() {
           <Link href="/dashboard">
             <Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button>
           </Link>
-          <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-neutral-950 leading-[1.2]">Products</h1>
+          <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-slate-950 leading-[1.2]">Products</h1>
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
           size="sm"
-          className="bg-neutral-950 text-white hover:bg-neutral-800"
+          className="bg-slate-900 text-white hover:bg-slate-800"
         >
           <Plus className="h-4 w-4 mr-1" /> Add Product
         </Button>
@@ -112,7 +112,7 @@ export default function ProductsPage() {
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={addProduct} disabled={adding || !form.name.trim()} className="bg-neutral-950 text-white hover:bg-neutral-800">
+              <Button onClick={addProduct} disabled={adding || !form.name.trim()} className="bg-slate-900 text-white hover:bg-slate-800">
                 {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Add Product'}
               </Button>
             </div>
@@ -123,18 +123,18 @@ export default function ProductsPage() {
       <div className="space-y-2">
         {products.length === 0 ? (
           <div className="text-center py-12">
-            <Package className="h-12 w-12 text-neutral-300 mx-auto mb-3" />
-            <p className="text-neutral-400">No products yet. Add your first product.</p>
+            <Package className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-400">No products yet. Add your first product.</p>
           </div>
         ) : (
           products.map((product) => (
-            <div key={product.id} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-neutral-200">
+            <div key={product.id} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-slate-200">
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-neutral-900">{product.name}</p>
-                {product.description && <p className="text-xs text-neutral-400 truncate">{product.description}</p>}
-                {product.price && <p className="text-sm font-semibold text-neutral-950 mt-1">{product.price}</p>}
+                <p className="font-medium text-sm text-slate-900">{product.name}</p>
+                {product.description && <p className="text-xs text-slate-400 truncate">{product.description}</p>}
+                {product.price && <p className="text-sm font-semibold text-slate-950 mt-1">{product.price}</p>}
               </div>
-              <Button variant="ghost" size="icon" onClick={() => deleteProduct(product.id)} className="text-neutral-400 hover:text-red-500">
+              <Button variant="ghost" size="icon" onClick={() => deleteProduct(product.id)} className="text-slate-400 hover:text-red-500">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>

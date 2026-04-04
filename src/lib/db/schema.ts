@@ -17,8 +17,8 @@ export const users = sqliteTable('users', {
   phone: text('phone'),
   address: text('address'),
   businessHours: text('business_hours'), // JSON string
-  primaryColor: text('primary_color').default('#5B5BD6'), // indigo-600
-  accentColor: text('accent_color').default('#3E3EA6'), // indigo-800
+  primaryColor: text('primary_color').default('#2563eb'), // blue-600
+  accentColor: text('accent_color').default('#1d4ed8'), // blue-700
   isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
   onboardingStep: integer('onboarding_step').notNull().default(0), // 0-4
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),

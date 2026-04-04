@@ -51,13 +51,13 @@ export default function LoginPage() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-[1.5rem] font-bold text-neutral-950 tracking-[-0.025em] leading-[1.2]">Welcome back</h1>
-          <p className="text-neutral-500 text-[0.875rem] mt-2 leading-[1.6]">Log in to manage your page</p>
+          <h1 className="text-[1.5rem] font-bold text-slate-950 tracking-[-0.025em] leading-[1.2]">Welcome back</h1>
+          <p className="text-slate-500 text-[0.875rem] mt-2 leading-[1.6]">Log in to manage your page</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="email" className="text-neutral-700">Email</Label>
+            <Label htmlFor="email" className="text-slate-700">Email</Label>
             <Input
               id="email"
               type="email"
@@ -70,7 +70,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <Label htmlFor="password" className="text-neutral-700">Password</Label>
+            <Label htmlFor="password" className="text-slate-700">Password</Label>
             <Input
               id="password"
               type="password"
@@ -93,9 +93,9 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-neutral-400 mt-8">
+        <p className="text-center text-sm text-slate-400 mt-8">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-neutral-950 font-medium hover:underline">
+          <Link href="/signup" className="text-blue-600 font-medium hover:text-blue-700">
             Get started
           </Link>
         </p>

@@ -64,7 +64,7 @@ export default function AnnouncementsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -76,12 +76,12 @@ export default function AnnouncementsPage() {
           <Link href="/dashboard">
             <Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button>
           </Link>
-          <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-neutral-950 leading-[1.2]">Announcements</h1>
+          <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-slate-950 leading-[1.2]">Announcements</h1>
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
           size="sm"
-          className="bg-neutral-950 text-white hover:bg-neutral-800"
+          className="bg-slate-900 text-white hover:bg-slate-800"
         >
           <Plus className="h-4 w-4 mr-1" /> New
         </Button>
@@ -110,7 +110,7 @@ export default function AnnouncementsPage() {
             </label>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={addItem} disabled={adding || !form.title.trim()} className="bg-neutral-950 text-white hover:bg-neutral-800">
+              <Button onClick={addItem} disabled={adding || !form.title.trim()} className="bg-slate-900 text-white hover:bg-slate-800">
                 {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Post'}
               </Button>
             </div>
@@ -121,18 +121,18 @@ export default function AnnouncementsPage() {
       <div className="space-y-2">
         {items.length === 0 ? (
           <div className="text-center py-12">
-            <Megaphone className="h-12 w-12 text-neutral-300 mx-auto mb-3" />
-            <p className="text-neutral-400">No announcements yet.</p>
+            <Megaphone className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-400">No announcements yet.</p>
           </div>
         ) : (
           items.map((item) => (
-            <div key={item.id} className="flex items-start gap-3 p-4 bg-white rounded-lg border border-neutral-200">
-              {item.isPinned && <Pin className="h-4 w-4 text-neutral-400 mt-1 flex-shrink-0" />}
+            <div key={item.id} className="flex items-start gap-3 p-4 bg-white rounded-lg border border-slate-200">
+              {item.isPinned && <Pin className="h-4 w-4 text-slate-400 mt-1 flex-shrink-0" />}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-neutral-900">{item.title}</p>
-                {item.content && <p className="text-xs text-neutral-400 mt-1">{item.content}</p>}
+                <p className="font-medium text-sm text-slate-900">{item.title}</p>
+                {item.content && <p className="text-xs text-slate-400 mt-1">{item.content}</p>}
               </div>
-              <Button variant="ghost" size="icon" onClick={() => deleteItem(item.id)} className="text-neutral-400 hover:text-red-500">
+              <Button variant="ghost" size="icon" onClick={() => deleteItem(item.id)} className="text-slate-400 hover:text-red-500">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>

@@ -81,7 +81,7 @@ export default function LinksPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function LinksPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-neutral-950 leading-[1.2]">Social Links</h1>
+        <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-slate-950 leading-[1.2]">Social Links</h1>
       </div>
 
       {/* Add new link */}
@@ -107,7 +107,7 @@ export default function LinksPage() {
             <select
               value={newLink.platform}
               onChange={(e) => setNewLink({ ...newLink, platform: e.target.value })}
-              className="h-10 px-3 border border-neutral-200 rounded-lg text-sm bg-white focus:border-neutral-400 focus:ring-2 focus:ring-neutral-950/10 outline-none transition-all"
+              className="h-10 px-3 border border-slate-200 rounded-lg text-sm bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
             >
               {PLATFORMS.map((p) => (
                 <option key={p.value} value={p.value}>{p.label}</option>
@@ -130,7 +130,7 @@ export default function LinksPage() {
             <Button
               onClick={addLink}
               disabled={adding || !newLink.url.trim()}
-              className="bg-neutral-950 text-white hover:bg-neutral-800"
+              className="bg-slate-900 text-white hover:bg-slate-800"
             >
               {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4 mr-1" /> Add</>}
             </Button>
@@ -141,25 +141,25 @@ export default function LinksPage() {
       {/* Existing links */}
       <div className="space-y-2">
         {links.length === 0 ? (
-          <p className="text-center text-neutral-400 py-8">No links yet. Add your first link above.</p>
+          <p className="text-center text-slate-400 py-8">No links yet. Add your first link above.</p>
         ) : (
           links.map((link) => (
             <div
               key={link.id}
-              className="flex items-center gap-3 p-4 bg-white rounded-lg border border-neutral-200"
+              className="flex items-center gap-3 p-4 bg-white rounded-lg border border-slate-200"
             >
-              <GripVertical className="h-5 w-5 text-neutral-300 cursor-grab" />
+              <GripVertical className="h-5 w-5 text-slate-300 cursor-grab" />
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-neutral-900">
+                <p className="font-medium text-sm text-slate-900">
                   {link.label || PLATFORMS.find((p) => p.value === link.platform)?.label || link.platform}
                 </p>
-                <p className="text-xs text-neutral-400 truncate">{link.url}</p>
+                <p className="text-xs text-slate-400 truncate">{link.url}</p>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => deleteLink(link.id)}
-                className="text-neutral-400 hover:text-red-500"
+                className="text-slate-400 hover:text-red-500"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

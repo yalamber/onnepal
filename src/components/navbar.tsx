@@ -42,13 +42,9 @@ export function Navbar() {
     };
 
     fetchUser();
-
     const handleAuthChange = () => fetchUser();
     window.addEventListener('auth-change', handleAuthChange);
-
-    return () => {
-      window.removeEventListener('auth-change', handleAuthChange);
-    };
+    return () => window.removeEventListener('auth-change', handleAuthChange);
   }, [isSitePage]);
 
   if (isSitePage) return null;
@@ -61,16 +57,19 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-neutral-100">
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/60">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-14">
-          <Link href="/" className="flex items-center">
-            <span className="text-base font-bold text-neutral-950 tracking-tight">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">ON</span>
+            </div>
+            <span className="text-[0.9375rem] font-bold text-slate-900 tracking-tight">
               OnNepal
             </span>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
@@ -79,7 +78,7 @@ export function Navbar() {
                     href={`https://${user.subdomain}.onnepal.com`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-neutral-500 hover:text-neutral-950 flex items-center gap-1 transition-colors"
+                    className="text-xs text-slate-400 hover:text-blue-600 flex items-center gap-1 transition-colors font-mono"
                   >
                     {user.subdomain}.onnepal.com
                     <ExternalLink className="h-3 w-3" />
@@ -87,7 +86,7 @@ export function Navbar() {
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-1.5 text-neutral-600">
+                    <Button variant="ghost" size="sm" className="gap-1.5 text-slate-600">
                       {user.businessName || user.email}
                       <ChevronDown className="h-3 w-3" />
                     </Button>
@@ -108,66 +107,38 @@ export function Navbar() {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm">
-                    Log in
-                  </Button>
+                  <Button variant="ghost" size="sm">Log in</Button>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm">
-                    Get Started
-                  </Button>
+                  <Button size="sm">Get Started</Button>
                 </Link>
               </>
             )}
           </div>
 
-          {/* Mobile menu */}
+          {/* Mobile */}
           <div className="md:hidden">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                </Button>
+                <Button variant="ghost" size="icon"><Menu className="h-5 w-5" /></Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72">
                 <div className="flex flex-col gap-3 mt-8">
                   {user ? (
                     <>
-                      <p className="text-sm font-medium px-2 text-neutral-950">
-                        {user.businessName || user.email}
-                      </p>
-                      <Link
-                        href="/dashboard"
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-2 px-2 py-2.5 text-sm text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50 rounded-lg transition-colors"
-                      >
-                        <LayoutDashboard className="h-4 w-4" />
-                        Dashboard
+                      <p className="text-sm font-medium px-2 text-slate-900">{user.businessName || user.email}</p>
+                      <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                        <LayoutDashboard className="h-4 w-4" /> Dashboard
                       </Link>
-                      <button
-                        onClick={() => {
-                          handleLogout();
-                          setMobileOpen(false);
-                        }}
-                        className="flex items-center gap-2 px-2 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Log out
+                      <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="flex items-center gap-2 px-2 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <LogOut className="h-4 w-4" /> Log out
                       </button>
                     </>
                   ) : (
                     <>
-                      <Link
-                        href="/login"
-                        onClick={() => setMobileOpen(false)}
-                        className="px-2 py-2.5 text-sm text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50 rounded-lg transition-colors"
-                      >
-                        Log in
-                      </Link>
+                      <Link href="/login" onClick={() => setMobileOpen(false)} className="px-2 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">Log in</Link>
                       <Link href="/signup" onClick={() => setMobileOpen(false)}>
-                        <Button className="w-full">
-                          Get Started
-                        </Button>
+                        <Button className="w-full">Get Started</Button>
                       </Link>
                     </>
                   )}

@@ -12,7 +12,7 @@ export default function SignupPage() {
   return (
     <Suspense fallback={
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
       </div>
     }>
       <SignupForm />
@@ -88,13 +88,13 @@ function SignupForm() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-[1.5rem] font-bold text-neutral-950 tracking-[-0.025em] leading-[1.2]">Create your page</h1>
-          <p className="text-neutral-500 text-[0.875rem] mt-2 leading-[1.6]">Get started in under a minute</p>
+          <h1 className="text-[1.5rem] font-bold text-slate-950 tracking-[-0.025em] leading-[1.2]">Create your page</h1>
+          <p className="text-slate-500 text-[0.875rem] mt-2 leading-[1.6]">Get started in under a minute</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="subdomain" className="text-neutral-700">Your page URL</Label>
+            <Label htmlFor="subdomain" className="text-slate-700">Your page URL</Label>
             <div className="flex items-center mt-1.5">
               <Input
                 id="subdomain"
@@ -106,13 +106,13 @@ function SignupForm() {
                 maxLength={30}
                 className="rounded-r-none"
               />
-              <span className="px-3 py-2 bg-neutral-50 border border-l-0 border-neutral-200 rounded-r-lg text-sm text-neutral-400 h-10 flex items-center">
+              <span className="px-3 py-2 bg-slate-50 border border-l-0 border-slate-200 rounded-r-lg text-sm text-slate-400 h-10 flex items-center">
                 .onnepal.com
               </span>
             </div>
             <div className="h-5 mt-1.5">
               {subdomainStatus === 'checking' && (
-                <span className="text-xs text-neutral-400 flex items-center gap-1">
+                <span className="text-xs text-slate-400 flex items-center gap-1">
                   <Loader2 className="h-3 w-3 animate-spin" /> Checking...
                 </span>
               )}
@@ -130,7 +130,7 @@ function SignupForm() {
           </div>
 
           <div>
-            <Label htmlFor="businessName" className="text-neutral-700">Business name</Label>
+            <Label htmlFor="businessName" className="text-slate-700">Business name</Label>
             <Input
               id="businessName"
               value={form.businessName}
@@ -143,7 +143,7 @@ function SignupForm() {
           </div>
 
           <div>
-            <Label htmlFor="email" className="text-neutral-700">Email</Label>
+            <Label htmlFor="email" className="text-slate-700">Email</Label>
             <Input
               id="email"
               type="email"
@@ -156,7 +156,7 @@ function SignupForm() {
           </div>
 
           <div>
-            <Label htmlFor="password" className="text-neutral-700">Password</Label>
+            <Label htmlFor="password" className="text-slate-700">Password</Label>
             <Input
               id="password"
               type="password"
@@ -180,9 +180,9 @@ function SignupForm() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-neutral-400 mt-8">
+        <p className="text-center text-sm text-slate-400 mt-8">
           Already have an account?{' '}
-          <Link href="/login" className="text-neutral-950 font-medium hover:underline">
+          <Link href="/login" className="text-blue-600 font-medium hover:text-blue-700">
             Log in
           </Link>
         </p>

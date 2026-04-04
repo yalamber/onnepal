@@ -96,7 +96,7 @@ export default function OnboardingPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -110,7 +110,7 @@ export default function OnboardingPage() {
             <div
               key={s}
               className={`h-1 rounded-full transition-all duration-500 ${
-                s <= step ? 'bg-neutral-950 w-10' : 'bg-neutral-200 w-6'
+                s <= step ? 'bg-slate-950 w-10' : 'bg-slate-200 w-6'
               }`}
             />
           ))}
@@ -119,11 +119,11 @@ export default function OnboardingPage() {
         {/* Step 1 */}
         {step === 1 && (
           <div className="text-center animate-fade-in">
-            <h1 className="text-[1.5rem] font-bold text-neutral-950 tracking-[-0.025em] leading-[1.2]">Welcome, {user?.businessName}!</h1>
-            <p className="text-neutral-500 text-[0.9375rem] mt-3 leading-[1.6]">
-              Your page will be at <span className="font-mono text-neutral-950 tracking-[-0.02em]">{user?.subdomain}.onnepal.com</span>
+            <h1 className="text-[1.5rem] font-bold text-slate-950 tracking-[-0.025em] leading-[1.2]">Welcome, {user?.businessName}!</h1>
+            <p className="text-slate-500 text-[0.9375rem] mt-3 leading-[1.6]">
+              Your page will be at <span className="font-mono text-slate-950 tracking-[-0.02em]">{user?.subdomain}.onnepal.com</span>
             </p>
-            <p className="text-neutral-400 text-[0.875rem] mt-4 mb-8 leading-[1.6]">
+            <p className="text-slate-400 text-[0.875rem] mt-4 mb-8 leading-[1.6]">
               Let&apos;s set up your business page. It only takes a couple of minutes.
             </p>
             <Button onClick={() => setStep(2)}>
@@ -135,12 +135,12 @@ export default function OnboardingPage() {
         {/* Step 2 */}
         {step === 2 && (
           <div className="animate-fade-in">
-            <h2 className="text-[1.25rem] font-bold text-neutral-950 tracking-[-0.02em] leading-[1.2] mb-1">Business Details</h2>
-            <p className="text-neutral-500 text-[0.875rem] mb-6 leading-[1.6]">Tell us about your business</p>
+            <h2 className="text-[1.25rem] font-bold text-slate-950 tracking-[-0.02em] leading-[1.2] mb-1">Business Details</h2>
+            <p className="text-slate-500 text-[0.875rem] mb-6 leading-[1.6]">Tell us about your business</p>
 
             <div className="space-y-5">
               <div>
-                <Label className="text-neutral-700">Category</Label>
+                <Label className="text-slate-700">Category</Label>
                 <div className="grid grid-cols-3 gap-1.5 mt-2">
                   {CATEGORIES.map((cat) => (
                     <button
@@ -149,8 +149,8 @@ export default function OnboardingPage() {
                       onClick={() => setCategory(cat)}
                       className={`px-3 py-2 text-xs rounded-lg border transition-all duration-150 ${
                         category === cat
-                          ? 'border-neutral-950 bg-neutral-950 text-white'
-                          : 'border-neutral-200 text-neutral-600 hover:border-neutral-300'
+                          ? 'border-blue-600 bg-blue-600 text-white'
+                          : 'border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                     >
                       {cat}
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <Label htmlFor="description" className="text-neutral-700">Description (optional)</Label>
+                <Label htmlFor="description" className="text-slate-700">Description (optional)</Label>
                 <Textarea
                   id="description"
                   value={description}
@@ -173,12 +173,12 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <Label htmlFor="phone" className="text-neutral-700">Phone (optional)</Label>
+                <Label htmlFor="phone" className="text-slate-700">Phone (optional)</Label>
                 <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+977-..." className="mt-1.5" />
               </div>
 
               <div>
-                <Label htmlFor="address" className="text-neutral-700">Address (optional)</Label>
+                <Label htmlFor="address" className="text-slate-700">Address (optional)</Label>
                 <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Kathmandu, Nepal" className="mt-1.5" />
               </div>
 
@@ -195,8 +195,8 @@ export default function OnboardingPage() {
         {/* Step 3 */}
         {step === 3 && (
           <div className="animate-fade-in">
-            <h2 className="text-[1.25rem] font-bold text-neutral-950 tracking-[-0.02em] leading-[1.2] mb-1">Add Your Links</h2>
-            <p className="text-neutral-500 text-[0.875rem] mb-6 leading-[1.6]">Connect your social profiles and website</p>
+            <h2 className="text-[1.25rem] font-bold text-slate-950 tracking-[-0.02em] leading-[1.2] mb-1">Add Your Links</h2>
+            <p className="text-slate-500 text-[0.875rem] mb-6 leading-[1.6]">Connect your social profiles and website</p>
 
             <div className="space-y-4">
               {links.map((link, i) => (
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
                       updated[i].platform = e.target.value;
                       setLinks(updated);
                     }}
-                    className="h-10 px-3 border border-neutral-200 rounded-lg text-sm bg-white focus:border-neutral-400 focus:ring-2 focus:ring-neutral-950/10 outline-none transition-all"
+                    className="h-10 px-3 border border-slate-200 rounded-lg text-sm bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                   >
                     {SOCIAL_PLATFORMS.map((p) => (
                       <option key={p.value} value={p.value}>{p.label}</option>
@@ -226,7 +226,7 @@ export default function OnboardingPage() {
                   />
                   {links.length > 1 && (
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(i)}>
-                      <Trash2 className="h-4 w-4 text-neutral-400" />
+                      <Trash2 className="h-4 w-4 text-slate-400" />
                     </Button>
                   )}
                 </div>
@@ -249,7 +249,7 @@ export default function OnboardingPage() {
                   await fetch('/api/business/publish', { method: 'POST' });
                   router.push('/dashboard');
                 }}
-                className="w-full text-center text-sm text-neutral-400 hover:text-neutral-600 transition-colors"
+                className="w-full text-center text-sm text-slate-400 hover:text-slate-600 transition-colors"
               >
                 Skip for now
               </button>
