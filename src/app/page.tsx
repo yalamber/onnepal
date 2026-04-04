@@ -1,129 +1,84 @@
 import { SubdomainChecker } from '@/components/subdomain-checker';
-import { ScrollAnimate, Parallax } from '@/components/scroll-animate';
-import { Globe, LinkIcon, Megaphone, ShoppingBag, Smartphone, Zap, ArrowRight, Palette, BarChart3, Check } from 'lucide-react';
+import { Reveal } from '@/components/scroll-animate';
+import { Facebook, Instagram, MessageCircle, Globe, ShoppingBag, Phone, MapPin, ExternalLink, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
-const EXAMPLES = [
-  {
-    name: 'Himalayan Bites',
-    subdomain: 'himalayanbites',
-    category: 'Restaurant & Cafe',
-    color: '#1e40af',
-    accent: '#3b82f6',
-    initial: 'H',
-    coverImage: 'https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&h=300&fit=crop',
-    links: ['Facebook', 'Instagram', 'WhatsApp'],
-    products: [
-      { name: 'Chicken Momo', price: 'Rs. 350', img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=200&h=200&fit=crop' },
-      { name: 'Thukpa Bowl', price: 'Rs. 280', img: 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=200&h=200&fit=crop' },
-    ],
-    announcement: '20% off this Dashain!',
-  },
-  {
-    name: 'Laxmi Beauty Studio',
-    subdomain: 'laxmibeauty',
-    category: 'Beauty & Salon',
-    color: '#9333ea',
-    accent: '#a855f7',
-    initial: 'L',
-    coverImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=300&fit=crop',
-    links: ['Instagram', 'Facebook', 'TikTok'],
-    products: [
-      { name: 'Bridal Package', price: 'Rs. 15,000', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&h=200&fit=crop' },
-      { name: 'Hair Treatment', price: 'Rs. 2,500', img: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop' },
-    ],
-    announcement: 'Booking for wedding season!',
-  },
-  {
-    name: 'Peak Trek Nepal',
-    subdomain: 'peaktrek',
-    category: 'Hotel & Travel',
-    color: '#059669',
-    accent: '#34d399',
-    initial: 'P',
-    coverImage: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=600&h=300&fit=crop',
-    links: ['Website', 'Instagram', 'WhatsApp'],
-    products: [
-      { name: 'EBC Trek', price: 'Rs. 45,000', img: 'https://images.unsplash.com/photo-1486911278844-a81c5267e227?w=200&h=200&fit=crop' },
-      { name: 'ABC Trek', price: 'Rs. 35,000', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200&h=200&fit=crop' },
-    ],
-    announcement: 'Spring 2026 now open!',
-  },
-];
-
-/* Phone mockup showing a mini business page */
-function PhoneMockup({ example }: { example: typeof EXAMPLES[0] }) {
+/* A single, detailed example that looks real */
+function LiveExample() {
   return (
-    <div className="relative mx-auto" style={{ width: 260 }}>
-      {/* Phone frame */}
-      <div className="rounded-[2rem] border-[6px] border-slate-900 bg-white shadow-2xl overflow-hidden">
-        {/* Status bar */}
-        <div className="bg-slate-900 h-6 flex items-center justify-center">
-          <div className="w-16 h-1 rounded-full bg-slate-700" />
+    <div className="max-w-sm mx-auto">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-lg overflow-hidden">
+        {/* Cover */}
+        <div className="h-28 relative">
+          <img
+            src="https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=800&h=300&fit=crop"
+            alt="Restaurant interior"
+            className="w-full h-full object-cover"
+          />
         </div>
 
-        {/* Page content */}
-        <div className="h-[420px] overflow-hidden">
-          {/* Cover */}
-          <div className="h-20 relative">
-            <img src={example.coverImage} alt="" className="w-full h-full object-cover" />
+        <div className="px-5 pb-5 -mt-7 relative">
+          {/* Avatar */}
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 border-[3px] border-white flex items-center justify-center text-white text-lg font-bold shadow-md">
+            H
           </div>
 
-          <div className="px-4 -mt-5 relative">
-            {/* Avatar */}
-            <div
-              className="w-10 h-10 rounded-xl border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow-sm"
-              style={{ background: `linear-gradient(135deg, ${example.color}, ${example.accent})` }}
-            >
-              {example.initial}
-            </div>
+          <h3 className="text-base font-bold text-slate-900 mt-2">Himalayan Bites</h3>
+          <p className="text-xs text-slate-500 mt-0.5">Restaurant & Cafe &middot; Thamel, Kathmandu</p>
+          <p className="text-[0.8125rem] text-slate-500 mt-2 leading-relaxed">Authentic Nepali & Tibetan food. Momos, thukpa, dal bhat — made fresh daily.</p>
 
-            <h3 className="text-[0.75rem] font-bold text-slate-900 mt-2">{example.name}</h3>
-            <p className="text-[0.5625rem] text-slate-400">{example.category}</p>
+          {/* CTA */}
+          <div className="flex gap-2 mt-4">
+            <button className="flex-1 py-2 rounded-xl bg-orange-500 text-white text-xs font-semibold">Order on WhatsApp</button>
+            <button className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">Menu</button>
+          </div>
 
-            {/* CTA */}
-            <button
-              className="w-full mt-3 py-1.5 rounded-lg text-white text-[0.625rem] font-semibold"
-              style={{ backgroundColor: example.color }}
-            >
-              Order Now
-            </button>
+          {/* Links */}
+          <div className="mt-4 space-y-1.5">
+            {[
+              { icon: Facebook, label: 'Facebook', color: 'text-blue-600' },
+              { icon: Instagram, label: 'Instagram', color: 'text-pink-600' },
+              { icon: MessageCircle, label: 'WhatsApp', color: 'text-green-600' },
+            ].map((l) => (
+              <div key={l.label} className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer">
+                <l.icon className={`h-4 w-4 ${l.color}`} />
+                <span className="text-[0.8125rem] font-medium text-slate-700">{l.label}</span>
+                <ExternalLink className="h-3 w-3 text-slate-300 ml-auto" />
+              </div>
+            ))}
+          </div>
 
-            {/* Links */}
-            <div className="mt-3 space-y-1">
-              {example.links.map((link) => (
-                <div key={link} className="flex items-center gap-2 p-1.5 rounded-lg bg-slate-50">
-                  <div className="w-4 h-4 rounded bg-slate-200" />
-                  <span className="text-[0.5625rem] text-slate-600 font-medium">{link}</span>
+          {/* Products */}
+          <p className="text-[0.625rem] uppercase tracking-widest text-slate-400 font-semibold mt-5 mb-2">Popular items</p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { name: 'Chicken Momo', price: 'Rs. 350', img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=200&h=200&fit=crop' },
+              { name: 'Thukpa Bowl', price: 'Rs. 280', img: 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=200&h=200&fit=crop' },
+            ].map((p) => (
+              <div key={p.name} className="rounded-xl overflow-hidden border border-slate-100">
+                <img src={p.img} alt={p.name} className="w-full h-20 object-cover" />
+                <div className="p-2">
+                  <p className="text-xs font-medium text-slate-700">{p.name}</p>
+                  <p className="text-xs font-bold text-orange-600">{p.price}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
 
-            {/* Products */}
-            <p className="text-[0.5rem] uppercase tracking-wider text-slate-400 font-semibold mt-3 mb-1.5">Products</p>
-            <div className="grid grid-cols-2 gap-1.5">
-              {example.products.map((p) => (
-                <div key={p.name} className="rounded-lg overflow-hidden bg-slate-50">
-                  <img src={p.img} alt={p.name} className="w-full h-12 object-cover" />
-                  <div className="px-1.5 py-1">
-                    <p className="text-[0.5rem] text-slate-600 truncate">{p.name}</p>
-                    <p className="text-[0.5rem] font-bold" style={{ color: example.color }}>{p.price}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {/* Announcement */}
+          <div className="mt-4 p-3 rounded-xl bg-amber-50 border border-amber-100">
+            <p className="text-xs text-amber-800 font-medium">20% off all items this Dashain week!</p>
+          </div>
 
-            {/* Announcement */}
-            <div className="mt-2 p-1.5 rounded-lg" style={{ backgroundColor: `${example.color}10` }}>
-              <p className="text-[0.5rem] font-medium" style={{ color: example.color }}>{example.announcement}</p>
-            </div>
+          {/* Contact */}
+          <div className="mt-4 flex items-center gap-4 text-xs text-slate-400">
+            <span className="flex items-center gap-1"><Phone className="h-3 w-3" /> 9801234567</span>
+            <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> Thamel</span>
           </div>
         </div>
       </div>
-
-      {/* URL label */}
-      <div className="text-center mt-3">
-        <p className="text-[0.75rem] font-mono text-slate-400">{example.subdomain}.onnepal.com</p>
-      </div>
+      <p className="text-center mt-3 text-xs font-mono text-slate-400">himalayanbites.onnepal.com</p>
     </div>
   );
 }
@@ -131,228 +86,200 @@ function PhoneMockup({ example }: { example: typeof EXAMPLES[0] }) {
 export default function HomePage() {
   return (
     <main>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-violet-50">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-200 rounded-full blur-3xl animate-pulse-soft" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-200 rounded-full blur-3xl animate-pulse-soft" style={{ animationDelay: '2s' }} />
-        </div>
-
-        <div className="max-w-6xl mx-auto px-6 pt-20 pb-16 sm:pt-28 sm:pb-24 relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Text */}
-            <div className="text-center lg:text-left animate-fade-in">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100/80 text-blue-700 text-xs font-medium mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                Free for all Nepali businesses
-              </div>
-              <h1 className="text-[2.5rem] sm:text-[3.25rem] lg:text-[3.75rem] font-bold text-slate-900 tracking-[-0.035em] leading-[1.08]">
-                Your business.
-                <br />
-                <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">One link.</span>
+      {/* Hero — split layout, real example on right */}
+      <section className="bg-white">
+        <div className="max-w-6xl mx-auto px-6 py-16 sm:py-24">
+          <div className="grid lg:grid-cols-5 gap-16 items-start">
+            {/* Left — takes 3 cols */}
+            <div className="lg:col-span-3 pt-4 sm:pt-8">
+              <h1 className="text-[2.25rem] sm:text-[3rem] font-bold text-slate-900 tracking-[-0.03em] leading-[1.1]">
+                One page for<br />your business
               </h1>
-              <p className="mt-5 text-[1.0625rem] sm:text-[1.125rem] text-slate-500 max-w-md mx-auto lg:mx-0 leading-[1.65]">
-                Create a beautiful mini website for your business in minutes. Social links, products, announcements — all on one page.
+              <p className="mt-5 text-[1.0625rem] text-slate-500 leading-[1.7] max-w-md">
+                Links, products, announcements, contact info — everything your customers need, on a single page with your own <span className="font-mono text-slate-700 text-[0.9375rem]">.onnepal.com</span> address.
               </p>
-              <div className="mt-8 max-w-md mx-auto lg:mx-0">
+              <div className="mt-8">
                 <SubdomainChecker />
               </div>
-            </div>
-
-            {/* Right: Phone mockups with float */}
-            <div className="hidden lg:flex items-center justify-center animate-fade-in-up delay-200">
-              <div className="relative">
-                <Parallax speed={-0.1} className="absolute -left-8 top-8 opacity-60 scale-90 -rotate-6">
-                  <div className="animate-float-slow" style={{ animationDelay: '1s' }}>
-                    <PhoneMockup example={EXAMPLES[2]} />
-                  </div>
-                </Parallax>
-                <div className="relative z-10 animate-float">
-                  <PhoneMockup example={EXAMPLES[0]} />
-                </div>
-                <Parallax speed={0.1} className="absolute -right-8 top-8 opacity-60 scale-90 rotate-6">
-                  <div className="animate-float-slow" style={{ animationDelay: '2s' }}>
-                    <PhoneMockup example={EXAMPLES[1]} />
-                  </div>
-                </Parallax>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-20 bg-white border-b border-slate-100">
-        <div className="max-w-4xl mx-auto px-6">
-          <ScrollAnimate animation="fade-up">
-            <h2 className="text-center text-[1.5rem] sm:text-[1.75rem] font-bold text-slate-900 tracking-[-0.025em] mb-12">
-              Live in 3 simple steps
-            </h2>
-          </ScrollAnimate>
-          <div className="grid sm:grid-cols-3 gap-8">
-            {[
-              { step: '1', title: 'Claim your name', desc: 'Pick your unique subdomain. It\'s free and takes 10 seconds.', color: 'from-blue-500 to-blue-600' },
-              { step: '2', title: 'Add your content', desc: 'Links, products, announcements, contact info — fill in what matters.', color: 'from-violet-500 to-violet-600' },
-              { step: '3', title: 'Go live', desc: 'Hit publish. Your page is live and ready to share.', color: 'from-emerald-500 to-emerald-600' },
-            ].map((s, i) => (
-              <ScrollAnimate key={s.step} animation="fade-up" delay={i * 150}>
-                <div className="text-center">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${s.color} flex items-center justify-center text-white text-lg font-bold mx-auto mb-4 shadow-lg`}>
-                    {s.step}
-                  </div>
-                  <h3 className="text-[0.9375rem] font-semibold text-slate-900 mb-1.5">{s.title}</h3>
-                  <p className="text-[0.8125rem] text-slate-500 leading-[1.6]">{s.desc}</p>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Examples - Mobile phone previews */}
-      <section className="py-24 sm:py-28 bg-slate-50">
-        <div className="max-w-5xl mx-auto px-6">
-          <ScrollAnimate animation="fade-up">
-            <div className="text-center mb-16">
-              <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-slate-900 tracking-[-0.03em] leading-[1.15]">
-                See what you can build
-              </h2>
-              <p className="mt-4 text-slate-500 text-[1.0625rem] leading-[1.65] max-w-lg mx-auto">
-                Restaurants, salons, trek agencies — any Nepali business gets a professional page.
+              <p className="mt-4 text-xs text-slate-400">
+                Free forever. No credit card. Takes 2 minutes to set up.
               </p>
             </div>
-          </ScrollAnimate>
-          <div className="flex justify-center gap-8 overflow-x-auto pb-4">
-            {EXAMPLES.map((ex, i) => (
-              <ScrollAnimate key={ex.subdomain} animation="scale" delay={i * 200}>
-                <PhoneMockup example={ex} />
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Features */}
-      <section className="py-24 sm:py-28 bg-white">
-        <div className="max-w-5xl mx-auto px-6">
-          <ScrollAnimate animation="fade-up">
-            <div className="text-center mb-14">
-              <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-slate-900 tracking-[-0.03em] leading-[1.15]">
-                Everything you need
-              </h2>
-              <p className="mt-4 text-slate-500 text-[1.0625rem] leading-[1.65] max-w-md mx-auto">
-                All the tools to build a complete business page.
-              </p>
+            {/* Right — live example, takes 2 cols */}
+            <div className="lg:col-span-2 hidden lg:block">
+              <LiveExample />
             </div>
-          </ScrollAnimate>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { icon: Globe, title: 'Your subdomain', description: 'yourname.onnepal.com — a memorable, shareable link.', color: 'bg-blue-50 text-blue-600' },
-              { icon: LinkIcon, title: 'Social links', description: 'Facebook, Instagram, TikTok, WhatsApp — all in one place.', color: 'bg-violet-50 text-violet-600' },
-              { icon: ShoppingBag, title: 'Product showcase', description: 'Photos, prices, and descriptions for every item.', color: 'bg-amber-50 text-amber-600' },
-              { icon: Megaphone, title: 'Announcements', description: 'Share news, offers, and updates instantly.', color: 'bg-rose-50 text-rose-600' },
-              { icon: Palette, title: '10 color themes', description: 'Choose a palette that matches your brand.', color: 'bg-emerald-50 text-emerald-600' },
-              { icon: Smartphone, title: 'Mobile-first', description: 'Looks perfect on every screen, automatically.', color: 'bg-sky-50 text-sky-600' },
-            ].map((feature, i) => (
-              <ScrollAnimate key={feature.title} animation="fade-up" delay={i * 100}>
-              <div className="group p-6 rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                <div className={`w-10 h-10 rounded-xl ${feature.color} flex items-center justify-center mb-4`}>
-                  <feature.icon className="h-5 w-5" />
-                </div>
-                <h3 className="text-[0.9375rem] font-semibold text-slate-900 mb-1.5 tracking-[-0.01em]">{feature.title}</h3>
-                <p className="text-slate-500 text-[0.8125rem] leading-[1.65]">{feature.description}</p>
-              </div>
-              </ScrollAnimate>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* Social proof */}
-      <section className="py-16 bg-slate-50 border-y border-slate-100">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="grid grid-cols-3 gap-8 text-center">
-            {[
-              { value: '500+', label: 'Businesses registered' },
-              { value: '50K+', label: 'Monthly page views' },
-              { value: '2 min', label: 'Average setup time' },
-            ].map((stat, i) => (
-              <ScrollAnimate key={stat.label} animation="fade-up" delay={i * 150}>
-                <div>
-                  <p className="text-[2rem] font-bold text-slate-900 tracking-tight">{stat.value}</p>
-                  <p className="text-[0.8125rem] text-slate-500 mt-1">{stat.label}</p>
-                </div>
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why OnNepal */}
-      <section className="py-24 bg-white">
-        <div className="max-w-3xl mx-auto px-6">
-          <ScrollAnimate animation="fade-up">
-            <h2 className="text-center text-[1.75rem] sm:text-[2rem] font-bold text-slate-900 tracking-[-0.025em] mb-12">
-              Built for Nepali businesses
+      {/* What you get — NOT a card grid */}
+      <section className="bg-slate-50 border-y border-slate-100">
+        <div className="max-w-4xl mx-auto px-6 py-20 sm:py-28">
+          <Reveal>
+            <h2 className="text-[1.5rem] sm:text-[2rem] font-bold text-slate-900 tracking-[-0.025em] leading-[1.15]">
+              Everything on one page
             </h2>
-          </ScrollAnimate>
-          <div className="space-y-4">
-            {[
-              { title: 'No coding required', desc: 'If you can fill a form, you can build your page. Our wizard guides you step by step.' },
-              { title: 'Free forever', desc: 'No hidden fees, no trials. Your OnNepal page is free to create and host.' },
-              { title: 'Share everywhere', desc: 'One link for Facebook, Instagram, WhatsApp, business cards, and anywhere else.' },
-              { title: 'Update anytime', desc: 'New products? Special offer? Update your page in seconds from your dashboard.' },
-            ].map((item, i) => (
-              <ScrollAnimate key={item.title} animation="fade-left" delay={i * 100}>
-              <div className="flex gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200">
-                <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Check className="h-3.5 w-3.5 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="text-[0.9375rem] font-semibold text-slate-900">{item.title}</h3>
-                  <p className="text-[0.8125rem] text-slate-500 mt-1 leading-[1.6]">{item.desc}</p>
-                </div>
-              </div>
-              </ScrollAnimate>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="relative py-24 sm:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-violet-950" />
-        <div className="absolute inset-0 opacity-20">
-          <Parallax speed={-0.15} className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl animate-pulse-soft" />
-          <Parallax speed={0.1} className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500 rounded-full blur-3xl animate-pulse-soft" />
-        </div>
-        <div className="max-w-3xl mx-auto px-6 text-center relative">
-          <ScrollAnimate animation="fade-up">
-            <h2 className="text-[1.75rem] sm:text-[2.5rem] font-bold text-white tracking-[-0.03em] leading-[1.12]">
-              Your business deserves<br />its own page.
-            </h2>
-          </ScrollAnimate>
-          <ScrollAnimate animation="fade-up" delay={150}>
-            <p className="text-blue-200/60 text-[1.0625rem] leading-[1.65] mt-6 mb-12 max-w-md mx-auto">
-              Join hundreds of Nepali businesses already on OnNepal. It&apos;s free.
+            <p className="mt-3 text-slate-500 text-[1rem] leading-[1.65] max-w-lg">
+              No app to download. No website to build. Just claim your name, add your stuff, and share the link.
             </p>
-          </ScrollAnimate>
-          <ScrollAnimate animation="scale" delay={300}>
-            <SubdomainChecker />
-          </ScrollAnimate>
+          </Reveal>
+
+          <div className="mt-14 space-y-12">
+            {[
+              {
+                label: 'Social links',
+                desc: 'Facebook, Instagram, WhatsApp, TikTok, Viber — all your profiles in one tap.',
+                visual: (
+                  <div className="flex gap-2">
+                    {['bg-blue-500', 'bg-pink-500', 'bg-green-500', 'bg-slate-900'].map((c, i) => (
+                      <div key={i} className={`w-9 h-9 rounded-xl ${c} flex items-center justify-center`}>
+                        {[Facebook, Instagram, MessageCircle, Globe][i] && (() => {
+                          const Icon = [Facebook, Instagram, MessageCircle, Globe][i];
+                          return <Icon className="h-4 w-4 text-white" />;
+                        })()}
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                label: 'Products & prices',
+                desc: 'Show what you sell with photos and prices. Customers browse before they visit.',
+                visual: (
+                  <div className="flex gap-2">
+                    <div className="w-20 h-16 rounded-lg overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=200&h=150&fit=crop" alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="w-20 h-16 rounded-lg overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&h=150&fit=crop" alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="w-20 h-16 rounded-lg overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1486911278844-a81c5267e227?w=200&h=150&fit=crop" alt="" className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                label: 'Announcements',
+                desc: 'Running a sale? Changed your hours? Post it and your customers see it instantly.',
+                visual: (
+                  <div className="px-3 py-2 rounded-lg bg-amber-50 border border-amber-100 text-xs text-amber-800 font-medium max-w-xs">
+                    20% off this Dashain week!
+                  </div>
+                ),
+              },
+              {
+                label: 'Contact & hours',
+                desc: 'Phone number, address, business hours — tap to call, tap to navigate.',
+                visual: (
+                  <div className="flex gap-3 text-xs text-slate-500">
+                    <span className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200"><Phone className="h-3 w-3" /> Call</span>
+                    <span className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200"><MapPin className="h-3 w-3" /> Directions</span>
+                  </div>
+                ),
+              },
+            ].map((item, i) => (
+              <Reveal key={item.label} delay={i * 80}>
+                <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8">
+                  <div className="flex-shrink-0">
+                    {item.visual}
+                  </div>
+                  <div>
+                    <h3 className="text-[0.9375rem] font-semibold text-slate-900">{item.label}</h3>
+                    <p className="text-[0.875rem] text-slate-500 mt-1 leading-[1.6]">{item.desc}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-10 bg-slate-900">
-        <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-blue-600 flex items-center justify-center">
-              <span className="text-white text-[0.5rem] font-bold">ON</span>
-            </div>
-            <span className="text-slate-400 text-sm font-medium">OnNepal</span>
+      {/* How it works — simple, not overdesigned */}
+      <section className="bg-white">
+        <div className="max-w-3xl mx-auto px-6 py-20 sm:py-28">
+          <Reveal>
+            <h2 className="text-[1.5rem] sm:text-[2rem] font-bold text-slate-900 tracking-[-0.025em]">
+              Three steps. Two minutes.
+            </h2>
+          </Reveal>
+
+          <div className="mt-10 space-y-8">
+            {[
+              { n: '1', title: 'Pick a name', desc: 'Choose your subdomain — himalayanbites, laxmibeauty, peaktrek — whatever fits.' },
+              { n: '2', title: 'Fill in the details', desc: 'Add your links, products, contact info. Our setup wizard walks you through it.' },
+              { n: '3', title: 'Share it', desc: 'Your page is live. Put the link in your Instagram bio, WhatsApp status, business card.' },
+            ].map((step, i) => (
+              <Reveal key={step.n} delay={i * 100}>
+                <div className="flex gap-5">
+                  <span className="text-[2rem] font-bold text-slate-200 leading-none select-none">{step.n}</span>
+                  <div>
+                    <h3 className="text-[0.9375rem] font-semibold text-slate-900">{step.title}</h3>
+                    <p className="text-[0.875rem] text-slate-500 mt-1 leading-[1.6]">{step.desc}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
           </div>
-          <p className="text-slate-500 text-sm">&copy; {new Date().getFullYear()} OnNepal. Made for Nepal.</p>
+        </div>
+      </section>
+
+      {/* Who it's for — real examples, not cards */}
+      <section className="bg-slate-50 border-y border-slate-100">
+        <div className="max-w-4xl mx-auto px-6 py-20 sm:py-28">
+          <Reveal>
+            <h2 className="text-[1.5rem] sm:text-[2rem] font-bold text-slate-900 tracking-[-0.025em]">
+              For every kind of business
+            </h2>
+            <p className="mt-3 text-slate-500 text-[1rem] leading-[1.65]">
+              If you have a business in Nepal and need a place to send people online — this is it.
+            </p>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <div className="mt-10 grid sm:grid-cols-2 gap-3">
+              {[
+                { type: 'Restaurants & cafes', example: 'Menu, prices, WhatsApp ordering, Dashain offers' },
+                { type: 'Beauty salons', example: 'Services, booking info, before/after photos' },
+                { type: 'Trek & travel agencies', example: 'Packages, itineraries, booking links' },
+                { type: 'Retail shops', example: 'Product catalog, store hours, location' },
+                { type: 'Freelancers & photographers', example: 'Portfolio links, booking, contact' },
+                { type: 'Hotels & homestays', example: 'Room info, amenities, booking platforms' },
+              ].map((b) => (
+                <div key={b.type} className="p-4 rounded-xl bg-white border border-slate-200/60">
+                  <p className="text-[0.875rem] font-semibold text-slate-900">{b.type}</p>
+                  <p className="text-[0.8125rem] text-slate-400 mt-0.5">{b.example}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* CTA — clean, confident */}
+      <section className="bg-slate-900">
+        <div className="max-w-3xl mx-auto px-6 py-20 sm:py-28 text-center">
+          <Reveal>
+            <h2 className="text-[1.5rem] sm:text-[2.25rem] font-bold text-white tracking-[-0.025em] leading-[1.15]">
+              Get your page
+            </h2>
+            <p className="text-slate-400 text-[1rem] mt-3 mb-10 max-w-sm mx-auto leading-[1.6]">
+              Free. Takes two minutes. No coding, no credit card.
+            </p>
+          </Reveal>
+          <Reveal delay={100}>
+            <SubdomainChecker />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Footer — minimal */}
+      <footer className="bg-slate-900 border-t border-slate-800 py-6">
+        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between">
+          <span className="text-slate-500 text-sm font-medium">OnNepal</span>
+          <span className="text-slate-600 text-xs">&copy; {new Date().getFullYear()}</span>
         </div>
       </footer>
     </main>
