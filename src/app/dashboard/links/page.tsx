@@ -107,7 +107,7 @@ export default function LinksPage() {
             <select
               value={newLink.platform}
               onChange={(e) => setNewLink({ ...newLink, platform: e.target.value })}
-              className="px-3 py-2 border rounded-md text-sm bg-white"
+              className="px-3 py-2 border border-gray-200 rounded-md text-sm bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/10 outline-none transition-all"
             >
               {PLATFORMS.map((p) => (
                 <option key={p.value} value={p.value}>{p.label}</option>

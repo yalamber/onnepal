@@ -137,7 +137,7 @@ export default function OnboardingPage() {
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`h-2 w-16 rounded-full ${
+              className={`h-1.5 w-14 rounded-full transition-all duration-300 ${
                 s <= step ? 'bg-indigo-600' : 'bg-gray-200'
               }`}
             />
@@ -261,7 +261,7 @@ export default function OnboardingPage() {
                       updated[i].platform = e.target.value;
                       setLinks(updated);
                     }}
-                    className="px-3 py-2 border rounded-md text-sm bg-white"
+                    className="px-3 py-2 border border-gray-200 rounded-md text-sm bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/10 outline-none transition-all"
                   >
                     {SOCIAL_PLATFORMS.map((p) => (
                       <option key={p.value} value={p.value}>

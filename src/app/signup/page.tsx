@@ -87,9 +87,9 @@ function SignupForm() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-white">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create your business page</CardTitle>
+      <Card className="w-full max-w-sm animate-scale-in">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-xl font-semibold tracking-tight">Create your business page</CardTitle>
           <CardDescription>Get started in under a minute</CardDescription>
         </CardHeader>
         <CardContent>
@@ -178,9 +178,9 @@ function SignupForm() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-gray-400 mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="text-indigo-600 hover:underline">
+            <Link href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
               Log in
             </Link>
           </p>

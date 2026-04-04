@@ -62,14 +62,14 @@ export function SubdomainChecker() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      <div className="flex items-stretch gap-0 bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="flex items-stretch gap-0 bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-200 focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-500/10">
         <div className="flex-1 flex items-center">
           <Input
             type="text"
             value={name}
             onChange={handleInputChange}
             placeholder="yourbusiness"
-            className="border-0 shadow-none text-lg h-14 focus-visible:ring-0 rounded-none"
+            className="border-0 shadow-none text-lg h-12 sm:h-14 focus-visible:ring-0 rounded-none"
             maxLength={30}
           />
           <span className="text-gray-400 text-sm pr-3 whitespace-nowrap">.onnepal.com</span>
@@ -77,7 +77,7 @@ export function SubdomainChecker() {
         <Button
           onClick={handleClaim}
           disabled={status !== 'available'}
-          className="h-14 px-6 rounded-none bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="h-12 sm:h-14 px-5 sm:px-6 rounded-none bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-all duration-200"
         >
           {status === 'checking' ? (
             <Loader2 className="h-5 w-5 animate-spin" />

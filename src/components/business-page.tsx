@@ -79,67 +79,67 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
   const accent = business.accentColor;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50/50">
       {/* Cover / Header */}
       <div
-        className="relative h-48 sm:h-56"
+        className="relative h-44 sm:h-52"
         style={{
           background: business.coverImageUrl
             ? `url(${business.coverImageUrl}) center/cover`
             : `linear-gradient(135deg, ${primary}, ${accent})`,
         }}
       >
-        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-0 bg-black/5" />
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 -mt-16 relative z-10 pb-20">
+      <div className="max-w-xl mx-auto px-4 -mt-14 relative z-10 pb-20">
         {/* Profile header */}
         <div className="text-center mb-8">
           {business.logoUrl ? (
             <img
               src={business.logoUrl}
               alt={business.businessName || ''}
-              className="w-28 h-28 rounded-full border-4 border-white mx-auto object-cover bg-white"
+              className="w-24 h-24 rounded-full border-[3px] border-white mx-auto object-cover bg-white shadow-sm"
             />
           ) : (
             <div
-              className="w-28 h-28 rounded-full border-4 border-white mx-auto flex items-center justify-center text-white text-3xl font-bold"
+              className="w-24 h-24 rounded-full border-[3px] border-white mx-auto flex items-center justify-center text-white text-2xl font-semibold shadow-sm"
               style={{ background: `linear-gradient(135deg, ${primary}, ${accent})` }}
             >
               {business.businessName?.charAt(0) || '?'}
             </div>
           )}
-          <h1 className="mt-4 text-2xl sm:text-3xl font-semibold text-gray-900">
+          <h1 className="mt-4 text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
             {business.businessName}
           </h1>
           {business.businessCategory && (
             <span
-              className="inline-block mt-2 px-3 py-1 rounded-full text-sm text-white"
+              className="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-medium text-white"
               style={{ backgroundColor: primary }}
             >
               {business.businessCategory}
             </span>
           )}
           {business.description && (
-            <p className="mt-4 text-gray-600 max-w-md mx-auto">{business.description}</p>
+            <p className="mt-3 text-gray-500 text-sm max-w-sm mx-auto leading-relaxed">{business.description}</p>
           )}
         </div>
 
         {/* CTA Buttons */}
         {ctas.length > 0 && (
-          <div className="flex flex-col gap-3 mb-8">
+          <div className="flex flex-col gap-2.5 mb-8">
             {ctas.map((cta) => (
               <a
                 key={cta.id}
                 href={cta.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`block w-full text-center py-3 px-6 rounded-lg font-semibold text-lg transition-colors hover:opacity-90 ${
+                className={`block w-full text-center py-3 px-6 rounded-lg font-medium transition-all duration-200 hover:opacity-90 ${
                   cta.style === 'primary'
                     ? 'text-white'
                     : cta.style === 'secondary'
-                    ? 'text-white opacity-80'
-                    : 'border-2 bg-white'
+                    ? 'text-white opacity-85'
+                    : 'border bg-white'
                 }`}
                 style={
                   cta.style === 'outline'
@@ -165,13 +165,13 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                    className="group flex items-center gap-3 p-3.5 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-150"
                   >
-                    <Icon className="h-5 w-5 text-gray-600" />
-                    <span className="font-medium text-gray-900">
+                    <Icon className="h-4.5 w-4.5 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                    <span className="font-medium text-sm text-gray-800">
                       {link.label || PLATFORM_LABELS[link.platform] || link.platform}
                     </span>
-                    <ExternalLink className="h-4 w-4 text-gray-400 ml-auto" />
+                    <ExternalLink className="h-3.5 w-3.5 text-gray-300 ml-auto group-hover:text-gray-400 transition-colors" />
                   </a>
                 );
               })}
@@ -182,19 +182,19 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         {/* Announcements */}
         {announcements.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Announcements</h2>
-            <div className="flex flex-col gap-3">
+            <h2 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Announcements</h2>
+            <div className="flex flex-col gap-2.5">
               {announcements.map((item) => (
                 <div
                   key={item.id}
                   className="p-4 bg-white rounded-lg border border-gray-200"
                 >
                   <div className="flex items-start gap-2">
-                    {item.isPinned && <Pin className="h-4 w-4 text-indigo-500 mt-1 flex-shrink-0" />}
+                    {item.isPinned && <Pin className="h-3.5 w-3.5 text-indigo-500 mt-0.5 flex-shrink-0" />}
                     <div>
-                      <h3 className="font-semibold text-gray-900">{item.title}</h3>
+                      <h3 className="font-medium text-sm text-gray-900">{item.title}</h3>
                       {item.content && (
-                        <p className="text-gray-600 text-sm mt-1">{item.content}</p>
+                        <p className="text-gray-500 text-sm mt-1 leading-relaxed">{item.content}</p>
                       )}
                     </div>
                   </div>
@@ -207,8 +207,8 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         {/* Products */}
         {products.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Products & Services</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <h2 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Products & Services</h2>
+            <div className="grid grid-cols-2 gap-2.5">
               {products.map((product) => (
                 <div
                   key={product.id}
@@ -218,16 +218,16 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-32 object-cover"
+                      className="w-full h-28 object-cover"
                     />
                   )}
                   <div className="p-3">
-                    <h3 className="font-semibold text-gray-900 text-sm">{product.name}</h3>
+                    <h3 className="font-medium text-gray-900 text-sm">{product.name}</h3>
                     {product.description && (
-                      <p className="text-gray-500 text-xs mt-1 line-clamp-2">{product.description}</p>
+                      <p className="text-gray-400 text-xs mt-1 line-clamp-2">{product.description}</p>
                     )}
                     {product.price && (
-                      <p className="mt-2 font-bold text-sm" style={{ color: primary }}>
+                      <p className="mt-2 font-semibold text-sm" style={{ color: primary }}>
                         {product.price}
                       </p>
                     )}
@@ -241,24 +241,24 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         {/* Contact Info */}
         {(business.phone || business.address || business.businessHours) && (
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact</h2>
+            <h2 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Contact</h2>
             <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-3">
               {business.phone && (
-                <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-gray-700 hover:text-gray-900">
-                  <Phone className="h-5 w-5 text-gray-400" />
+                <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  <Phone className="h-4 w-4 text-gray-400" />
                   {business.phone}
                 </a>
               )}
               {business.address && (
-                <div className="flex items-start gap-3 text-gray-700">
-                  <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                <div className="flex items-start gap-3 text-sm text-gray-600">
+                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
                   {business.address}
                 </div>
               )}
               {business.businessHours && (
-                <div className="flex items-start gap-3 text-gray-700">
-                  <Clock className="h-5 w-5 text-gray-400 mt-0.5" />
-                  <span className="text-sm">{business.businessHours}</span>
+                <div className="flex items-start gap-3 text-sm text-gray-600">
+                  <Clock className="h-4 w-4 text-gray-400 mt-0.5" />
+                  <span>{business.businessHours}</span>
                 </div>
               )}
             </div>
@@ -266,10 +266,10 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         )}
 
         {/* Footer */}
-        <div className="text-center text-sm text-gray-400 mt-12">
+        <div className="text-center text-xs text-gray-400 mt-16">
           <a
             href="https://onnepal.com"
-            className="hover:text-gray-600 transition-colors"
+            className="hover:text-gray-500 transition-colors"
           >
             Powered by OnNepal
           </a>

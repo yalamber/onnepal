@@ -67,14 +67,14 @@ export function Navbar() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b transition-shadow ${
-        isScrolled ? 'shadow-sm' : ''
+      className={`sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b transition-all duration-200 ${
+        isScrolled ? 'border-gray-200' : 'border-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold text-gray-900">
+            <span className="text-lg font-bold text-gray-900 tracking-tight">
               OnNepal
             </span>
           </Link>

@@ -51,9 +51,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-white">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome back</CardTitle>
+      <Card className="w-full max-w-sm animate-scale-in">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-xl font-semibold tracking-tight">Welcome back</CardTitle>
           <CardDescription>Log in to manage your business page</CardDescription>
         </CardHeader>
         <CardContent>
@@ -93,9 +93,9 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-gray-400 mt-6">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-indigo-600 hover:underline">
+            <Link href="/signup" className="text-indigo-600 hover:text-indigo-700 font-medium">
               Get started
             </Link>
           </p>
