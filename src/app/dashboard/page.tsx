@@ -69,8 +69,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-10 animate-fade-in">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-950 tracking-tight">Dashboard</h1>
-          <p className="text-neutral-400 text-sm mt-0.5">{user.businessName}</p>
+          <h1 className="text-[1.5rem] font-bold text-neutral-950 tracking-[-0.025em] leading-[1.2]">Dashboard</h1>
+          <p className="text-neutral-400 text-[0.8125rem] mt-1">{user.businessName}</p>
         </div>
         <a href={siteUrl} target="_blank" rel="noopener noreferrer">
           <Button variant="outline" size="sm">
@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
       {/* Site URL */}
       <div className="mb-10 p-6 rounded-2xl bg-neutral-950 animate-fade-in-up delay-100">
-        <p className="text-neutral-500 text-xs font-medium uppercase tracking-wider mb-2">Your page</p>
+        <p className="text-neutral-500 text-[0.6875rem] font-medium uppercase tracking-[0.08em] mb-2">Your page</p>
         <a
           href={siteUrl}
           target="_blank"

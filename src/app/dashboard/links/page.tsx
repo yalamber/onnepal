@@ -94,7 +94,7 @@ export default function LinksPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Social Links</h1>
+        <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-neutral-950 leading-[1.2]">Social Links</h1>
       </div>
 
       {/* Add new link */}

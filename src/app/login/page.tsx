@@ -51,8 +51,8 @@ export default function LoginPage() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-neutral-950 tracking-tight">Welcome back</h1>
-          <p className="text-neutral-500 text-sm mt-2">Log in to manage your page</p>
+          <h1 className="text-[1.5rem] font-bold text-neutral-950 tracking-[-0.025em] leading-[1.2]">Welcome back</h1>
+          <p className="text-neutral-500 text-[0.875rem] mt-2 leading-[1.6]">Log in to manage your page</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

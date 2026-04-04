@@ -119,11 +119,11 @@ export default function OnboardingPage() {
         {/* Step 1 */}
         {step === 1 && (
           <div className="text-center animate-fade-in">
-            <h1 className="text-2xl font-bold text-neutral-950 tracking-tight">Welcome, {user?.businessName}!</h1>
-            <p className="text-neutral-500 mt-2">
-              Your page will be at <span className="font-mono text-neutral-950">{user?.subdomain}.onnepal.com</span>
+            <h1 className="text-[1.5rem] font-bold text-neutral-950 tracking-[-0.025em] leading-[1.2]">Welcome, {user?.businessName}!</h1>
+            <p className="text-neutral-500 text-[0.9375rem] mt-3 leading-[1.6]">
+              Your page will be at <span className="font-mono text-neutral-950 tracking-[-0.02em]">{user?.subdomain}.onnepal.com</span>
             </p>
-            <p className="text-neutral-400 text-sm mt-4 mb-8">
+            <p className="text-neutral-400 text-[0.875rem] mt-4 mb-8 leading-[1.6]">
               Let&apos;s set up your business page. It only takes a couple of minutes.
             </p>
             <Button onClick={() => setStep(2)}>
@@ -135,8 +135,8 @@ export default function OnboardingPage() {
         {/* Step 2 */}
         {step === 2 && (
           <div className="animate-fade-in">
-            <h2 className="text-xl font-bold text-neutral-950 tracking-tight mb-1">Business Details</h2>
-            <p className="text-neutral-500 text-sm mb-6">Tell us about your business</p>
+            <h2 className="text-[1.25rem] font-bold text-neutral-950 tracking-[-0.02em] leading-[1.2] mb-1">Business Details</h2>
+            <p className="text-neutral-500 text-[0.875rem] mb-6 leading-[1.6]">Tell us about your business</p>
 
             <div className="space-y-5">
               <div>
@@ -195,8 +195,8 @@ export default function OnboardingPage() {
         {/* Step 3 */}
         {step === 3 && (
           <div className="animate-fade-in">
-            <h2 className="text-xl font-bold text-neutral-950 tracking-tight mb-1">Add Your Links</h2>
-            <p className="text-neutral-500 text-sm mb-6">Connect your social profiles and website</p>
+            <h2 className="text-[1.25rem] font-bold text-neutral-950 tracking-[-0.02em] leading-[1.2] mb-1">Add Your Links</h2>
+            <p className="text-neutral-500 text-[0.875rem] mb-6 leading-[1.6]">Connect your social profiles and website</p>
 
             <div className="space-y-4">
               {links.map((link, i) => (

@@ -8,13 +8,13 @@ export default function HomePage() {
       <section className="relative bg-white">
         <div className="max-w-4xl mx-auto px-6 pt-24 pb-20 sm:pt-32 sm:pb-28 text-center">
           <div className="animate-fade-in">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-neutral-950 tracking-tight leading-[1.05]">
+            <h1 className="text-[2.75rem] sm:text-[3.5rem] lg:text-[4.25rem] font-bold text-neutral-950 tracking-[-0.035em] leading-[1.08]">
               Your business.
               <br />
               One link.
             </h1>
           </div>
-          <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-xl mx-auto animate-fade-in delay-100 leading-relaxed">
+          <p className="mt-6 text-[1.125rem] sm:text-[1.25rem] text-neutral-500 max-w-xl mx-auto animate-fade-in delay-100 leading-[1.65] tracking-[-0.011em]">
             A free mini website for your Nepali business. Social links, products, announcements — all on one page.
           </p>
           <div className="mt-12 animate-fade-in-up delay-200">
@@ -27,10 +27,10 @@ export default function HomePage() {
       <section className="py-24 sm:py-32 bg-neutral-50">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-950 tracking-tight">
+            <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-neutral-950 tracking-[-0.03em] leading-[1.15]">
               Everything you need
             </h2>
-            <p className="mt-4 text-neutral-500 text-lg max-w-md mx-auto">
+            <p className="mt-4 text-neutral-500 text-[1.0625rem] leading-[1.65] max-w-md mx-auto">
               A complete business page with all the essentials.
             </p>
           </div>
@@ -72,8 +72,8 @@ export default function HomePage() {
                 className="group p-6 rounded-2xl bg-white hover:bg-neutral-950 transition-all duration-300"
               >
                 <feature.icon className="h-6 w-6 text-neutral-400 group-hover:text-white mb-4 transition-colors duration-300" />
-                <h3 className="text-base font-semibold text-neutral-950 group-hover:text-white mb-1 transition-colors duration-300">{feature.title}</h3>
-                <p className="text-neutral-500 text-sm leading-relaxed group-hover:text-neutral-400 transition-colors duration-300">{feature.description}</p>
+                <h3 className="text-[0.9375rem] font-semibold text-neutral-950 group-hover:text-white mb-1.5 tracking-[-0.01em] transition-colors duration-300">{feature.title}</h3>
+                <p className="text-neutral-500 text-[0.8125rem] leading-[1.65] group-hover:text-neutral-400 transition-colors duration-300">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -83,10 +83,10 @@ export default function HomePage() {
       {/* CTA */}
       <section className="py-24 sm:py-32 bg-neutral-950">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
+          <h2 className="text-[1.75rem] sm:text-[2.75rem] font-bold text-white tracking-[-0.03em] leading-[1.12]">
             Claim your name.<br />Go live today.
           </h2>
-          <p className="text-neutral-500 text-lg mt-6 mb-12 max-w-md mx-auto">
+          <p className="text-neutral-500 text-[1.0625rem] leading-[1.65] mt-6 mb-12 max-w-md mx-auto">
             Join hundreds of Nepali businesses already on OnNepal.
           </p>
           <SubdomainChecker />
