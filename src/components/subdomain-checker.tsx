@@ -39,8 +39,8 @@ export function SubdomainChecker() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="flex items-center gap-0 bg-white rounded-2xl border border-slate-200 shadow-sm p-1.5 transition-all duration-200 focus-within:border-blue-300 focus-within:shadow-md focus-within:shadow-blue-500/5">
+    <div className="w-full max-w-md">
+      <div className="flex items-center gap-0 bg-white rounded-xl border border-slate-200 shadow-sm p-1.5 transition-all duration-200 focus-within:border-blue-300 focus-within:shadow-md focus-within:shadow-blue-500/5">
         <div className="flex-1 flex items-center pl-3">
           <input
             type="text"
