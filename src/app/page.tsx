@@ -1,5 +1,128 @@
 import { SubdomainChecker } from '@/components/subdomain-checker';
-import { Globe, LinkIcon, Megaphone, ShoppingBag, Smartphone, Zap } from 'lucide-react';
+import { Globe, LinkIcon, Megaphone, ShoppingBag, Smartphone, Zap, ExternalLink, Phone, MapPin, Facebook, Instagram, MessageCircle } from 'lucide-react';
+
+const EXAMPLES = [
+  {
+    name: 'Himalayan Bites',
+    subdomain: 'himalayanbites',
+    category: 'Restaurant & Cafe',
+    description: 'Authentic Nepali & Tibetan cuisine in the heart of Thamel. Momos, thukpa, and more.',
+    color: '#1a1a2e',
+    accent: '#16213e',
+    initial: 'H',
+    links: ['Facebook', 'Instagram', 'WhatsApp'],
+    products: [
+      { name: 'Chicken Momo', price: 'Rs. 350' },
+      { name: 'Thukpa Bowl', price: 'Rs. 280' },
+      { name: 'Buff Chhoila', price: 'Rs. 400' },
+    ],
+    announcement: '🎉 20% off on all orders this Dashain!',
+    phone: '+977 9801234567',
+    address: 'Thamel, Kathmandu',
+  },
+  {
+    name: 'Laxmi Beauty Studio',
+    subdomain: 'laxmibeauty',
+    category: 'Beauty & Salon',
+    description: 'Premium beauty services for every occasion. Bridal makeup, hair styling, and skincare.',
+    color: '#6b21a8',
+    accent: '#9333ea',
+    initial: 'L',
+    links: ['Instagram', 'Facebook', 'TikTok'],
+    products: [
+      { name: 'Bridal Package', price: 'Rs. 15,000' },
+      { name: 'Hair Treatment', price: 'Rs. 2,500' },
+      { name: 'Facial', price: 'Rs. 1,800' },
+    ],
+    announcement: 'Now accepting appointments for wedding season!',
+    phone: '+977 9812345678',
+    address: 'New Road, Kathmandu',
+  },
+  {
+    name: 'Peak Trek Nepal',
+    subdomain: 'peaktrek',
+    category: 'Hotel & Travel',
+    description: 'Adventure awaits. Guided treks to Everest Base Camp, Annapurna Circuit, and beyond.',
+    color: '#0f766e',
+    accent: '#14b8a6',
+    initial: 'P',
+    links: ['Website', 'Instagram', 'WhatsApp'],
+    products: [
+      { name: 'EBC Trek', price: 'Rs. 45,000' },
+      { name: 'ABC Trek', price: 'Rs. 35,000' },
+      { name: 'Langtang Valley', price: 'Rs. 28,000' },
+    ],
+    announcement: 'Spring 2026 treks now open for booking!',
+    phone: '+977 9823456789',
+    address: 'Lazimpat, Kathmandu',
+  },
+];
+
+function ExampleCard({ example }: { example: typeof EXAMPLES[0] }) {
+  return (
+    <div className="group relative bg-white rounded-2xl border border-neutral-100 overflow-hidden hover:border-neutral-200 transition-all duration-300">
+      {/* Mini cover */}
+      <div
+        className="h-20 relative"
+        style={{ background: `linear-gradient(135deg, ${example.color}, ${example.accent})` }}
+      />
+
+      <div className="px-5 pb-6 -mt-6 relative">
+        {/* Avatar */}
+        <div
+          className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-semibold mb-3"
+          style={{ background: `linear-gradient(135deg, ${example.color}, ${example.accent})` }}
+        >
+          {example.initial}
+        </div>
+
+        {/* Info */}
+        <h3 className="text-[0.9375rem] font-bold text-neutral-950 tracking-[-0.01em]">{example.name}</h3>
+        <p className="text-[0.75rem] text-neutral-400 mt-0.5">{example.category}</p>
+        <p className="text-[0.8125rem] text-neutral-500 mt-2 leading-[1.6] line-clamp-2">{example.description}</p>
+
+        {/* Mini links */}
+        <div className="flex gap-1.5 mt-4">
+          {example.links.map((link) => (
+            <span key={link} className="px-2.5 py-1 rounded-full bg-neutral-50 text-[0.6875rem] text-neutral-500 font-medium">
+              {link}
+            </span>
+          ))}
+        </div>
+
+        {/* Mini products */}
+        <div className="mt-4 space-y-1.5">
+          {example.products.map((product) => (
+            <div key={product.name} className="flex justify-between items-center">
+              <span className="text-[0.8125rem] text-neutral-700">{product.name}</span>
+              <span className="text-[0.75rem] font-semibold text-neutral-950">{product.price}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Announcement */}
+        <div className="mt-4 p-3 rounded-xl bg-neutral-50">
+          <p className="text-[0.75rem] text-neutral-600 leading-[1.5]">{example.announcement}</p>
+        </div>
+
+        {/* Contact */}
+        <div className="mt-4 flex items-center gap-4 text-[0.75rem] text-neutral-400">
+          <span className="flex items-center gap-1">
+            <Phone className="h-3 w-3" />
+            {example.phone}
+          </span>
+        </div>
+
+        {/* URL */}
+        <div className="mt-4 pt-4 border-t border-neutral-100">
+          <p className="text-[0.75rem] font-mono text-neutral-400">
+            {example.subdomain}.onnepal.com
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -19,6 +142,25 @@ export default function HomePage() {
           </p>
           <div className="mt-12 animate-fade-in-up delay-200">
             <SubdomainChecker />
+          </div>
+        </div>
+      </section>
+
+      {/* Examples */}
+      <section className="py-24 sm:py-32 bg-white">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-neutral-950 tracking-[-0.03em] leading-[1.15]">
+              See what you can build
+            </h2>
+            <p className="mt-4 text-neutral-500 text-[1.0625rem] leading-[1.65] max-w-lg mx-auto">
+              Restaurants, salons, trek agencies — any Nepali business can create a professional page in minutes.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {EXAMPLES.map((example) => (
+              <ExampleCard key={example.subdomain} example={example} />
+            ))}
           </div>
         </div>
       </section>
