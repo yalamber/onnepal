@@ -74,7 +74,7 @@ export default function SettingsPage() {
   if (loading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
       </div>
     );
   }
@@ -85,7 +85,7 @@ export default function SettingsPage() {
         <Link href="/dashboard">
           <Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Settings</h1>
       </div>
 
       {/* Site URL */}
@@ -98,7 +98,7 @@ export default function SettingsPage() {
             href={`https://${profile.subdomain}.onnepal.com`}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-indigo-600 hover:underline flex items-center gap-1"
+            className="font-mono text-neutral-950 hover:underline flex items-center gap-1"
           >
             {profile.subdomain}.onnepal.com <ExternalLink className="h-3 w-3" />
           </a>
@@ -212,7 +212,7 @@ export default function SettingsPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-indigo-600 text-white hover:bg-indigo-700"
+          className="bg-neutral-950 text-white hover:bg-neutral-800"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4 mr-1" /> Save Changes</>}
         </Button>

@@ -79,62 +79,55 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
   const accent = business.accentColor;
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
-      {/* Cover / Header */}
+    <div className="min-h-screen bg-white">
+      {/* Cover */}
       <div
-        className="relative h-44 sm:h-52"
+        className="relative h-40 sm:h-48"
         style={{
           background: business.coverImageUrl
             ? `url(${business.coverImageUrl}) center/cover`
             : `linear-gradient(135deg, ${primary}, ${accent})`,
         }}
-      >
-        <div className="absolute inset-0 bg-black/5" />
-      </div>
+      />
 
-      <div className="max-w-xl mx-auto px-4 -mt-14 relative z-10 pb-20">
-        {/* Profile header */}
-        <div className="text-center mb-8">
+      <div className="max-w-lg mx-auto px-5 -mt-12 relative z-10 pb-24">
+        {/* Profile */}
+        <div className="text-center mb-10">
           {business.logoUrl ? (
             <img
               src={business.logoUrl}
               alt={business.businessName || ''}
-              className="w-24 h-24 rounded-full border-[3px] border-white mx-auto object-cover bg-white shadow-sm"
+              className="w-20 h-20 rounded-full border-[3px] border-white mx-auto object-cover bg-white"
             />
           ) : (
             <div
-              className="w-24 h-24 rounded-full border-[3px] border-white mx-auto flex items-center justify-center text-white text-2xl font-semibold shadow-sm"
+              className="w-20 h-20 rounded-full border-[3px] border-white mx-auto flex items-center justify-center text-white text-xl font-semibold"
               style={{ background: `linear-gradient(135deg, ${primary}, ${accent})` }}
             >
               {business.businessName?.charAt(0) || '?'}
             </div>
           )}
-          <h1 className="mt-4 text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
+          <h1 className="mt-4 text-xl font-bold text-neutral-950 tracking-tight">
             {business.businessName}
           </h1>
           {business.businessCategory && (
-            <span
-              className="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-medium text-white"
-              style={{ backgroundColor: primary }}
-            >
-              {business.businessCategory}
-            </span>
+            <p className="mt-1 text-sm text-neutral-500">{business.businessCategory}</p>
           )}
           {business.description && (
-            <p className="mt-3 text-gray-500 text-sm max-w-sm mx-auto leading-relaxed">{business.description}</p>
+            <p className="mt-3 text-neutral-500 text-sm max-w-xs mx-auto leading-relaxed">{business.description}</p>
           )}
         </div>
 
         {/* CTA Buttons */}
         {ctas.length > 0 && (
-          <div className="flex flex-col gap-2.5 mb-8">
+          <div className="flex flex-col gap-2.5 mb-10">
             {ctas.map((cta) => (
               <a
                 key={cta.id}
                 href={cta.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`block w-full text-center py-3 px-6 rounded-lg font-medium transition-all duration-200 hover:opacity-90 ${
+                className={`block w-full text-center py-3 px-6 rounded-full font-medium transition-opacity duration-200 hover:opacity-80 ${
                   cta.style === 'primary'
                     ? 'text-white'
                     : cta.style === 'secondary'
@@ -155,7 +148,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
 
         {/* Social Links */}
         {links.length > 0 && (
-          <div className="mb-8">
+          <div className="mb-10">
             <div className="flex flex-col gap-2">
               {links.map((link) => {
                 const Icon = PLATFORM_ICONS[link.platform] || Globe;
@@ -165,13 +158,13 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-3 p-3.5 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-150"
+                    className="group flex items-center gap-3 p-3.5 rounded-xl bg-neutral-50 hover:bg-neutral-100 transition-colors duration-150"
                   >
-                    <Icon className="h-4.5 w-4.5 text-gray-500 group-hover:text-gray-700 transition-colors" />
-                    <span className="font-medium text-sm text-gray-800">
+                    <Icon className="h-4 w-4 text-neutral-400" />
+                    <span className="font-medium text-sm text-neutral-800">
                       {link.label || PLATFORM_LABELS[link.platform] || link.platform}
                     </span>
-                    <ExternalLink className="h-3.5 w-3.5 text-gray-300 ml-auto group-hover:text-gray-400 transition-colors" />
+                    <ExternalLink className="h-3 w-3 text-neutral-300 ml-auto group-hover:text-neutral-400 transition-colors" />
                   </a>
                 );
               })}
@@ -181,20 +174,17 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
 
         {/* Announcements */}
         {announcements.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Announcements</h2>
-            <div className="flex flex-col gap-2.5">
+          <div className="mb-10">
+            <h2 className="text-xs font-semibold text-neutral-400 mb-3 uppercase tracking-wider">Announcements</h2>
+            <div className="flex flex-col gap-2">
               {announcements.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-4 bg-white rounded-lg border border-gray-200"
-                >
+                <div key={item.id} className="p-4 rounded-xl bg-neutral-50">
                   <div className="flex items-start gap-2">
-                    {item.isPinned && <Pin className="h-3.5 w-3.5 text-indigo-500 mt-0.5 flex-shrink-0" />}
+                    {item.isPinned && <Pin className="h-3 w-3 text-neutral-400 mt-0.5 flex-shrink-0" />}
                     <div>
-                      <h3 className="font-medium text-sm text-gray-900">{item.title}</h3>
+                      <h3 className="font-medium text-sm text-neutral-900">{item.title}</h3>
                       {item.content && (
-                        <p className="text-gray-500 text-sm mt-1 leading-relaxed">{item.content}</p>
+                        <p className="text-neutral-500 text-sm mt-1 leading-relaxed">{item.content}</p>
                       )}
                     </div>
                   </div>
@@ -206,14 +196,11 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
 
         {/* Products */}
         {products.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Products & Services</h2>
-            <div className="grid grid-cols-2 gap-2.5">
+          <div className="mb-10">
+            <h2 className="text-xs font-semibold text-neutral-400 mb-3 uppercase tracking-wider">Products & Services</h2>
+            <div className="grid grid-cols-2 gap-2">
               {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-lg border border-gray-200 overflow-hidden"
-                >
+                <div key={product.id} className="rounded-xl bg-neutral-50 overflow-hidden">
                   {product.imageUrl && (
                     <img
                       src={product.imageUrl}
@@ -222,12 +209,12 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
                     />
                   )}
                   <div className="p-3">
-                    <h3 className="font-medium text-gray-900 text-sm">{product.name}</h3>
+                    <h3 className="font-medium text-neutral-900 text-sm">{product.name}</h3>
                     {product.description && (
-                      <p className="text-gray-400 text-xs mt-1 line-clamp-2">{product.description}</p>
+                      <p className="text-neutral-400 text-xs mt-0.5 line-clamp-2">{product.description}</p>
                     )}
                     {product.price && (
-                      <p className="mt-2 font-semibold text-sm" style={{ color: primary }}>
+                      <p className="mt-1.5 font-semibold text-sm text-neutral-950">
                         {product.price}
                       </p>
                     )}
@@ -238,27 +225,27 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
           </div>
         )}
 
-        {/* Contact Info */}
+        {/* Contact */}
         {(business.phone || business.address || business.businessHours) && (
-          <div className="mb-8">
-            <h2 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Contact</h2>
-            <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-3">
+          <div className="mb-10">
+            <h2 className="text-xs font-semibold text-neutral-400 mb-3 uppercase tracking-wider">Contact</h2>
+            <div className="rounded-xl bg-neutral-50 p-4 space-y-2.5">
               {business.phone && (
-                <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                  <Phone className="h-4 w-4 text-gray-400" />
+                <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-sm text-neutral-600 hover:text-neutral-950 transition-colors">
+                  <Phone className="h-4 w-4 text-neutral-400" />
                   {business.phone}
                 </a>
               )}
               {business.address && (
-                <div className="flex items-start gap-3 text-sm text-gray-600">
-                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+                <div className="flex items-start gap-3 text-sm text-neutral-600">
+                  <MapPin className="h-4 w-4 text-neutral-400 mt-0.5" />
                   {business.address}
                 </div>
               )}
               {business.businessHours && (
-                <div className="flex items-start gap-3 text-sm text-gray-600">
-                  <Clock className="h-4 w-4 text-gray-400 mt-0.5" />
-                  <span>{business.businessHours}</span>
+                <div className="flex items-start gap-3 text-sm text-neutral-600">
+                  <Clock className="h-4 w-4 text-neutral-400 mt-0.5" />
+                  {business.businessHours}
                 </div>
               )}
             </div>
@@ -266,12 +253,12 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         )}
 
         {/* Footer */}
-        <div className="text-center text-xs text-gray-400 mt-16">
+        <div className="text-center mt-20">
           <a
             href="https://onnepal.com"
-            className="hover:text-gray-500 transition-colors"
+            className="text-xs text-neutral-300 hover:text-neutral-500 transition-colors"
           >
-            Powered by OnNepal
+            onnepal.com
           </a>
         </div>
       </div>

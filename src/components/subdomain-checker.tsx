@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Check, X, Loader2, ArrowRight } from 'lucide-react';
 
 export function SubdomainChecker() {
@@ -61,48 +60,49 @@ export function SubdomainChecker() {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto">
-      <div className="flex items-stretch gap-0 bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-200 focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-500/10">
-        <div className="flex-1 flex items-center">
-          <Input
+    <div className="w-full max-w-md mx-auto">
+      <div className="flex items-center gap-0 bg-neutral-100 rounded-full p-1.5 transition-all duration-200 focus-within:bg-neutral-200/80">
+        <div className="flex-1 flex items-center pl-4">
+          <input
             type="text"
             value={name}
             onChange={handleInputChange}
             placeholder="yourbusiness"
-            className="border-0 shadow-none text-lg h-12 sm:h-14 focus-visible:ring-0 rounded-none"
             maxLength={30}
+            className="w-full bg-transparent text-base text-neutral-950 placeholder:text-neutral-400 outline-none"
           />
-          <span className="text-gray-400 text-sm pr-3 whitespace-nowrap">.onnepal.com</span>
+          <span className="text-neutral-400 text-sm pr-2 whitespace-nowrap">.onnepal.com</span>
         </div>
         <Button
           onClick={handleClaim}
           disabled={status !== 'available'}
-          className="h-12 sm:h-14 px-5 sm:px-6 rounded-none bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-all duration-200"
+          size="sm"
+          className="h-9 px-5 rounded-full"
         >
           {status === 'checking' ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <>
-              Claim <ArrowRight className="h-4 w-4 ml-1" />
+              Claim <ArrowRight className="h-3.5 w-3.5" />
             </>
           )}
         </Button>
       </div>
-      <div className="h-8 mt-2 px-1">
+      <div className="h-6 mt-2 px-4">
         {status === 'available' && (
-          <p className="text-sm text-green-600 flex items-center gap-1">
-            <Check className="h-4 w-4" />
-            {name}.onnepal.com is available!
+          <p className="text-sm text-emerald-600 flex items-center gap-1">
+            <Check className="h-3.5 w-3.5" />
+            {name}.onnepal.com is available
           </p>
         )}
         {(status === 'taken' || status === 'invalid') && (
           <p className="text-sm text-red-500 flex items-center gap-1">
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
             {error}
           </p>
         )}
         {status === 'idle' && name.length > 0 && name.length < 3 && (
-          <p className="text-sm text-gray-400">Type at least 3 characters</p>
+          <p className="text-sm text-neutral-400">Type at least 3 characters</p>
         )}
       </div>
     </div>

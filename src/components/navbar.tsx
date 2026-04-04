@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ExternalLink, User } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ExternalLink, ChevronDown } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -24,7 +24,6 @@ interface UserData {
 
 export function Navbar() {
   const [user, setUser] = useState<UserData | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -47,12 +46,8 @@ export function Navbar() {
     const handleAuthChange = () => fetchUser();
     window.addEventListener('auth-change', handleAuthChange);
 
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
-
     return () => {
       window.removeEventListener('auth-change', handleAuthChange);
-      window.removeEventListener('scroll', handleScroll);
     };
   }, [isSitePage]);
 
@@ -66,21 +61,17 @@ export function Navbar() {
   };
 
   return (
-    <nav
-      className={`sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b transition-all duration-200 ${
-        isScrolled ? 'border-gray-200' : 'border-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-neutral-100">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-14">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-lg font-bold text-gray-900 tracking-tight">
+          <Link href="/" className="flex items-center">
+            <span className="text-base font-bold text-neutral-950 tracking-tight">
               OnNepal
             </span>
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
                 {user.subdomain && (
@@ -88,7 +79,7 @@ export function Navbar() {
                     href={`https://${user.subdomain}.onnepal.com`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+                    className="text-sm text-neutral-500 hover:text-neutral-950 flex items-center gap-1 transition-colors"
                   >
                     {user.subdomain}.onnepal.com
                     <ExternalLink className="h-3 w-3" />
@@ -96,9 +87,9 @@ export function Navbar() {
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <User className="h-4 w-4" />
+                    <Button variant="ghost" size="sm" className="gap-1.5 text-neutral-600">
                       {user.businessName || user.email}
+                      <ChevronDown className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -122,7 +113,7 @@ export function Navbar() {
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="bg-indigo-600 text-white hover:bg-indigo-700">
+                  <Button size="sm">
                     Get Started
                   </Button>
                 </Link>
@@ -139,16 +130,16 @@ export function Navbar() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72">
-                <div className="flex flex-col gap-4 mt-8">
+                <div className="flex flex-col gap-3 mt-8">
                   {user ? (
                     <>
-                      <p className="text-sm font-medium px-2">
+                      <p className="text-sm font-medium px-2 text-neutral-950">
                         {user.businessName || user.email}
                       </p>
                       <Link
                         href="/dashboard"
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-2 px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                        className="flex items-center gap-2 px-2 py-2.5 text-sm text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50 rounded-lg transition-colors"
                       >
                         <LayoutDashboard className="h-4 w-4" />
                         Dashboard
@@ -158,7 +149,7 @@ export function Navbar() {
                           handleLogout();
                           setMobileOpen(false);
                         }}
-                        className="flex items-center gap-2 px-2 py-2 text-sm hover:bg-gray-100 rounded-md text-red-600"
+                        className="flex items-center gap-2 px-2 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
                         Log out
@@ -169,12 +160,12 @@ export function Navbar() {
                       <Link
                         href="/login"
                         onClick={() => setMobileOpen(false)}
-                        className="px-2 py-2 text-sm hover:bg-gray-100 rounded-md"
+                        className="px-2 py-2.5 text-sm text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50 rounded-lg transition-colors"
                       >
                         Log in
                       </Link>
                       <Link href="/signup" onClick={() => setMobileOpen(false)}>
-                        <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-700">
+                        <Button className="w-full">
                           Get Started
                         </Button>
                       </Link>
