@@ -7,6 +7,9 @@
 	"name": "onnepal",
 	"account_id": "b686affd559b683612b319be824080a3",
 	"main": "worker/index.ts",
+	"assets": {
+		"directory": "dist/client"
+	},
 	"compatibility_date": "2025-03-01",
 	"compatibility_flags": [
 		"nodejs_compat"
