@@ -1,4 +1,5 @@
 import { SubdomainChecker } from '@/components/subdomain-checker';
+import { ScrollAnimate, Parallax } from '@/components/scroll-animate';
 import { Globe, LinkIcon, Megaphone, ShoppingBag, Smartphone, Zap, ArrowRight, Palette, BarChart3, Check } from 'lucide-react';
 
 const EXAMPLES = [
@@ -133,8 +134,8 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-violet-50">
         <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-200 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-200 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-200 rounded-full blur-3xl animate-pulse-soft" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-200 rounded-full blur-3xl animate-pulse-soft" style={{ animationDelay: '2s' }} />
         </div>
 
         <div className="max-w-6xl mx-auto px-6 pt-20 pb-16 sm:pt-28 sm:pb-24 relative">
@@ -158,18 +159,22 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right: Phone mockups */}
+            {/* Right: Phone mockups with float */}
             <div className="hidden lg:flex items-center justify-center animate-fade-in-up delay-200">
               <div className="relative">
-                <div className="absolute -left-8 top-8 opacity-60 scale-90 -rotate-6">
-                  <PhoneMockup example={EXAMPLES[2]} />
-                </div>
-                <div className="relative z-10">
+                <Parallax speed={-0.1} className="absolute -left-8 top-8 opacity-60 scale-90 -rotate-6">
+                  <div className="animate-float-slow" style={{ animationDelay: '1s' }}>
+                    <PhoneMockup example={EXAMPLES[2]} />
+                  </div>
+                </Parallax>
+                <div className="relative z-10 animate-float">
                   <PhoneMockup example={EXAMPLES[0]} />
                 </div>
-                <div className="absolute -right-8 top-8 opacity-60 scale-90 rotate-6">
-                  <PhoneMockup example={EXAMPLES[1]} />
-                </div>
+                <Parallax speed={0.1} className="absolute -right-8 top-8 opacity-60 scale-90 rotate-6">
+                  <div className="animate-float-slow" style={{ animationDelay: '2s' }}>
+                    <PhoneMockup example={EXAMPLES[1]} />
+                  </div>
+                </Parallax>
               </div>
             </div>
           </div>
@@ -179,22 +184,26 @@ export default function HomePage() {
       {/* How it works */}
       <section className="py-20 bg-white border-b border-slate-100">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-center text-[1.5rem] sm:text-[1.75rem] font-bold text-slate-900 tracking-[-0.025em] mb-12">
-            Live in 3 simple steps
-          </h2>
+          <ScrollAnimate animation="fade-up">
+            <h2 className="text-center text-[1.5rem] sm:text-[1.75rem] font-bold text-slate-900 tracking-[-0.025em] mb-12">
+              Live in 3 simple steps
+            </h2>
+          </ScrollAnimate>
           <div className="grid sm:grid-cols-3 gap-8">
             {[
               { step: '1', title: 'Claim your name', desc: 'Pick your unique subdomain. It\'s free and takes 10 seconds.', color: 'from-blue-500 to-blue-600' },
               { step: '2', title: 'Add your content', desc: 'Links, products, announcements, contact info — fill in what matters.', color: 'from-violet-500 to-violet-600' },
               { step: '3', title: 'Go live', desc: 'Hit publish. Your page is live and ready to share.', color: 'from-emerald-500 to-emerald-600' },
-            ].map((s) => (
-              <div key={s.step} className="text-center">
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${s.color} flex items-center justify-center text-white text-lg font-bold mx-auto mb-4 shadow-lg`}>
-                  {s.step}
+            ].map((s, i) => (
+              <ScrollAnimate key={s.step} animation="fade-up" delay={i * 150}>
+                <div className="text-center">
+                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${s.color} flex items-center justify-center text-white text-lg font-bold mx-auto mb-4 shadow-lg`}>
+                    {s.step}
+                  </div>
+                  <h3 className="text-[0.9375rem] font-semibold text-slate-900 mb-1.5">{s.title}</h3>
+                  <p className="text-[0.8125rem] text-slate-500 leading-[1.6]">{s.desc}</p>
                 </div>
-                <h3 className="text-[0.9375rem] font-semibold text-slate-900 mb-1.5">{s.title}</h3>
-                <p className="text-[0.8125rem] text-slate-500 leading-[1.6]">{s.desc}</p>
-              </div>
+              </ScrollAnimate>
             ))}
           </div>
         </div>
@@ -203,17 +212,21 @@ export default function HomePage() {
       {/* Examples - Mobile phone previews */}
       <section className="py-24 sm:py-28 bg-slate-50">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-slate-900 tracking-[-0.03em] leading-[1.15]">
-              See what you can build
-            </h2>
-            <p className="mt-4 text-slate-500 text-[1.0625rem] leading-[1.65] max-w-lg mx-auto">
-              Restaurants, salons, trek agencies — any Nepali business gets a professional page.
-            </p>
-          </div>
+          <ScrollAnimate animation="fade-up">
+            <div className="text-center mb-16">
+              <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-slate-900 tracking-[-0.03em] leading-[1.15]">
+                See what you can build
+              </h2>
+              <p className="mt-4 text-slate-500 text-[1.0625rem] leading-[1.65] max-w-lg mx-auto">
+                Restaurants, salons, trek agencies — any Nepali business gets a professional page.
+              </p>
+            </div>
+          </ScrollAnimate>
           <div className="flex justify-center gap-8 overflow-x-auto pb-4">
-            {EXAMPLES.map((ex) => (
-              <PhoneMockup key={ex.subdomain} example={ex} />
+            {EXAMPLES.map((ex, i) => (
+              <ScrollAnimate key={ex.subdomain} animation="scale" delay={i * 200}>
+                <PhoneMockup example={ex} />
+              </ScrollAnimate>
             ))}
           </div>
         </div>
@@ -222,14 +235,16 @@ export default function HomePage() {
       {/* Features */}
       <section className="py-24 sm:py-28 bg-white">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-slate-900 tracking-[-0.03em] leading-[1.15]">
-              Everything you need
-            </h2>
-            <p className="mt-4 text-slate-500 text-[1.0625rem] leading-[1.65] max-w-md mx-auto">
-              All the tools to build a complete business page.
-            </p>
-          </div>
+          <ScrollAnimate animation="fade-up">
+            <div className="text-center mb-14">
+              <h2 className="text-[1.75rem] sm:text-[2.25rem] font-bold text-slate-900 tracking-[-0.03em] leading-[1.15]">
+                Everything you need
+              </h2>
+              <p className="mt-4 text-slate-500 text-[1.0625rem] leading-[1.65] max-w-md mx-auto">
+                All the tools to build a complete business page.
+              </p>
+            </div>
+          </ScrollAnimate>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { icon: Globe, title: 'Your subdomain', description: 'yourname.onnepal.com — a memorable, shareable link.', color: 'bg-blue-50 text-blue-600' },
@@ -238,14 +253,16 @@ export default function HomePage() {
               { icon: Megaphone, title: 'Announcements', description: 'Share news, offers, and updates instantly.', color: 'bg-rose-50 text-rose-600' },
               { icon: Palette, title: '10 color themes', description: 'Choose a palette that matches your brand.', color: 'bg-emerald-50 text-emerald-600' },
               { icon: Smartphone, title: 'Mobile-first', description: 'Looks perfect on every screen, automatically.', color: 'bg-sky-50 text-sky-600' },
-            ].map((feature) => (
-              <div key={feature.title} className="group p-6 rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300">
+            ].map((feature, i) => (
+              <ScrollAnimate key={feature.title} animation="fade-up" delay={i * 100}>
+              <div className="group p-6 rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                 <div className={`w-10 h-10 rounded-xl ${feature.color} flex items-center justify-center mb-4`}>
                   <feature.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-[0.9375rem] font-semibold text-slate-900 mb-1.5 tracking-[-0.01em]">{feature.title}</h3>
                 <p className="text-slate-500 text-[0.8125rem] leading-[1.65]">{feature.description}</p>
               </div>
+              </ScrollAnimate>
             ))}
           </div>
         </div>
@@ -259,11 +276,13 @@ export default function HomePage() {
               { value: '500+', label: 'Businesses registered' },
               { value: '50K+', label: 'Monthly page views' },
               { value: '2 min', label: 'Average setup time' },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <p className="text-[2rem] font-bold text-slate-900 tracking-tight">{stat.value}</p>
-                <p className="text-[0.8125rem] text-slate-500 mt-1">{stat.label}</p>
-              </div>
+            ].map((stat, i) => (
+              <ScrollAnimate key={stat.label} animation="fade-up" delay={i * 150}>
+                <div>
+                  <p className="text-[2rem] font-bold text-slate-900 tracking-tight">{stat.value}</p>
+                  <p className="text-[0.8125rem] text-slate-500 mt-1">{stat.label}</p>
+                </div>
+              </ScrollAnimate>
             ))}
           </div>
         </div>
@@ -272,17 +291,20 @@ export default function HomePage() {
       {/* Why OnNepal */}
       <section className="py-24 bg-white">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-center text-[1.75rem] sm:text-[2rem] font-bold text-slate-900 tracking-[-0.025em] mb-12">
-            Built for Nepali businesses
-          </h2>
+          <ScrollAnimate animation="fade-up">
+            <h2 className="text-center text-[1.75rem] sm:text-[2rem] font-bold text-slate-900 tracking-[-0.025em] mb-12">
+              Built for Nepali businesses
+            </h2>
+          </ScrollAnimate>
           <div className="space-y-4">
             {[
               { title: 'No coding required', desc: 'If you can fill a form, you can build your page. Our wizard guides you step by step.' },
               { title: 'Free forever', desc: 'No hidden fees, no trials. Your OnNepal page is free to create and host.' },
               { title: 'Share everywhere', desc: 'One link for Facebook, Instagram, WhatsApp, business cards, and anywhere else.' },
               { title: 'Update anytime', desc: 'New products? Special offer? Update your page in seconds from your dashboard.' },
-            ].map((item) => (
-              <div key={item.title} className="flex gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100">
+            ].map((item, i) => (
+              <ScrollAnimate key={item.title} animation="fade-left" delay={i * 100}>
+              <div className="flex gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200">
                 <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Check className="h-3.5 w-3.5 text-emerald-600" />
                 </div>
@@ -291,6 +313,7 @@ export default function HomePage() {
                   <p className="text-[0.8125rem] text-slate-500 mt-1 leading-[1.6]">{item.desc}</p>
                 </div>
               </div>
+              </ScrollAnimate>
             ))}
           </div>
         </div>
@@ -300,17 +323,23 @@ export default function HomePage() {
       <section className="relative py-24 sm:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-violet-950" />
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500 rounded-full blur-3xl" />
+          <Parallax speed={-0.15} className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl animate-pulse-soft" />
+          <Parallax speed={0.1} className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500 rounded-full blur-3xl animate-pulse-soft" />
         </div>
         <div className="max-w-3xl mx-auto px-6 text-center relative">
-          <h2 className="text-[1.75rem] sm:text-[2.5rem] font-bold text-white tracking-[-0.03em] leading-[1.12]">
-            Your business deserves<br />its own page.
-          </h2>
-          <p className="text-blue-200/60 text-[1.0625rem] leading-[1.65] mt-6 mb-12 max-w-md mx-auto">
-            Join hundreds of Nepali businesses already on OnNepal. It&apos;s free.
-          </p>
-          <SubdomainChecker />
+          <ScrollAnimate animation="fade-up">
+            <h2 className="text-[1.75rem] sm:text-[2.5rem] font-bold text-white tracking-[-0.03em] leading-[1.12]">
+              Your business deserves<br />its own page.
+            </h2>
+          </ScrollAnimate>
+          <ScrollAnimate animation="fade-up" delay={150}>
+            <p className="text-blue-200/60 text-[1.0625rem] leading-[1.65] mt-6 mb-12 max-w-md mx-auto">
+              Join hundreds of Nepali businesses already on OnNepal. It&apos;s free.
+            </p>
+          </ScrollAnimate>
+          <ScrollAnimate animation="scale" delay={300}>
+            <SubdomainChecker />
+          </ScrollAnimate>
         </div>
       </section>
 
