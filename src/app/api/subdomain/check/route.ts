@@ -27,6 +27,8 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Subdomain check error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    // Return available: true on DB errors so users aren't blocked from signing up
+    // The actual check will happen again during signup
+    return NextResponse.json({ available: true, name, unchecked: true });
   }
 }

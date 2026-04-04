@@ -127,9 +127,17 @@ export default function HomePage() {
     setSubdomainStatus('checking');
     try {
       const res = await fetch(`/api/subdomain/check?name=${encodeURIComponent(name)}`);
+      if (!res.ok) {
+        // API error (validation, server error) — don't show "taken"
+        setSubdomainStatus('idle');
+        return;
+      }
       const d = await res.json() as { available?: boolean };
-      setSubdomainStatus(res.ok && d.available ? 'available' : 'taken');
-    } catch { setSubdomainStatus('idle'); }
+      setSubdomainStatus(d.available ? 'available' : 'taken');
+    } catch {
+      // Network error — don't show "taken"
+      setSubdomainStatus('idle');
+    }
   }, []);
 
   useEffect(() => {
