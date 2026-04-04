@@ -13,20 +13,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Announcements**: Share news, offers, updates (pinnable, expirable)
 - **CTA buttons**: Configurable call-to-action buttons (Order, Book, Call)
 - **Contact info**: Phone, address, business hours
-- **Brand customization**: Primary/accent colors per business
+- **Theme palettes**: 10 curated color palettes (Ocean, Forest, Sunset, Berry, Rose, Slate, Midnight, Coffee, Teal, Coral)
+- **Interactive page builder**: Homepage lets visitors build their page before signing up
 - **Onboarding wizard**: 3-step setup gets page live in minutes
 
 ### Technical Foundation
-Next.js 15.4 on Cloudflare Workers via OpenNext. App Router, TypeScript, React 19, Tailwind CSS v4. Subdomain routing via Next.js middleware.
+Next.js 15.4 on Cloudflare Workers via vinext + Vite. App Router, TypeScript, React 19, Tailwind CSS v4. Subdomain routing via Next.js middleware.
 
 ## Tech Stack
 
 - **Framework**: Next.js 15.4.6 with App Router
 - **Runtime**: React 19.1.0
+- **Build**: Vite 8 + vinext (Cloudflare Workers adapter)
 - **ORM**: Drizzle ORM with Cloudflare D1 (SQLite)
-- **Styling**: Tailwind CSS v4 with PostCSS
+- **Styling**: Tailwind CSS v4 with @tailwindcss/vite plugin
 - **Validation**: Zod v4
-- **Deployment**: Cloudflare Workers via @opennextjs/cloudflare
+- **Deployment**: Cloudflare Workers via vinext deploy
 - **Storage**: Cloudflare R2 for images
 - **Auth**: JWT with httpOnly cookies, bcryptjs
 - **Language**: TypeScript 5
@@ -48,16 +50,17 @@ src/
 │   │   ├── links/         # Social links CRUD
 │   │   ├── products/      # Products CRUD
 │   │   ├── announcements/ # Announcements CRUD
-│   │   └── settings/      # Profile, colors, business info
+│   │   └── settings/      # Profile, theme palette, business info
 │   ├── login/             # Login page
 │   ├── signup/            # Signup with subdomain claim
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Landing page with subdomain checker
-│   └── globals.css
+│   ├── layout.tsx         # Root layout (Geist fonts)
+│   ├── page.tsx           # Interactive page builder (stepped wizard)
+│   └── globals.css        # Design tokens, animations
 ├── components/
 │   ├── navbar.tsx           # Main navigation (hidden on subdomain pages)
 │   ├── subdomain-checker.tsx # Real-time subdomain availability input
 │   ├── business-page.tsx    # Public page renderer
+│   ├── scroll-animate.tsx   # Scroll-triggered reveal animation component
 │   └── ui/                  # Shadcn/Radix UI primitives
 ├── lib/
 │   ├── auth/
@@ -78,22 +81,41 @@ src/
 │   ├── validators/
 │   │   ├── business.ts      # Zod schemas for all business data
 │   │   └── subdomain.ts     # Subdomain validation + reserved names
-│   ├── cloudflare.ts        # Context/binding accessors
+│   ├── themes.ts            # 10 curated color palettes for business pages
+│   ├── cloudflare.ts        # Context/binding accessors (D1, R2, JWT_SECRET)
 │   └── utils.ts             # Utility functions
 ├── middleware.ts             # Subdomain routing
 └── types/
     └── cloudflare.ts        # CloudflareEnv type
+worker/
+└── index.ts                 # Cloudflare Worker entry point (vinext + image optimization)
+vite.config.ts               # Vite config with vinext, cloudflare, tailwindcss plugins
+wrangler.jsonc               # Cloudflare Workers config (D1, R2, routes, assets)
 ```
 
 ## Common Commands
 
 ```bash
-npm run dev          # Start dev server on localhost:3000
-npm run build        # Build for production
-npm run deploy       # Build and deploy to Cloudflare
+npm run dev          # Start dev server (vite dev)
+npm run build        # Build for production (vite build)
+npm run deploy       # Deploy to Cloudflare (vinext deploy --skip-build)
 npm run db:generate  # Generate Drizzle migration from schema
 npm run lint         # Run ESLint
 ```
+
+## Design System
+
+- **Color palette**: Slate-based neutrals with blue accents for interactive elements
+- **Components**: Shadcn/ui base with rounded-xl buttons, rounded-2xl cards, shadow-sm depth
+- **Typography**: Geist Sans (variable font), standard Tailwind sizes (text-xs through text-3xl)
+- **Inputs**: 48px height (h-12) on builder, 40px (h-10) elsewhere, rounded-xl, blue focus rings
+- **Animations**: Scroll-triggered reveals via IntersectionObserver (`src/components/scroll-animate.tsx`)
+
+### Theme Palettes (`src/lib/themes.ts`)
+10 curated palettes replace individual color pickers in settings:
+Ocean, Forest, Sunset, Berry, Rose, Slate, Midnight, Coffee, Teal, Coral.
+Each has primary + accent colors and a 3-color preview swatch.
+Default for new users: Ocean (blue).
 
 ## Subdomain Routing
 
@@ -123,9 +145,9 @@ All tables indexed on `user_id` foreign key.
 
 ## User Flow
 
-1. Landing page → subdomain checker → signup with subdomain claim
+1. Homepage page builder → fill in details with live preview → claim subdomain → signup
 2. Onboarding wizard (3 steps): Welcome → Business details → Social links → Publish
-3. Dashboard → manage links, products, announcements, settings
+3. Dashboard → manage links, products, announcements, settings (theme palette)
 4. Public page live at `subdomain.onnepal.com`
 
 ## Onboarding Steps
@@ -141,8 +163,10 @@ Track via `users.onboardingStep` (0-4):
 
 - **D1**: `onnepal-db` database bound as `DB`
 - **R2**: `onnepal-images` bucket bound as `IMAGES`
+- **Assets**: `dist/client` directory served as static assets (ASSETS binding auto-provisioned)
 - **Routes**: `*.onnepal.com` and `onnepal.com/*`
 - **Secret**: `JWT_SECRET` (set via `wrangler secret put JWT_SECRET`)
+- **Worker entry**: `worker/index.ts` handles image optimization + delegates to vinext
 
 ## Development Workflow
 
@@ -150,4 +174,5 @@ Track via `users.onboardingStep` (0-4):
 2. Run `npm run db:generate`
 3. Apply migration: `wrangler d1 execute onnepal-db --file=./drizzle/XXXX.sql`
 4. Test locally with `npm run dev`
-5. Deploy: `npm run deploy`
+5. Build: `npm run build`
+6. Deploy: `npm run deploy`
