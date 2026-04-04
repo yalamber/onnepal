@@ -195,8 +195,8 @@ export default function OnboardingPage() {
         {/* Step 3 */}
         {step === 3 && (
           <div className="animate-fade-in">
-            <h2 className="text-[1.25rem] font-bold text-slate-950 tracking-[-0.02em] leading-[1.2] mb-1">Add Your Links</h2>
-            <p className="text-slate-500 text-[0.875rem] mb-6 leading-[1.6]">Connect your social profiles and website</p>
+            <h2 className="text-lg font-bold text-slate-950 tracking-tight leading-[1.2] mb-1">Add Your Links</h2>
+            <p className="text-slate-500 text-sm mb-6 leading-[1.6]">Connect your social profiles and website</p>
 
             <div className="space-y-4">
               {links.map((link, i) => (
