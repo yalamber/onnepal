@@ -67,14 +67,14 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
               {business.businessName?.charAt(0) || '?'}
             </div>
           )}
-          <h1 className="mt-4 text-[1.375rem] font-bold text-slate-900 tracking-[-0.025em] leading-[1.2]">
+          <h1 className="mt-4 text-xl font-bold text-slate-900 tracking-tight">
             {business.businessName}
           </h1>
           {business.businessCategory && (
-            <p className="mt-1.5 text-[0.8125rem] text-slate-500">{business.businessCategory}</p>
+            <p className="mt-1.5 text-sm text-slate-500">{business.businessCategory}</p>
           )}
           {business.description && (
-            <p className="mt-3 text-slate-500 text-[0.875rem] max-w-xs mx-auto leading-[1.65]">{business.description}</p>
+            <p className="mt-3 text-slate-500 text-sm max-w-xs mx-auto leading-relaxed">{business.description}</p>
           )}
         </div>
 
@@ -135,7 +135,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         {/* Announcements */}
         {announcements.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-[0.6875rem] font-semibold text-slate-400 mb-3 uppercase tracking-[0.08em]">Announcements</h2>
+            <h2 className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-widest">Announcements</h2>
             <div className="flex flex-col gap-2">
               {announcements.map((item) => (
                 <div key={item.id} className="p-4 bg-white rounded-xl border border-slate-200/60 shadow-sm">
@@ -155,7 +155,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         {/* Products */}
         {products.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-[0.6875rem] font-semibold text-slate-400 mb-3 uppercase tracking-[0.08em]">Products & Services</h2>
+            <h2 className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-widest">Products & Services</h2>
             <div className="grid grid-cols-2 gap-2.5">
               {products.map((product) => (
                 <div key={product.id} className="bg-white rounded-xl border border-slate-200/60 shadow-sm overflow-hidden">
@@ -178,7 +178,7 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         {/* Contact */}
         {(business.phone || business.address || business.businessHours) && (
           <div className="mb-8">
-            <h2 className="text-[0.6875rem] font-semibold text-slate-400 mb-3 uppercase tracking-[0.08em]">Contact</h2>
+            <h2 className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-widest">Contact</h2>
             <div className="bg-white rounded-xl border border-slate-200/60 shadow-sm p-4 space-y-2.5">
               {business.phone && (
                 <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-sm text-slate-600 hover:text-slate-900 transition-colors">

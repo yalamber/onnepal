@@ -88,8 +88,8 @@ function SignupForm() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-[1.5rem] font-bold text-slate-950 tracking-[-0.025em] leading-[1.2]">Create your page</h1>
-          <p className="text-slate-500 text-[0.875rem] mt-2 leading-[1.6]">Get started in under a minute</p>
+          <h1 className="text-xl font-bold text-slate-950 tracking-tight leading-[1.2]">Create your page</h1>
+          <p className="text-slate-500 text-sm mt-2 leading-[1.6]">Get started in under a minute</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

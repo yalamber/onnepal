@@ -64,12 +64,12 @@ export default function DashboardPage() {
   const siteUrl = `https://${user.subdomain}.onnepal.com`;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 animate-fade-in">
         <div>
-          <h1 className="text-[1.5rem] font-bold text-slate-900 tracking-[-0.025em] leading-[1.2]">Dashboard</h1>
-          <p className="text-slate-400 text-[0.8125rem] mt-1">{user.businessName}</p>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-[1.2]">Dashboard</h1>
+          <p className="text-slate-400 text-sm mt-1">{user.businessName}</p>
         </div>
         <a href={siteUrl} target="_blank" rel="noopener noreferrer">
           <Button variant="outline" size="sm">
@@ -80,7 +80,7 @@ export default function DashboardPage() {
 
       {/* Site URL */}
       <div className="mb-8 p-5 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg animate-fade-in-up delay-100">
-        <p className="text-slate-400 text-[0.6875rem] font-medium uppercase tracking-[0.08em] mb-2">Your page is live</p>
+        <p className="text-slate-400 text-xs font-medium uppercase tracking-[0.08em] mb-2">Your page is live</p>
         <a
           href={siteUrl}
           target="_blank"
@@ -109,8 +109,8 @@ export default function DashboardPage() {
                 <item.icon className="h-5 w-5" />
               </div>
               <div className="flex-1">
-                <p className="text-[0.875rem] font-semibold text-slate-900">{item.label}</p>
-                <p className="text-[0.75rem] text-slate-400">{item.desc}</p>
+                <p className="text-sm font-semibold text-slate-900">{item.label}</p>
+                <p className="text-xs text-slate-400">{item.desc}</p>
               </div>
               {item.count !== null && (
                 <span className="text-lg font-bold text-slate-900">{item.count}</span>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
 
       {/* Tip */}
       <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 animate-fade-in delay-500">
-        <p className="text-[0.8125rem] text-blue-700 leading-[1.6]">
+        <p className="text-sm text-blue-700 leading-[1.6]">
           Share <span className="font-mono font-semibold">{user.subdomain}.onnepal.com</span> on social media, WhatsApp, and business cards to drive visitors to your page.
         </p>
       </div>

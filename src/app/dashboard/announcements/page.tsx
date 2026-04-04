@@ -76,7 +76,7 @@ export default function AnnouncementsPage() {
           <Link href="/dashboard">
             <Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button>
           </Link>
-          <h1 className="text-[1.375rem] font-bold tracking-[-0.025em] text-slate-950 leading-[1.2]">Announcements</h1>
+          <h1 className="text-xl font-bold tracking-tight text-slate-950 leading-[1.2]">Announcements</h1>
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
