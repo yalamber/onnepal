@@ -1,51 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
-  ExternalLink, LinkIcon, Megaphone, ShoppingBag, Settings,
-  Eye, Loader2, MousePointer
+  ExternalLink, LinkIcon, Megaphone, ShoppingBag, ArrowRight, Loader2,
 } from 'lucide-react';
 
-interface UserData {
-  id: string;
-  email: string;
-  subdomain: string | null;
-  businessName: string | null;
-  isPublished: boolean;
-  onboardingStep: number;
-}
-
 export default function DashboardPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ links: 0, products: 0, announcements: 0 });
+  const [subdomain, setSubdomain] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('/api/auth/me');
-        if (!res.ok) {
-          router.push('/login');
-          return;
-        }
-        const data: { user: UserData } = await res.json();
-        if (data.user.onboardingStep < 4) {
-          router.push('/onboarding');
-          return;
-        }
-        setUser(data.user);
-
-        // Fetch counts
-        const [linksRes, productsRes, announcementsRes] = await Promise.all([
+        const [meRes, linksRes, productsRes, announcementsRes] = await Promise.all([
+          fetch('/api/auth/me'),
           fetch('/api/business/links'),
           fetch('/api/business/products'),
           fetch('/api/business/announcements'),
         ]);
+        if (meRes.ok) {
+          const meData = await meRes.json() as { user: { subdomain: string } };
+          setSubdomain(meData.user.subdomain);
+        }
         const linksData = await linksRes.json() as { links?: unknown[] };
         const productsData = await productsRes.json() as { products?: unknown[] };
         const announcementsData = await announcementsRes.json() as { announcements?: unknown[] };
@@ -54,103 +32,70 @@ export default function DashboardPage() {
           products: productsData.products?.length || 0,
           announcements: announcementsData.announcements?.length || 0,
         });
-      } catch {
-        router.push('/login');
-      } finally {
-        setLoading(false);
-      }
+      } catch {}
+      finally { setLoading(false); }
     };
     fetchData();
-  }, [router]);
+  }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
       </div>
     );
   }
 
-  if (!user) return null;
-
-  const siteUrl = `https://${user.subdomain}.onnepal.com`;
+  const siteUrl = `https://${subdomain}.onnepal.com`;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">{user.businessName}</p>
-        </div>
-        <a
-          href={siteUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Button variant="outline" size="sm" className="gap-2">
-            <Eye className="h-4 w-4" />
-            View site
-            <ExternalLink className="h-3 w-3" />
-          </Button>
-        </a>
-      </div>
-
+    <div className="space-y-6">
       {/* Site URL card */}
-      <Card className="mb-8 bg-gray-950 text-white border-0">
-        <CardContent className="py-6">
-          <p className="text-gray-400 text-sm mb-1">Your page is live at</p>
+      {subdomain && (
+        <div className="p-5 rounded-2xl bg-gray-950 shadow-lg">
+          <p className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-2">Your page is live</p>
           <a
             href={siteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xl font-mono font-bold hover:underline flex items-center gap-2"
+            className="text-lg font-mono font-bold text-white hover:text-indigo-300 flex items-center gap-2 transition-colors"
           >
-            {user.subdomain}.onnepal.com
-            <ExternalLink className="h-4 w-4" />
+            {subdomain}.onnepal.com
+            <ExternalLink className="h-4 w-4 text-gray-500" />
           </a>
-        </CardContent>
-      </Card>
+        </div>
+      )}
 
       {/* Quick actions */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid sm:grid-cols-3 gap-3">
         {[
-          { href: '/dashboard/links', icon: LinkIcon, label: 'Links', count: stats.links },
-          { href: '/dashboard/products', icon: ShoppingBag, label: 'Products', count: stats.products },
-          { href: '/dashboard/announcements', icon: Megaphone, label: 'Announcements', count: stats.announcements },
-          { href: '/dashboard/settings', icon: Settings, label: 'Settings', count: null },
+          { href: '/dashboard/links', icon: LinkIcon, label: 'Links', count: stats.links, color: 'bg-indigo-50 text-indigo-600' },
+          { href: '/dashboard/products', icon: ShoppingBag, label: 'Products', count: stats.products, color: 'bg-emerald-50 text-emerald-600' },
+          { href: '/dashboard/announcements', icon: Megaphone, label: 'News', count: stats.announcements, color: 'bg-amber-50 text-amber-600' },
         ].map((item) => (
           <Link key={item.href} href={item.href}>
-            <Card className="hover:border-gray-300 transition-colors cursor-pointer h-full">
-              <CardContent className="py-6 flex flex-col items-center text-center">
-                <item.icon className="h-8 w-8 text-indigo-500 mb-3" />
-                <p className="font-semibold text-gray-900">{item.label}</p>
-                {item.count !== null && (
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{item.count}</p>
-                )}
-              </CardContent>
-            </Card>
+            <div className="group flex items-center gap-3 p-4 rounded-xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer">
+              <div className={`w-9 h-9 rounded-lg ${item.color} flex items-center justify-center`}>
+                <item.icon className="h-4 w-4" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-gray-900">{item.label}</p>
+                <p className="text-xs text-gray-400">{item.count} {item.count === 1 ? 'item' : 'items'}</p>
+              </div>
+              <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-gray-500 transition-colors" />
+            </div>
           </Link>
         ))}
       </div>
 
-      {/* Quick tips */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <MousePointer className="h-5 w-5 text-indigo-500" />
-            Quick tips
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li>Add your social links to help customers find you on every platform</li>
-            <li>Upload products to showcase what you offer</li>
-            <li>Post announcements to keep customers updated about offers and events</li>
-            <li>Share your link ({user.subdomain}.onnepal.com) on social media and business cards</li>
-          </ul>
-        </CardContent>
-      </Card>
+      {/* Tip */}
+      {subdomain && (
+        <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
+          <p className="text-sm text-indigo-700 leading-relaxed">
+            Share <span className="font-mono font-semibold">{subdomain}.onnepal.com</span> on social media, WhatsApp, and business cards.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
