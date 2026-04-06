@@ -28,6 +28,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const isSitePage = pathname.startsWith('/site/');
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
     if (isSitePage) return;
@@ -56,17 +57,36 @@ export function Navbar() {
     router.push('/');
   };
 
+  // Minimal navbar on homepage — just logo + login
+  if (isHomePage && !user) {
+    return (
+      <nav className="absolute top-0 left-0 right-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-14">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+                <span className="text-white text-[0.6rem] font-bold tracking-tight">ON</span>
+              </div>
+              <span className="text-sm font-bold text-slate-900 tracking-tight">OnNepal</span>
+            </Link>
+            <Link href="/login" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">
+              Log in
+            </Link>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/60">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">ON</span>
+              <span className="text-white text-[0.6rem] font-bold tracking-tight">ON</span>
             </div>
-            <span className="text-[0.9375rem] font-bold text-slate-900 tracking-tight">
-              OnNepal
-            </span>
+            <span className="text-sm font-bold text-slate-900 tracking-tight">OnNepal</span>
           </Link>
 
           {/* Desktop */}
