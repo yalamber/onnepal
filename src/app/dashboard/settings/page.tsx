@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Loader2, Save, Check } from 'lucide-react';
+import { THEME_PALETTES, findPalette, type ThemePalette } from '@/lib/themes';
 
 interface Profile {
   subdomain: string;
@@ -36,6 +37,8 @@ export default function SettingsPage() {
         if (!res.ok) { router.push('/login'); return; }
         const data = await res.json() as { user: Profile };
         setProfile(data.user);
+        const palette = findPalette(data.user.primaryColor || '', data.user.accentColor || '');
+        setSelectedPalette(palette || THEME_PALETTES[0]);
       } catch { router.push('/login'); }
       finally { setLoading(false); }
     };
@@ -143,43 +146,63 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Brand Colors */}
+      {/* Theme */}
       <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
-        <p className="text-sm font-semibold text-gray-900">Brand colors</p>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label className="text-xs">Primary Color</Label>
-            <div className="flex items-center gap-2 mt-1">
-              <input
-                type="color"
-                value={profile.primaryColor || '#5B5BD6'}
-                onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })}
-                className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
-              />
-              <Input
-                value={profile.primaryColor || '#5B5BD6'}
-                onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })}
-                className="flex-1 font-mono text-sm"
-              />
-            </div>
-          </div>
-          <div>
-            <Label className="text-xs">Accent Color</Label>
-            <div className="flex items-center gap-2 mt-1">
-              <input
-                type="color"
-                value={profile.accentColor || '#3E3EA6'}
-                onChange={(e) => setProfile({ ...profile, accentColor: e.target.value })}
-                className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
-              />
-              <Input
-                value={profile.accentColor || '#3E3EA6'}
-                onChange={(e) => setProfile({ ...profile, accentColor: e.target.value })}
-                className="flex-1 font-mono text-sm"
-              />
-            </div>
-          </div>
+        <p className="text-sm font-semibold text-gray-900">Theme</p>
+        <div className="grid grid-cols-5 gap-2.5">
+          {THEME_PALETTES.map((palette) => {
+            const isSelected = selectedPalette?.id === palette.id;
+            return (
+              <button
+                key={palette.id}
+                onClick={() => selectPalette(palette)}
+                className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 transition-all duration-200 ${
+                  isSelected
+                    ? 'border-gray-900 bg-gray-50'
+                    : 'border-transparent hover:border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <div className="flex gap-0.5 w-full">
+                  {palette.preview.map((color, i) => (
+                    <div
+                      key={i}
+                      className={`h-7 flex-1 ${i === 0 ? 'rounded-l-lg' : ''} ${i === 2 ? 'rounded-r-lg' : ''}`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+                <span className={`text-[0.625rem] font-medium ${isSelected ? 'text-gray-900' : 'text-gray-400'}`}>{palette.name}</span>
+                {isSelected && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gray-900 flex items-center justify-center">
+                    <Check className="h-2.5 w-2.5 text-white" />
+                  </div>
+                )}
+              </button>
+            );
+          })}
         </div>
+
+        {/* Mini preview */}
+        {selectedPalette && (
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${selectedPalette.primary}, ${selectedPalette.accent})` }}
+            >
+              {profile.businessName?.charAt(0) || 'B'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-900 truncate">{profile.businessName}</p>
+              <p className="text-[0.625rem] text-gray-500">{selectedPalette.name} theme</p>
+            </div>
+            <div
+              className="px-3 py-1 rounded-full text-white text-[0.625rem] font-medium"
+              style={{ backgroundColor: selectedPalette.primary }}
+            >
+              CTA
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Save */}

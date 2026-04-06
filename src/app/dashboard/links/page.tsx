@@ -129,10 +129,10 @@ export default function LinksPage() {
             >
               <GripVertical className="h-4 w-4 text-gray-300 cursor-grab flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-slate-900">
+                <p className="font-medium text-sm text-gray-900">
                   {link.label || PLATFORMS.find((p) => p.value === link.platform)?.label || link.platform}
                 </p>
-                <p className="text-xs text-slate-400 truncate">{link.url}</p>
+                <p className="text-xs text-gray-400 truncate">{link.url}</p>
               </div>
               <Button
                 variant="ghost"
