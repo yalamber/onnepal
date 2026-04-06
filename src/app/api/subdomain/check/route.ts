@@ -5,9 +5,9 @@ import { isSubdomainTaken } from '@/lib/db/queries/users';
 import { checkSubdomainSchema } from '@/lib/validators/subdomain';
 
 export async function GET(request: NextRequest) {
-  try {
-    const name = request.nextUrl.searchParams.get('name');
+  const name = request.nextUrl.searchParams.get('name');
 
+  try {
     const validation = checkSubdomainSchema.safeParse({ name });
     if (!validation.success) {
       return NextResponse.json(
