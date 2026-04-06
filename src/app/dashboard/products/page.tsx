@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Plus, Trash2, Loader2, Package } from 'lucide-react';
+import { Plus, Trash2, Loader2, Package, X } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -27,9 +25,7 @@ export default function ProductsPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', description: '', price: '', category: '' });
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  useEffect(() => { fetchProducts(); }, []);
 
   const fetchProducts = async () => {
     try {
@@ -64,78 +60,76 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button>
-          </Link>
-          <h1 className="text-xl font-bold tracking-tight text-slate-950 leading-[1.2]">Products</h1>
+    <div className="space-y-5 animate-fade-in">
+      {/* Add button / form */}
+      {showForm ? (
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-slate-900">New product</p>
+            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div>
+            <Label className="text-xs">Name</Label>
+            <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Product name" className="mt-1" />
+          </div>
+          <div>
+            <Label className="text-xs">Description <span className="text-slate-400 font-normal">optional</span></Label>
+            <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description" rows={2} className="mt-1" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Price <span className="text-slate-400 font-normal">optional</span></Label>
+              <Input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Rs. 500" className="mt-1" />
+            </div>
+            <div>
+              <Label className="text-xs">Category <span className="text-slate-400 font-normal">optional</span></Label>
+              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Food, Clothing..." className="mt-1" />
+            </div>
+          </div>
+          <div className="flex gap-2 pt-1">
+            <Button variant="outline" size="sm" onClick={() => setShowForm(false)}>Cancel</Button>
+            <Button onClick={addProduct} disabled={adding || !form.name.trim()} size="sm">
+              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Add Product'}
+            </Button>
+          </div>
         </div>
-        <Button
-          onClick={() => setShowForm(!showForm)}
-          size="sm"
-          className="bg-slate-900 text-white hover:bg-slate-800"
+      ) : (
+        <button
+          onClick={() => setShowForm(true)}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-slate-200 text-sm font-medium text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-colors"
         >
-          <Plus className="h-4 w-4 mr-1" /> Add Product
-        </Button>
-      </div>
-
-      {showForm && (
-        <Card className="mb-6">
-          <CardHeader><CardTitle className="text-base">New Product</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <Label>Name</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Product name" />
-            </div>
-            <div>
-              <Label>Description (optional)</Label>
-              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description" rows={2} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Price (optional)</Label>
-                <Input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Rs. 500" />
-              </div>
-              <div>
-                <Label>Category (optional)</Label>
-                <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Food, Clothing..." />
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={addProduct} disabled={adding || !form.name.trim()} className="bg-slate-900 text-white hover:bg-slate-800">
-                {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Add Product'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          <Plus className="h-4 w-4" /> Add product
+        </button>
       )}
 
-      <div className="space-y-2">
-        {products.length === 0 ? (
+      {/* List */}
+      <div className="space-y-1.5">
+        {products.length === 0 && !showForm ? (
           <div className="text-center py-12">
-            <Package className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-400">No products yet. Add your first product.</p>
+            <Package className="h-10 w-10 text-slate-300 mx-auto mb-2" />
+            <p className="text-sm text-slate-400">No products yet</p>
           </div>
         ) : (
           products.map((product) => (
-            <div key={product.id} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-slate-200">
+            <div key={product.id} className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-slate-200/60">
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-slate-900">{product.name}</p>
-                {product.description && <p className="text-xs text-slate-400 truncate">{product.description}</p>}
-                {product.price && <p className="text-sm font-semibold text-slate-950 mt-1">{product.price}</p>}
+                <div className="flex items-baseline gap-2">
+                  <p className="font-medium text-sm text-slate-900">{product.name}</p>
+                  {product.price && <span className="text-xs font-semibold text-slate-500">{product.price}</span>}
+                </div>
+                {product.description && <p className="text-xs text-slate-400 truncate mt-0.5">{product.description}</p>}
               </div>
-              <Button variant="ghost" size="icon" onClick={() => deleteProduct(product.id)} className="text-slate-400 hover:text-red-500">
-                <Trash2 className="h-4 w-4" />
+              <Button variant="ghost" size="icon" onClick={() => deleteProduct(product.id)} className="text-slate-400 hover:text-red-500 h-8 w-8">
+                <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
           ))

@@ -111,5 +111,9 @@ body {
 .delay-300 { animation-delay: 300ms; }
 .delay-400 { animation-delay: 400ms; }
 
+/* Hide scrollbar for tab bars */
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
 /* Smooth scroll */
 html { scroll-behavior: smooth; }

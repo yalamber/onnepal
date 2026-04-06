@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Plus, Trash2, Loader2, GripVertical } from 'lucide-react';
+import { Plus, Trash2, Loader2, GripVertical } from 'lucide-react';
 
 interface SocialLink {
   id: string;
@@ -37,22 +35,15 @@ export default function LinksPage() {
   const [adding, setAdding] = useState(false);
   const [newLink, setNewLink] = useState({ platform: 'facebook', url: '', label: '' });
 
-  useEffect(() => {
-    fetchLinks();
-  }, []);
+  useEffect(() => { fetchLinks(); }, []);
 
   const fetchLinks = async () => {
     try {
       const res = await fetch('/api/business/links');
-      if (res.status === 401) {
-        router.push('/login');
-        return;
-      }
+      if (res.status === 401) { router.push('/login'); return; }
       const data: { links?: SocialLink[] } = await res.json();
       setLinks(data.links || []);
-    } catch {} finally {
-      setLoading(false);
-    }
+    } catch {} finally { setLoading(false); }
   };
 
   const addLink = async () => {
@@ -68,9 +59,7 @@ export default function LinksPage() {
         setNewLink({ platform: 'facebook', url: '', label: '' });
         await fetchLinks();
       }
-    } finally {
-      setAdding(false);
-    }
+    } finally { setAdding(false); }
   };
 
   const deleteLink = async (id: string) => {
@@ -80,75 +69,64 @@ export default function LinksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center gap-3 mb-6">
-        <Link href="/dashboard">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+    <div className="space-y-5 animate-fade-in">
+      {/* Add form */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+        <p className="text-sm font-medium text-slate-900">Add a link</p>
+        <div className="flex gap-2">
+          <select
+            value={newLink.platform}
+            onChange={(e) => setNewLink({ ...newLink, platform: e.target.value })}
+            className="h-10 px-3 border border-slate-200 rounded-xl text-sm bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+          >
+            {PLATFORMS.map((p) => (
+              <option key={p.value} value={p.value}>{p.label}</option>
+            ))}
+          </select>
+          <Input
+            value={newLink.url}
+            onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
+            placeholder="https://..."
+            className="flex-1"
+            onKeyDown={(e) => { if (e.key === 'Enter') addLink(); }}
+          />
+        </div>
+        <div className="flex gap-2">
+          <Input
+            value={newLink.label}
+            onChange={(e) => setNewLink({ ...newLink, label: e.target.value })}
+            placeholder="Custom label (optional)"
+            className="flex-1"
+            onKeyDown={(e) => { if (e.key === 'Enter') addLink(); }}
+          />
+          <Button
+            onClick={addLink}
+            disabled={adding || !newLink.url.trim()}
+            size="sm"
+          >
+            {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4 mr-1" /> Add</>}
           </Button>
-        </Link>
-        <h1 className="text-xl font-bold tracking-tight text-slate-950 leading-[1.2]">Social Links</h1>
+        </div>
       </div>
 
-      {/* Add new link */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-base">Add a link</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex gap-2">
-            <select
-              value={newLink.platform}
-              onChange={(e) => setNewLink({ ...newLink, platform: e.target.value })}
-              className="h-10 px-3 border border-slate-200 rounded-lg text-sm bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-            >
-              {PLATFORMS.map((p) => (
-                <option key={p.value} value={p.value}>{p.label}</option>
-              ))}
-            </select>
-            <Input
-              value={newLink.url}
-              onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
-              placeholder="https://..."
-              className="flex-1"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Input
-              value={newLink.label}
-              onChange={(e) => setNewLink({ ...newLink, label: e.target.value })}
-              placeholder="Custom label (optional)"
-              className="flex-1"
-            />
-            <Button
-              onClick={addLink}
-              disabled={adding || !newLink.url.trim()}
-              className="bg-slate-900 text-white hover:bg-slate-800"
-            >
-              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4 mr-1" /> Add</>}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Existing links */}
-      <div className="space-y-2">
+      {/* List */}
+      <div className="space-y-1.5">
         {links.length === 0 ? (
-          <p className="text-center text-slate-400 py-8">No links yet. Add your first link above.</p>
+          <p className="text-center text-slate-400 text-sm py-10">No links yet. Add your first link above.</p>
         ) : (
           links.map((link) => (
             <div
               key={link.id}
-              className="flex items-center gap-3 p-4 bg-white rounded-lg border border-slate-200"
+              className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-slate-200/60"
             >
-              <GripVertical className="h-5 w-5 text-slate-300 cursor-grab" />
+              <GripVertical className="h-4 w-4 text-slate-300 cursor-grab flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-slate-900">
                   {link.label || PLATFORMS.find((p) => p.value === link.platform)?.label || link.platform}
@@ -159,9 +137,9 @@ export default function LinksPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => deleteLink(link.id)}
-                className="text-slate-400 hover:text-red-500"
+                className="text-slate-400 hover:text-red-500 h-8 w-8"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
           ))

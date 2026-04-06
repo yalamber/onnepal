@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Loader2, Save, ExternalLink, Check, Palette } from 'lucide-react';
+import { Loader2, Save, Check } from 'lucide-react';
 import { THEME_PALETTES, findPalette, type ThemePalette } from '@/lib/themes';
 
 interface Profile {
@@ -41,11 +39,8 @@ export default function SettingsPage() {
         setProfile(data.user);
         const palette = findPalette(data.user.primaryColor || '', data.user.accentColor || '');
         setSelectedPalette(palette || THEME_PALETTES[0]);
-      } catch {
-        router.push('/login');
-      } finally {
-        setLoading(false);
-      }
+      } catch { router.push('/login'); }
+      finally { setLoading(false); }
     };
     fetchProfile();
   }, [router]);
@@ -77,198 +72,147 @@ export default function SettingsPage() {
         }),
       });
       if (res.ok) setSaved(true);
-    } finally {
-      setSaving(false);
-    }
+    } finally { setSaving(false); }
   };
 
   if (loading || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center gap-3 mb-6">
-        <Link href="/dashboard">
-          <Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button>
-        </Link>
-        <h1 className="text-xl font-bold tracking-tight text-slate-900 leading-[1.2]">Settings</h1>
+    <div className="space-y-5 animate-fade-in">
+      {/* Business Info */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-4">
+        <p className="text-sm font-medium text-slate-900">Business information</p>
+        <div>
+          <Label className="text-xs">Business Name</Label>
+          <Input
+            value={profile.businessName || ''}
+            onChange={(e) => setProfile({ ...profile, businessName: e.target.value })}
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label className="text-xs">Category</Label>
+          <Input
+            value={profile.businessCategory || ''}
+            onChange={(e) => setProfile({ ...profile, businessCategory: e.target.value })}
+            placeholder="Restaurant, Retail, etc."
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label className="text-xs">Description</Label>
+          <Textarea
+            value={profile.description || ''}
+            onChange={(e) => setProfile({ ...profile, description: e.target.value })}
+            placeholder="What does your business do?"
+            rows={3}
+            className="mt-1"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label className="text-xs">Phone</Label>
+            <Input
+              value={profile.phone || ''}
+              onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+              placeholder="+977-..."
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label className="text-xs">Business Hours</Label>
+            <Input
+              value={profile.businessHours || ''}
+              onChange={(e) => setProfile({ ...profile, businessHours: e.target.value })}
+              placeholder="Sun-Fri: 9 AM - 6 PM"
+              className="mt-1"
+            />
+          </div>
+        </div>
+        <div>
+          <Label className="text-xs">Address</Label>
+          <Input
+            value={profile.address || ''}
+            onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+            placeholder="Kathmandu, Nepal"
+            className="mt-1"
+          />
+        </div>
       </div>
 
-      {/* Site URL */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-base">Your page</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <a
-            href={`https://${profile.subdomain}.onnepal.com`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 text-sm"
-          >
-            {profile.subdomain}.onnepal.com <ExternalLink className="h-3 w-3" />
-          </a>
-        </CardContent>
-      </Card>
-
-      {/* Business Info */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-base">Business Information</CardTitle>
-          <CardDescription>This appears on your public page</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Business Name</Label>
-            <Input
-              value={profile.businessName || ''}
-              onChange={(e) => setProfile({ ...profile, businessName: e.target.value })}
-              className="mt-1.5"
-            />
-          </div>
-          <div>
-            <Label>Category</Label>
-            <Input
-              value={profile.businessCategory || ''}
-              onChange={(e) => setProfile({ ...profile, businessCategory: e.target.value })}
-              placeholder="Restaurant, Retail, etc."
-              className="mt-1.5"
-            />
-          </div>
-          <div>
-            <Label>Description</Label>
-            <Textarea
-              value={profile.description || ''}
-              onChange={(e) => setProfile({ ...profile, description: e.target.value })}
-              placeholder="What does your business do?"
-              rows={3}
-              className="mt-1.5"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label>Phone</Label>
-              <Input
-                value={profile.phone || ''}
-                onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                placeholder="+977-..."
-                className="mt-1.5"
-              />
-            </div>
-            <div>
-              <Label>Business Hours</Label>
-              <Input
-                value={profile.businessHours || ''}
-                onChange={(e) => setProfile({ ...profile, businessHours: e.target.value })}
-                placeholder="Sun-Fri: 9 AM - 6 PM"
-                className="mt-1.5"
-              />
-            </div>
-          </div>
-          <div>
-            <Label>Address</Label>
-            <Input
-              value={profile.address || ''}
-              onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-              placeholder="Kathmandu, Nepal"
-              className="mt-1.5"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Theme Palette */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Palette className="h-4 w-4 text-slate-400" />
-            Theme
-          </CardTitle>
-          <CardDescription>Choose a color palette for your page</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-5 gap-3">
-            {THEME_PALETTES.map((palette) => {
-              const isSelected = selectedPalette?.id === palette.id;
-              return (
-                <button
-                  key={palette.id}
-                  onClick={() => selectPalette(palette)}
-                  className={`group relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 ${
-                    isSelected
-                      ? 'border-slate-900 bg-slate-50'
-                      : 'border-transparent hover:border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
-                  {/* Color swatch */}
-                  <div className="flex gap-0.5 w-full">
-                    {palette.preview.map((color, i) => (
-                      <div
-                        key={i}
-                        className={`h-8 flex-1 ${i === 0 ? 'rounded-l-lg' : ''} ${i === 2 ? 'rounded-r-lg' : ''}`}
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
+      {/* Theme */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-4">
+        <p className="text-sm font-medium text-slate-900">Theme</p>
+        <div className="grid grid-cols-5 gap-2.5">
+          {THEME_PALETTES.map((palette) => {
+            const isSelected = selectedPalette?.id === palette.id;
+            return (
+              <button
+                key={palette.id}
+                onClick={() => selectPalette(palette)}
+                className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 transition-all duration-200 ${
+                  isSelected
+                    ? 'border-slate-900 bg-slate-50'
+                    : 'border-transparent hover:border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex gap-0.5 w-full">
+                  {palette.preview.map((color, i) => (
+                    <div
+                      key={i}
+                      className={`h-7 flex-1 ${i === 0 ? 'rounded-l-lg' : ''} ${i === 2 ? 'rounded-r-lg' : ''}`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+                <span className={`text-[0.625rem] font-medium ${isSelected ? 'text-slate-900' : 'text-slate-400'}`}>{palette.name}</span>
+                {isSelected && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-slate-900 flex items-center justify-center">
+                    <Check className="h-2.5 w-2.5 text-white" />
                   </div>
-                  <span className="text-[0.6875rem] font-medium text-slate-600">{palette.name}</span>
-                  {isSelected && (
-                    <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-slate-900 flex items-center justify-center">
-                      <Check className="h-3 w-3 text-white" />
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
-          {/* Preview */}
-          {selectedPalette && (
-            <div className="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <p className="text-[0.6875rem] font-medium text-slate-400 uppercase tracking-wider mb-3">Preview</p>
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                  style={{ background: `linear-gradient(135deg, ${selectedPalette.primary}, ${selectedPalette.accent})` }}
-                >
-                  {profile.businessName?.charAt(0) || 'B'}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{profile.businessName}</p>
-                  <p className="text-xs text-slate-500">{profile.businessCategory || 'Your category'}</p>
-                </div>
-              </div>
-              <div className="flex gap-2 mt-3">
-                <div
-                  className="px-4 py-1.5 rounded-full text-white text-xs font-medium"
-                  style={{ backgroundColor: selectedPalette.primary }}
-                >
-                  Order Now
-                </div>
-                <div
-                  className="px-4 py-1.5 rounded-full text-xs font-medium border"
-                  style={{ borderColor: selectedPalette.primary, color: selectedPalette.primary }}
-                >
-                  Contact
-                </div>
-              </div>
+        {/* Mini preview */}
+        {selectedPalette && (
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${selectedPalette.primary}, ${selectedPalette.accent})` }}
+            >
+              {profile.businessName?.charAt(0) || 'B'}
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-slate-900 truncate">{profile.businessName}</p>
+              <p className="text-[0.625rem] text-slate-500">{selectedPalette.name} theme</p>
+            </div>
+            <div
+              className="px-3 py-1 rounded-full text-white text-[0.625rem] font-medium"
+              style={{ backgroundColor: selectedPalette.primary }}
+            >
+              CTA
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Save */}
-      <div className="flex items-center gap-3">
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Save Changes</>}
+      <div className="flex items-center gap-3 sticky bottom-4 bg-white/90 backdrop-blur-sm p-3 -mx-1 rounded-xl border border-slate-200/60 shadow-sm">
+        <Button onClick={handleSave} disabled={saving} size="sm">
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-3.5 w-3.5" /> Save changes</>}
         </Button>
         {saved && (
-          <span className="text-sm text-emerald-600 flex items-center gap-1">
-            <Check className="h-3.5 w-3.5" /> Saved
+          <span className="text-xs text-emerald-600 flex items-center gap-1">
+            <Check className="h-3 w-3" /> Saved
           </span>
         )}
       </div>
