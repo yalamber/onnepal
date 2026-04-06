@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Loader2, Save, Check } from 'lucide-react';
-import { THEME_PALETTES, findPalette, type ThemePalette } from '@/lib/themes';
 
 interface Profile {
   subdomain: string;
@@ -37,8 +36,6 @@ export default function SettingsPage() {
         if (!res.ok) { router.push('/login'); return; }
         const data = await res.json() as { user: Profile };
         setProfile(data.user);
-        const palette = findPalette(data.user.primaryColor || '', data.user.accentColor || '');
-        setSelectedPalette(palette || THEME_PALETTES[0]);
       } catch { router.push('/login'); }
       finally { setLoading(false); }
     };
@@ -78,16 +75,16 @@ export default function SettingsPage() {
   if (loading || !profile) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-5">
       {/* Business Info */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-4">
-        <p className="text-sm font-medium text-slate-900">Business information</p>
+      <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+        <p className="text-sm font-semibold text-gray-900">Business information</p>
         <div>
           <Label className="text-xs">Business Name</Label>
           <Input
@@ -146,72 +143,52 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Theme */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-4">
-        <p className="text-sm font-medium text-slate-900">Theme</p>
-        <div className="grid grid-cols-5 gap-2.5">
-          {THEME_PALETTES.map((palette) => {
-            const isSelected = selectedPalette?.id === palette.id;
-            return (
-              <button
-                key={palette.id}
-                onClick={() => selectPalette(palette)}
-                className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 transition-all duration-200 ${
-                  isSelected
-                    ? 'border-slate-900 bg-slate-50'
-                    : 'border-transparent hover:border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex gap-0.5 w-full">
-                  {palette.preview.map((color, i) => (
-                    <div
-                      key={i}
-                      className={`h-7 flex-1 ${i === 0 ? 'rounded-l-lg' : ''} ${i === 2 ? 'rounded-r-lg' : ''}`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-                <span className={`text-[0.625rem] font-medium ${isSelected ? 'text-slate-900' : 'text-slate-400'}`}>{palette.name}</span>
-                {isSelected && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-slate-900 flex items-center justify-center">
-                    <Check className="h-2.5 w-2.5 text-white" />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Mini preview */}
-        {selectedPalette && (
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-              style={{ background: `linear-gradient(135deg, ${selectedPalette.primary}, ${selectedPalette.accent})` }}
-            >
-              {profile.businessName?.charAt(0) || 'B'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-slate-900 truncate">{profile.businessName}</p>
-              <p className="text-[0.625rem] text-slate-500">{selectedPalette.name} theme</p>
-            </div>
-            <div
-              className="px-3 py-1 rounded-full text-white text-[0.625rem] font-medium"
-              style={{ backgroundColor: selectedPalette.primary }}
-            >
-              CTA
+      {/* Brand Colors */}
+      <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+        <p className="text-sm font-semibold text-gray-900">Brand colors</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label className="text-xs">Primary Color</Label>
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="color"
+                value={profile.primaryColor || '#5B5BD6'}
+                onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })}
+                className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
+              />
+              <Input
+                value={profile.primaryColor || '#5B5BD6'}
+                onChange={(e) => setProfile({ ...profile, primaryColor: e.target.value })}
+                className="flex-1 font-mono text-sm"
+              />
             </div>
           </div>
-        )}
+          <div>
+            <Label className="text-xs">Accent Color</Label>
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="color"
+                value={profile.accentColor || '#3E3EA6'}
+                onChange={(e) => setProfile({ ...profile, accentColor: e.target.value })}
+                className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
+              />
+              <Input
+                value={profile.accentColor || '#3E3EA6'}
+                onChange={(e) => setProfile({ ...profile, accentColor: e.target.value })}
+                className="flex-1 font-mono text-sm"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Save */}
-      <div className="flex items-center gap-3 sticky bottom-4 bg-white/90 backdrop-blur-sm p-3 -mx-1 rounded-xl border border-slate-200/60 shadow-sm">
-        <Button onClick={handleSave} disabled={saving} size="sm">
+      <div className="flex items-center gap-3 sticky bottom-4 bg-white/90 backdrop-blur-sm p-3 -mx-1 rounded-xl border border-gray-200 shadow-sm">
+        <Button onClick={handleSave} disabled={saving} size="sm" className="bg-indigo-600 text-white hover:bg-indigo-700">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-3.5 w-3.5" /> Save changes</>}
         </Button>
         {saved && (
-          <span className="text-xs text-emerald-600 flex items-center gap-1">
+          <span className="text-xs text-green-600 flex items-center gap-1">
             <Check className="h-3 w-3" /> Saved
           </span>
         )}

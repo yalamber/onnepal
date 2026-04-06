@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -58,26 +58,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const siteUrl = `https://${user.subdomain}.onnepal.com`;
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
+    <div className="min-h-screen bg-gray-50/50">
       {/* Top bar */}
-      <div className="bg-white border-b border-slate-200/60">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           {/* Header row */}
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3 min-w-0">
-              <h1 className="text-sm font-bold text-slate-900 truncate">{user.businessName}</h1>
+              <h1 className="text-sm font-bold text-gray-900 truncate">{user.businessName}</h1>
               <a
                 href={siteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:flex items-center gap-1 text-xs text-slate-400 hover:text-blue-600 font-mono transition-colors"
+                className="hidden sm:flex items-center gap-1 text-xs text-gray-400 hover:text-indigo-600 font-mono transition-colors"
               >
                 {user.subdomain}.onnepal.com
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
             <a href={siteUrl} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
                 <Eye className="h-3.5 w-3.5" /> View site
               </Button>
             </a>
@@ -95,8 +95,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   href={tab.href}
                   className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
                     isActive
-                      ? 'border-slate-900 text-slate-900'
-                      : 'border-transparent text-slate-400 hover:text-slate-600 hover:border-slate-300'
+                      ? 'border-indigo-600 text-indigo-600'
+                      : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-300'
                   }`}
                 >
                   <tab.icon className="h-3.5 w-3.5" />
