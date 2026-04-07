@@ -20,7 +20,7 @@ export function requireAuth(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const session = verifyToken(authCookie, getJwtSecret());
+    const session = await verifyToken(authCookie, getJwtSecret());
 
     if (!session) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });

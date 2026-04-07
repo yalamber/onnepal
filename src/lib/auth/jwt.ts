@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 
 export interface TokenPayload {
   userId: string;
@@ -6,16 +6,26 @@ export interface TokenPayload {
   subdomain: string | null;
 }
 
-export function generateToken(payload: TokenPayload, secret: string): string {
-  return jwt.sign(payload, secret, {
-    expiresIn: '7d',
-  });
+function getSecretKey(secret: string) {
+  return new TextEncoder().encode(secret);
 }
 
-export function verifyToken(token: string, secret: string): TokenPayload | null {
+export async function generateToken(payload: TokenPayload, secret: string): Promise<string> {
+  return new SignJWT(payload as unknown as Record<string, unknown>)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setExpirationTime('7d')
+    .setIssuedAt()
+    .sign(getSecretKey(secret));
+}
+
+export async function verifyToken(token: string, secret: string): Promise<TokenPayload | null> {
   try {
-    const decoded = jwt.verify(token, secret) as TokenPayload;
-    return decoded;
+    const { payload } = await jwtVerify(token, getSecretKey(secret));
+    return {
+      userId: payload.userId as string,
+      email: payload.email as string,
+      subdomain: (payload.subdomain as string) || null,
+    };
   } catch {
     return null;
   }
