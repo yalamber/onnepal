@@ -32,7 +32,8 @@
       "mcp__f5f24856-59e7-4c2c-bc7c-1b1b927b7aff__accounts_list",
       "mcp__f5f24856-59e7-4c2c-bc7c-1b1b927b7aff__workers_get_worker",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "mcp__f5f24856-59e7-4c2c-bc7c-1b1b927b7aff__d1_database_query"
     ],
     "deny": [],
     "ask": []

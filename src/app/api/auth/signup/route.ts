@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       subdomain,
     });
 
-    const token = generateToken(
+    const token = await generateToken(
       {
         userId: user.id,
         email,

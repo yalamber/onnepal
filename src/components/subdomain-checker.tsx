@@ -40,7 +40,13 @@ export function SubdomainChecker() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="flex items-center gap-0 bg-white rounded-xl border border-gray-200 shadow-sm p-1.5 transition-all duration-200 focus-within:border-indigo-300 focus-within:shadow-md focus-within:shadow-indigo-500/5">
+      <div className={`flex items-center gap-0 bg-white rounded-xl border shadow-sm p-1.5 transition-all duration-200 ${
+        status === 'available'
+          ? 'border-emerald-300 shadow-emerald-100'
+          : status === 'taken' || status === 'invalid'
+          ? 'border-red-200 shadow-red-50'
+          : 'border-gray-200 focus-within:border-indigo-300 focus-within:shadow-md focus-within:shadow-indigo-500/5'
+      }`}>
         <div className="flex-1 flex items-center pl-3">
           <input
             type="text"
@@ -57,23 +63,23 @@ export function SubdomainChecker() {
           onClick={handleClaim}
           disabled={status !== 'available'}
           size="sm"
-          className="h-9 px-5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+          className="h-9 px-5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40"
         >
           {status === 'checking' ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <>Claim <ArrowRight className="h-3.5 w-3.5" /></>
+            <>Claim <ArrowRight className="h-3.5 w-3.5 ml-1" /></>
           )}
         </Button>
       </div>
       <div className="h-6 mt-2 px-3">
         {status === 'available' && (
-          <p className="text-sm text-emerald-600 flex items-center justify-center gap-1">
-            <Check className="h-3.5 w-3.5" /> {name}.onnepal.com is available
+          <p className="text-sm text-emerald-600 flex items-center justify-center gap-1.5 font-medium">
+            <Check className="h-3.5 w-3.5" /> {name}.onnepal.com is yours!
           </p>
         )}
         {(status === 'taken' || status === 'invalid') && (
-          <p className="text-sm text-red-500 flex items-center justify-center gap-1">
+          <p className="text-sm text-red-500 flex items-center justify-center gap-1.5">
             <X className="h-3.5 w-3.5" /> {error}
           </p>
         )}

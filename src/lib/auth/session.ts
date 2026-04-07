@@ -12,7 +12,7 @@ export async function getSession(): Promise<TokenPayload | null> {
     return null;
   }
 
-  return verifyToken(token, getJwtSecret());
+  return await verifyToken(token, getJwtSecret());
 }
 
 export async function setAuthCookie(token: string) {
