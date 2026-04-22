@@ -10,28 +10,17 @@ import {
   FolderOpen,
   X,
 } from 'lucide-react';
+import Link from 'next/link';
 import { BusinessCard, BusinessCardSkeleton } from '@/components/business-card';
 import type { BusinessCardData } from '@/components/business-card';
+import { CATEGORIES, getSlugFromName } from '@/lib/categories';
 
 interface CategoryInfo {
   category: string;
   count: number;
 }
 
-const ALL_CATEGORIES = [
-  'Restaurant & Cafe',
-  'Retail Shop',
-  'Beauty & Salon',
-  'Hotel & Travel',
-  'Education',
-  'Health & Fitness',
-  'Technology',
-  'Construction',
-  'Agriculture',
-  'Fashion',
-  'Photography',
-  'Other',
-];
+const ALL_CATEGORIES = CATEGORIES.map((c) => c.name);
 
 const ITEMS_PER_PAGE = 12;
 
@@ -213,9 +202,13 @@ export default function DirectoryPage() {
               All
             </button>
             {categoryList.map(({ category, count }) => (
-              <button
+              <Link
                 key={category}
-                onClick={() => handleCategoryChange(category)}
+                href={`/directory/${getSlugFromName(category)}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleCategoryChange(category);
+                }}
                 className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   activeCategory === category
                     ? 'bg-indigo-600 text-white shadow-sm'
@@ -234,7 +227,7 @@ export default function DirectoryPage() {
                     {count}
                   </span>
                 )}
-              </button>
+              </Link>
             ))}
           </div>
         </div>
