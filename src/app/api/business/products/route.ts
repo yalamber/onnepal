@@ -1,20 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import { getD1Database } from '@/lib/cloudflare';
 import { getProducts, createProduct } from '@/lib/db/queries/products';
-import { getSession } from '@/lib/auth/session';
+import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 import { productSchema } from '@/lib/validators/business';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    const items = await getProducts(db, session.userId);
+    const items = await getProducts(auth.db, auth.businessId);
 
     return NextResponse.json({ products: items });
   } catch (error) {
@@ -25,10 +19,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
     const body = await request.json();
     const validation = productSchema.safeParse(body);
@@ -39,9 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    const result = await createProduct(db, session.userId, validation.data);
+    const result = await createProduct(auth.db, auth.businessId, validation.data);
 
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });
   } catch (error) {

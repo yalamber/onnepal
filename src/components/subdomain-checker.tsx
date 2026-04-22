@@ -35,7 +35,7 @@ export function SubdomainChecker() {
   };
 
   const handleClaim = () => {
-    if (status === 'available') router.push(`/signup?subdomain=${encodeURIComponent(name)}`);
+    if (status === 'available') router.push(`/create-business?subdomain=${encodeURIComponent(name)}`);
   };
 
   return (

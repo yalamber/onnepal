@@ -1,11 +1,16 @@
 import { z } from 'zod';
 import { subdomainSchema } from './subdomain';
 
-export const signupWithSubdomainSchema = z.object({
+export const signupSchema = z.object({
   email: z.string().email('Invalid email'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  businessName: z.string().min(2, 'Business name must be at least 2 characters').max(100),
+  displayName: z.string().min(2, 'Display name must be at least 2 characters').max(100),
+});
+
+export const createBusinessSchema = z.object({
   subdomain: subdomainSchema,
+  businessName: z.string().min(2, 'Business name must be at least 2 characters').max(100),
+  businessCategory: z.string().max(50).optional(),
 });
 
 export const updateProfileSchema = z.object({

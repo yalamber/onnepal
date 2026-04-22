@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
-import { isSubdomainTaken } from '@/lib/db/queries/users';
+import { isSubdomainTaken } from '@/lib/db/queries/businesses';
 import { checkSubdomainSchema } from '@/lib/validators/subdomain';
 
 export async function GET(request: NextRequest) {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const d1 = await getD1Database();
+    const d1 = getD1Database();
     const db = getDb(d1);
 
     const taken = await isSubdomainTaken(db, validation.data.name);

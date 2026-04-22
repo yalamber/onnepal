@@ -1,5 +1,5 @@
-import { eq, and, like, sql, desc } from 'drizzle-orm';
-import { users } from '../schema';
+import { eq, and, sql, desc } from 'drizzle-orm';
+import { businesses } from '../schema';
 import type { Database } from '../index';
 
 interface DirectoryFilters {
@@ -13,16 +13,16 @@ export async function getPublishedBusinesses(
   db: Database,
   { category, search, page, limit }: DirectoryFilters
 ) {
-  const conditions = [eq(users.isPublished, true)];
+  const conditions = [eq(businesses.isPublished, true)];
 
   if (category) {
-    conditions.push(eq(users.businessCategory, category));
+    conditions.push(eq(businesses.businessCategory, category));
   }
 
   if (search) {
     const searchPattern = `%${search}%`;
     conditions.push(
-      sql`(${users.businessName} LIKE ${searchPattern} COLLATE NOCASE OR ${users.description} LIKE ${searchPattern} COLLATE NOCASE)`
+      sql`(${businesses.businessName} LIKE ${searchPattern} COLLATE NOCASE OR ${businesses.description} LIKE ${searchPattern} COLLATE NOCASE)`
     );
   }
 
@@ -30,18 +30,18 @@ export async function getPublishedBusinesses(
 
   const results = await db
     .select({
-      id: users.id,
-      subdomain: users.subdomain,
-      businessName: users.businessName,
-      businessCategory: users.businessCategory,
-      description: users.description,
-      logoUrl: users.logoUrl,
-      primaryColor: users.primaryColor,
-      accentColor: users.accentColor,
+      id: businesses.id,
+      subdomain: businesses.subdomain,
+      businessName: businesses.businessName,
+      businessCategory: businesses.businessCategory,
+      description: businesses.description,
+      logoUrl: businesses.logoUrl,
+      primaryColor: businesses.primaryColor,
+      accentColor: businesses.accentColor,
     })
-    .from(users)
+    .from(businesses)
     .where(and(...conditions))
-    .orderBy(desc(users.createdAt))
+    .orderBy(desc(businesses.createdAt))
     .limit(limit)
     .offset(offset);
 
@@ -52,22 +52,22 @@ export async function getPublishedBusinessCount(
   db: Database,
   { category, search }: { category?: string; search?: string }
 ) {
-  const conditions = [eq(users.isPublished, true)];
+  const conditions = [eq(businesses.isPublished, true)];
 
   if (category) {
-    conditions.push(eq(users.businessCategory, category));
+    conditions.push(eq(businesses.businessCategory, category));
   }
 
   if (search) {
     const searchPattern = `%${search}%`;
     conditions.push(
-      sql`(${users.businessName} LIKE ${searchPattern} COLLATE NOCASE OR ${users.description} LIKE ${searchPattern} COLLATE NOCASE)`
+      sql`(${businesses.businessName} LIKE ${searchPattern} COLLATE NOCASE OR ${businesses.description} LIKE ${searchPattern} COLLATE NOCASE)`
     );
   }
 
   const result = await db
     .select({ count: sql<number>`count(*)` })
-    .from(users)
+    .from(businesses)
     .where(and(...conditions));
 
   return result[0]?.count ?? 0;
@@ -76,12 +76,12 @@ export async function getPublishedBusinessCount(
 export async function getCategories(db: Database) {
   const results = await db
     .select({
-      category: users.businessCategory,
+      category: businesses.businessCategory,
       count: sql<number>`count(*)`,
     })
-    .from(users)
-    .where(eq(users.isPublished, true))
-    .groupBy(users.businessCategory)
+    .from(businesses)
+    .where(eq(businesses.isPublished, true))
+    .groupBy(businesses.businessCategory)
     .orderBy(sql`count(*) DESC`);
 
   // Filter out null categories

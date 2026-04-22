@@ -3,25 +3,25 @@ import { products } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
 
-export async function getProducts(db: Database, userId: string) {
+export async function getProducts(db: Database, businessId: string) {
   return db
     .select()
     .from(products)
-    .where(eq(products.userId, userId))
+    .where(eq(products.businessId, businessId))
     .orderBy(asc(products.displayOrder));
 }
 
-export async function getAvailableProducts(db: Database, userId: string) {
+export async function getAvailableProducts(db: Database, businessId: string) {
   return db
     .select()
     .from(products)
-    .where(eq(products.userId, userId))
+    .where(and(eq(products.businessId, businessId), eq(products.isAvailable, true)))
     .orderBy(asc(products.displayOrder));
 }
 
 export async function createProduct(
   db: Database,
-  userId: string,
+  businessId: string,
   data: {
     name: string;
     description?: string;
@@ -33,11 +33,11 @@ export async function createProduct(
 ) {
   const id = generateId();
   const now = new Date();
-  const existing = await getProducts(db, userId);
+  const existing = await getProducts(db, businessId);
 
   await db.insert(products).values({
     id,
-    userId,
+    businessId,
     name: data.name,
     description: data.description || null,
     price: data.price || null,
@@ -55,7 +55,7 @@ export async function createProduct(
 export async function updateProduct(
   db: Database,
   id: string,
-  userId: string,
+  businessId: string,
   data: Partial<{
     name: string;
     description: string;
@@ -68,20 +68,20 @@ export async function updateProduct(
   await db
     .update(products)
     .set({ ...data, updatedAt: new Date() } as Partial<typeof products.$inferInsert>)
-    .where(and(eq(products.id, id), eq(products.userId, userId)));
+    .where(and(eq(products.id, id), eq(products.businessId, businessId)));
 }
 
-export async function deleteProduct(db: Database, id: string, userId?: string) {
+export async function deleteProduct(db: Database, id: string, businessId?: string) {
   const conditions = [eq(products.id, id)];
-  if (userId) conditions.push(eq(products.userId, userId));
+  if (businessId) conditions.push(eq(products.businessId, businessId));
   await db.delete(products).where(and(...conditions));
 }
 
-export async function reorderProducts(db: Database, userId: string, orderedIds: string[]) {
+export async function reorderProducts(db: Database, businessId: string, orderedIds: string[]) {
   for (let i = 0; i < orderedIds.length; i++) {
     await db
       .update(products)
       .set({ displayOrder: i })
-      .where(and(eq(products.id, orderedIds[i]), eq(products.userId, userId)));
+      .where(and(eq(products.id, orderedIds[i]), eq(products.businessId, businessId)));
   }
 }

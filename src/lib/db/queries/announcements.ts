@@ -3,22 +3,22 @@ import { announcements } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
 
-export async function getAnnouncements(db: Database, userId: string) {
+export async function getAnnouncements(db: Database, businessId: string) {
   return db
     .select()
     .from(announcements)
-    .where(eq(announcements.userId, userId))
+    .where(eq(announcements.businessId, businessId))
     .orderBy(desc(announcements.isPinned), desc(announcements.createdAt));
 }
 
-export async function getActiveAnnouncements(db: Database, userId: string) {
+export async function getActiveAnnouncements(db: Database, businessId: string) {
   const now = new Date();
   return db
     .select()
     .from(announcements)
     .where(
       and(
-        eq(announcements.userId, userId),
+        eq(announcements.businessId, businessId),
         or(isNull(announcements.expiresAt), gt(announcements.expiresAt, now))
       )
     )
@@ -27,7 +27,7 @@ export async function getActiveAnnouncements(db: Database, userId: string) {
 
 export async function createAnnouncement(
   db: Database,
-  userId: string,
+  businessId: string,
   data: {
     title: string;
     content?: string;
@@ -40,7 +40,7 @@ export async function createAnnouncement(
 
   await db.insert(announcements).values({
     id,
-    userId,
+    businessId,
     title: data.title,
     content: data.content || null,
     isPinned: data.isPinned || false,
@@ -73,8 +73,8 @@ export async function updateAnnouncement(
   await db.update(announcements).set(updateData).where(eq(announcements.id, id));
 }
 
-export async function deleteAnnouncement(db: Database, id: string, userId?: string) {
+export async function deleteAnnouncement(db: Database, id: string, businessId?: string) {
   const conditions = [eq(announcements.id, id)];
-  if (userId) conditions.push(eq(announcements.userId, userId));
+  if (businessId) conditions.push(eq(announcements.businessId, businessId));
   await db.delete(announcements).where(and(...conditions));
 }

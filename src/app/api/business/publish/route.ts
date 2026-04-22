@@ -1,25 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import { getD1Database } from '@/lib/cloudflare';
-import { publishSite, updateOnboardingStep, getUserById } from '@/lib/db/queries/users';
-import { getSession } from '@/lib/auth/session';
+import { publishBusiness } from '@/lib/db/queries/businesses';
+import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-
-    await publishSite(db, session.userId);
-
-    const user = await getUserById(db, session.userId);
-    if (user && user.onboardingStep < 4) {
-      await updateOnboardingStep(db, session.userId, 4);
-    }
+    await publishBusiness(auth.db, auth.businessId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -6,7 +6,6 @@ export interface RequestWithSession extends NextRequest {
   session?: {
     userId: string;
     email: string;
-    subdomain: string | null;
   };
 }
 

@@ -46,8 +46,7 @@ export async function getClassifieds(
       imageUrls: classifieds.imageUrls,
       status: classifieds.status,
       createdAt: classifieds.createdAt,
-      userName: users.businessName,
-      userSubdomain: users.subdomain,
+      userName: users.displayName,
     })
     .from(classifieds)
     .leftJoin(users, eq(classifieds.userId, users.id))
@@ -96,8 +95,7 @@ export async function getClassifiedById(db: Database, id: string) {
       imageUrls: classifieds.imageUrls,
       status: classifieds.status,
       createdAt: classifieds.createdAt,
-      userName: users.businessName,
-      userSubdomain: users.subdomain,
+      userName: users.displayName,
     })
     .from(classifieds)
     .leftJoin(users, eq(classifieds.userId, users.id))

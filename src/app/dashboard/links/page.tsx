@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useActiveBusiness } from '../layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -37,28 +38,30 @@ function getPlatform(value: string) {
 
 export default function LinksPage() {
   const router = useRouter();
+  const { business } = useActiveBusiness();
   const [links, setLinks] = useState<SocialLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [newLink, setNewLink] = useState({ platform: 'facebook', url: '', label: '' });
 
-  useEffect(() => { fetchLinks(); }, []);
-
   const fetchLinks = async () => {
+    if (!business) return;
     try {
-      const res = await fetch('/api/business/links');
+      const res = await fetch(`/api/business/links?businessId=${business.id}`);
       if (res.status === 401) { router.push('/login'); return; }
       const data: { links?: SocialLink[] } = await res.json();
       setLinks(data.links || []);
     } catch {} finally { setLoading(false); }
   };
 
+  useEffect(() => { fetchLinks(); }, [business]);
+
   const addLink = async () => {
-    if (!newLink.url.trim()) return;
+    if (!newLink.url.trim() || !business) return;
     setAdding(true);
     try {
-      const res = await fetch('/api/business/links', {
+      const res = await fetch(`/api/business/links?businessId=${business.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newLink),
@@ -72,7 +75,8 @@ export default function LinksPage() {
   };
 
   const deleteLink = async (id: string) => {
-    await fetch(`/api/business/links/${id}`, { method: 'DELETE' });
+    if (!business) return;
+    await fetch(`/api/business/links/${id}?businessId=${business.id}`, { method: 'DELETE' });
     setLinks(links.filter((l) => l.id !== id));
   };
 

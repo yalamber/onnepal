@@ -17,9 +17,7 @@ import { Menu, LayoutDashboard, LogOut, ExternalLink, ChevronDown, Search, Tag }
 interface UserData {
   id: string;
   email: string;
-  businessName: string | null;
-  subdomain: string | null;
-  onboardingStep: number;
+  displayName: string | null;
 }
 
 export function Navbar() {
@@ -36,7 +34,7 @@ export function Navbar() {
       try {
         const res = await fetch('/api/auth/me');
         if (res.ok) {
-          const data = await res.json() as { user: UserData };
+          const data = await res.json() as { user: UserData; businesses: unknown[] };
           setUser(data.user);
         }
       } catch {}
@@ -127,21 +125,10 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                {user.subdomain && (
-                  <a
-                    href={`https://${user.subdomain}.onnepal.com`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors font-mono"
-                  >
-                    {user.subdomain}.onnepal.com
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="gap-1.5 text-slate-600">
-                      {user.businessName || user.email}
+                      {user.displayName || user.email}
                       <ChevronDown className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -187,7 +174,7 @@ export function Navbar() {
                   <div className="h-px bg-slate-100 my-2" />
                   {user ? (
                     <>
-                      <p className="text-sm font-medium px-2 text-slate-900">{user.businessName || user.email}</p>
+                      <p className="text-sm font-medium px-2 text-slate-900">{user.displayName || user.email}</p>
                       <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
                         <LayoutDashboard className="h-4 w-4" /> Dashboard
                       </Link>

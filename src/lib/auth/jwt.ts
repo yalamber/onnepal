@@ -3,7 +3,6 @@ import { SignJWT, jwtVerify } from 'jose';
 export interface TokenPayload {
   userId: string;
   email: string;
-  subdomain: string | null;
 }
 
 function getSecretKey(secret: string) {
@@ -24,7 +23,6 @@ export async function verifyToken(token: string, secret: string): Promise<TokenP
     return {
       userId: payload.userId as string,
       email: payload.email as string,
-      subdomain: (payload.subdomain as string) || null,
     };
   } catch {
     return null;

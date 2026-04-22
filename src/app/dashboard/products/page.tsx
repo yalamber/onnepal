@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useActiveBusiness } from '../layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,28 +19,30 @@ interface Product {
 
 export default function ProductsPage() {
   const router = useRouter();
+  const { business } = useActiveBusiness();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', description: '', price: '', category: '' });
 
-  useEffect(() => { fetchProducts(); }, []);
-
   const fetchProducts = async () => {
+    if (!business) return;
     try {
-      const res = await fetch('/api/business/products');
+      const res = await fetch(`/api/business/products?businessId=${business.id}`);
       if (res.status === 401) { router.push('/login'); return; }
       const data: { products?: Product[] } = await res.json();
       setProducts(data.products || []);
     } catch {} finally { setLoading(false); }
   };
 
+  useEffect(() => { fetchProducts(); }, [business]);
+
   const addProduct = async () => {
-    if (!form.name.trim()) return;
+    if (!form.name.trim() || !business) return;
     setAdding(true);
     try {
-      const res = await fetch('/api/business/products', {
+      const res = await fetch(`/api/business/products?businessId=${business.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -53,7 +56,8 @@ export default function ProductsPage() {
   };
 
   const deleteProduct = async (id: string) => {
-    await fetch(`/api/business/products/${id}`, { method: 'DELETE' });
+    if (!business) return;
+    await fetch(`/api/business/products/${id}?businessId=${business.id}`, { method: 'DELETE' });
     setProducts(products.filter((p) => p.id !== id));
   };
 

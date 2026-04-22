@@ -1,21 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import { getD1Database } from '@/lib/cloudflare';
 import { getSocialLinks, createSocialLink } from '@/lib/db/queries/links';
-import { getSession } from '@/lib/auth/session';
+import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 import { socialLinkSchema } from '@/lib/validators/business';
-import { updateOnboardingStep, getUserById } from '@/lib/db/queries/users';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    const links = await getSocialLinks(db, session.userId);
+    const links = await getSocialLinks(auth.db, auth.businessId);
 
     return NextResponse.json({ links });
   } catch (error) {
@@ -26,10 +19,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
     const body = await request.json();
     const validation = socialLinkSchema.safeParse(body);
@@ -40,15 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    const result = await createSocialLink(db, session.userId, validation.data);
-
-    // Advance onboarding if at step 2
-    const user = await getUserById(db, session.userId);
-    if (user && user.onboardingStep === 2) {
-      await updateOnboardingStep(db, session.userId, 3);
-    }
+    const result = await createSocialLink(auth.db, auth.businessId, validation.data);
 
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });
   } catch (error) {

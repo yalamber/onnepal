@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useActiveBusiness } from '../layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,28 +18,30 @@ interface Announcement {
 
 export default function AnnouncementsPage() {
   const router = useRouter();
+  const { business } = useActiveBusiness();
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: '', content: '', isPinned: false });
 
-  useEffect(() => { fetchItems(); }, []);
-
   const fetchItems = async () => {
+    if (!business) return;
     try {
-      const res = await fetch('/api/business/announcements');
+      const res = await fetch(`/api/business/announcements?businessId=${business.id}`);
       if (res.status === 401) { router.push('/login'); return; }
       const data: { announcements?: Announcement[] } = await res.json();
       setItems(data.announcements || []);
     } catch {} finally { setLoading(false); }
   };
 
+  useEffect(() => { fetchItems(); }, [business]);
+
   const addItem = async () => {
-    if (!form.title.trim()) return;
+    if (!form.title.trim() || !business) return;
     setAdding(true);
     try {
-      const res = await fetch('/api/business/announcements', {
+      const res = await fetch(`/api/business/announcements?businessId=${business.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -52,7 +55,8 @@ export default function AnnouncementsPage() {
   };
 
   const deleteItem = async (id: string) => {
-    await fetch(`/api/business/announcements/${id}`, { method: 'DELETE' });
+    if (!business) return;
+    await fetch(`/api/business/announcements/${id}?businessId=${business.id}`, { method: 'DELETE' });
     setItems(items.filter((i) => i.id !== id));
   };
 

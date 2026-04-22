@@ -3,17 +3,17 @@ import { socialLinks } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
 
-export async function getSocialLinks(db: Database, userId: string) {
+export async function getSocialLinks(db: Database, businessId: string) {
   return db
     .select()
     .from(socialLinks)
-    .where(eq(socialLinks.userId, userId))
+    .where(eq(socialLinks.businessId, businessId))
     .orderBy(asc(socialLinks.displayOrder));
 }
 
 export async function createSocialLink(
   db: Database,
-  userId: string,
+  businessId: string,
   data: {
     platform: string;
     url: string;
@@ -21,13 +21,12 @@ export async function createSocialLink(
   }
 ) {
   const id = generateId();
-  // Get the next display order
-  const existing = await getSocialLinks(db, userId);
+  const existing = await getSocialLinks(db, businessId);
   const nextOrder = existing.length;
 
   await db.insert(socialLinks).values({
     id,
-    userId,
+    businessId,
     platform: data.platform as typeof socialLinks.$inferInsert['platform'],
     url: data.url,
     label: data.label || null,
@@ -41,7 +40,7 @@ export async function createSocialLink(
 export async function updateSocialLink(
   db: Database,
   id: string,
-  userId: string,
+  businessId: string,
   data: Partial<{
     platform: string;
     url: string;
@@ -51,20 +50,20 @@ export async function updateSocialLink(
   await db
     .update(socialLinks)
     .set(data as Partial<typeof socialLinks.$inferInsert>)
-    .where(and(eq(socialLinks.id, id), eq(socialLinks.userId, userId)));
+    .where(and(eq(socialLinks.id, id), eq(socialLinks.businessId, businessId)));
 }
 
-export async function deleteSocialLink(db: Database, id: string, userId?: string) {
+export async function deleteSocialLink(db: Database, id: string, businessId?: string) {
   const conditions = [eq(socialLinks.id, id)];
-  if (userId) conditions.push(eq(socialLinks.userId, userId));
+  if (businessId) conditions.push(eq(socialLinks.businessId, businessId));
   await db.delete(socialLinks).where(and(...conditions));
 }
 
-export async function reorderSocialLinks(db: Database, userId: string, orderedIds: string[]) {
+export async function reorderSocialLinks(db: Database, businessId: string, orderedIds: string[]) {
   for (let i = 0; i < orderedIds.length; i++) {
     await db
       .update(socialLinks)
       .set({ displayOrder: i })
-      .where(eq(socialLinks.id, orderedIds[i]));
+      .where(and(eq(socialLinks.id, orderedIds[i]), eq(socialLinks.businessId, businessId)));
   }
 }

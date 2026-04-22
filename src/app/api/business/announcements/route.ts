@@ -1,20 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import { getD1Database } from '@/lib/cloudflare';
 import { getAnnouncements, createAnnouncement } from '@/lib/db/queries/announcements';
-import { getSession } from '@/lib/auth/session';
+import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 import { announcementSchema } from '@/lib/validators/business';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    const items = await getAnnouncements(db, session.userId);
+    const items = await getAnnouncements(auth.db, auth.businessId);
 
     return NextResponse.json({ announcements: items });
   } catch (error) {
@@ -25,10 +19,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
     const body = await request.json();
     const validation = announcementSchema.safeParse(body);
@@ -39,9 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    const result = await createAnnouncement(db, session.userId, validation.data);
+    const result = await createAnnouncement(auth.db, auth.businessId, validation.data);
 
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });
   } catch (error) {

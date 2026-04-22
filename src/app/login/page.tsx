@@ -27,19 +27,14 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json() as { error?: string; success?: boolean; user?: { onboardingStep: number } };
+      const data = await res.json() as { error?: string };
       if (!res.ok) {
         setError(data.error || 'Login failed');
         return;
       }
 
       window.dispatchEvent(new Event('auth-change'));
-
-      if (data.user && data.user.onboardingStep < 4) {
-        router.push('/onboarding');
-      } else {
-        router.push('/dashboard');
-      }
+      router.push('/dashboard');
     } catch {
       setError('Something went wrong');
     } finally {
@@ -52,7 +47,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
           <h1 className="text-xl font-bold text-slate-950 tracking-tight leading-[1.2]">Welcome back</h1>
-          <p className="text-slate-500 text-sm mt-2 leading-[1.6]">Log in to manage your page</p>
+          <p className="text-slate-500 text-sm mt-2 leading-[1.6]">Log in to manage your businesses and ads</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,7 +81,7 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            className="w-full"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
             disabled={loading}
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Log in'}
@@ -95,7 +90,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-slate-400 mt-8">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-blue-600 font-medium hover:text-blue-700">
+          <Link href="/signup" className="text-indigo-600 font-medium hover:text-indigo-700">
             Get started
           </Link>
         </p>

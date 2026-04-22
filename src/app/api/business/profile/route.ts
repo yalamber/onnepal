@@ -1,25 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import { getD1Database } from '@/lib/cloudflare';
-import { getUserById, updateUserProfile, updateOnboardingStep } from '@/lib/db/queries/users';
-import { getSession } from '@/lib/auth/session';
+import { updateBusinessProfile } from '@/lib/db/queries/businesses';
+import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 import { updateProfileSchema } from '@/lib/validators/business';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    const user = await getUserById(db, session.userId);
-    if (!user) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({ profile: user });
+    return NextResponse.json({ profile: auth.business });
   } catch (error) {
     console.error('Get profile error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -28,10 +17,8 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
     const body = await request.json();
     const validation = updateProfileSchema.safeParse(body);
@@ -42,16 +29,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-
-    await updateUserProfile(db, session.userId, validation.data);
-
-    // If this is during onboarding step 2, advance to step 3
-    const user = await getUserById(db, session.userId);
-    if (user && user.onboardingStep === 1) {
-      await updateOnboardingStep(db, session.userId, 2);
-    }
+    await updateBusinessProfile(auth.db, auth.businessId, validation.data);
 
     return NextResponse.json({ success: true });
   } catch (error) {

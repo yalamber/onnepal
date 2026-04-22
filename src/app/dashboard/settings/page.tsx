@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useActiveBusiness } from '../layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -29,20 +30,23 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [selectedPalette, setSelectedPalette] = useState<ThemePalette | null>(null);
 
+  const { business } = useActiveBusiness();
+
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!business) return;
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch(`/api/business/profile?businessId=${business.id}`);
         if (!res.ok) { router.push('/login'); return; }
-        const data = await res.json() as { user: Profile };
-        setProfile(data.user);
+        const data = await res.json() as { profile: Profile };
+        setProfile(data.profile);
         const palette = findPalette(data.user.primaryColor || '', data.user.accentColor || '');
         setSelectedPalette(palette || THEME_PALETTES[0]);
       } catch { router.push('/login'); }
       finally { setLoading(false); }
     };
     fetchProfile();
-  }, [router]);
+  }, [router, business]);
 
   const selectPalette = (palette: ThemePalette) => {
     setSelectedPalette(palette);
@@ -52,11 +56,11 @@ export default function SettingsPage() {
   };
 
   const handleSave = async () => {
-    if (!profile) return;
+    if (!profile || !business) return;
     setSaving(true);
     setSaved(false);
     try {
-      const res = await fetch('/api/business/profile', {
+      const res = await fetch(`/api/business/profile?businessId=${business.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

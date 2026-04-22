@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import { getD1Database } from '@/lib/cloudflare';
 import { updateAnnouncement, deleteAnnouncement } from '@/lib/db/queries/announcements';
-import { getSession } from '@/lib/auth/session';
+import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 import { announcementSchema } from '@/lib/validators/business';
 
 export async function PATCH(
@@ -10,10 +8,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
     const { id } = await params;
     const body = await request.json();
@@ -25,9 +21,7 @@ export async function PATCH(
       );
     }
 
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    await updateAnnouncement(db, id, validation.data);
+    await updateAnnouncement(auth.db, id, validation.data);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -37,19 +31,15 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedBusiness(request);
+    if ('error' in auth) return auth.error;
 
     const { id } = await params;
-    const d1 = await getD1Database();
-    const db = getDb(d1);
-    await deleteAnnouncement(db, id, session.userId);
+    await deleteAnnouncement(auth.db, id, auth.businessId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
-import { getUserBySubdomain } from '@/lib/db/queries/users';
+import { getBusinessBySubdomain } from '@/lib/db/queries/businesses';
 import { getSocialLinks } from '@/lib/db/queries/links';
 import { getActiveAnnouncements } from '@/lib/db/queries/announcements';
 import { getAvailableProducts } from '@/lib/db/queries/products';
@@ -17,17 +17,17 @@ export async function generateMetadata({
   params: Promise<{ subdomain: string }>;
 }) {
   const { subdomain } = await params;
-  const d1 = await getD1Database();
+  const d1 = getD1Database();
   const db = getDb(d1);
-  const user = await getUserBySubdomain(db, subdomain);
+  const business = await getBusinessBySubdomain(db, subdomain);
 
-  if (!user || !user.isPublished) {
+  if (!business || !business.isPublished) {
     return { title: 'Not Found' };
   }
 
   return {
-    title: `${user.businessName} | OnNepal`,
-    description: user.description || `${user.businessName} on OnNepal`,
+    title: `${business.businessName} | OnNepal`,
+    description: business.description || `${business.businessName} on OnNepal`,
   };
 }
 
@@ -38,37 +38,37 @@ export default async function SitePage({
 }) {
   const { subdomain } = await params;
 
-  const d1 = await getD1Database();
+  const d1 = getD1Database();
   const db = getDb(d1);
 
-  const user = await getUserBySubdomain(db, subdomain);
-  if (!user || !user.isPublished) {
+  const business = await getBusinessBySubdomain(db, subdomain);
+  if (!business || !business.isPublished) {
     notFound();
   }
 
   const [links, announcements, products, ctas] = await Promise.all([
-    getSocialLinks(db, user.id),
-    getActiveAnnouncements(db, user.id),
-    getAvailableProducts(db, user.id),
-    getCtaButtons(db, user.id),
+    getSocialLinks(db, business.id),
+    getActiveAnnouncements(db, business.id),
+    getAvailableProducts(db, business.id),
+    getCtaButtons(db, business.id),
   ]);
 
   // Record page view (fire and forget)
-  recordPageView(db, user.id).catch(() => {});
+  recordPageView(db, business.id).catch(() => {});
 
   return (
     <BusinessPage
       business={{
-        businessName: user.businessName,
-        businessCategory: user.businessCategory,
-        description: user.description,
-        logoUrl: user.logoUrl,
-        coverImageUrl: user.coverImageUrl,
-        phone: user.phone,
-        address: user.address,
-        businessHours: user.businessHours,
-        primaryColor: user.primaryColor || '#ea580c',
-        accentColor: user.accentColor || '#dc2626',
+        businessName: business.businessName,
+        businessCategory: business.businessCategory,
+        description: business.description,
+        logoUrl: business.logoUrl,
+        coverImageUrl: business.coverImageUrl,
+        phone: business.phone,
+        address: business.address,
+        businessHours: business.businessHours,
+        primaryColor: business.primaryColor || '#ea580c',
+        accentColor: business.accentColor || '#dc2626',
       }}
       links={links}
       announcements={announcements}

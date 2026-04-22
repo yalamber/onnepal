@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = validation.data;
 
-    const d1 = await getD1Database();
+    const d1 = getD1Database();
     const db = getDb(d1);
 
     const user = await getUserByEmail(db, email);
@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
       {
         userId: user.id,
         email: user.email,
-        subdomain: user.subdomain,
       },
       getJwtSecret()
     );
@@ -55,9 +54,7 @@ export async function POST(request: NextRequest) {
       user: {
         id: user.id,
         email: user.email,
-        businessName: user.businessName,
-        subdomain: user.subdomain,
-        onboardingStep: user.onboardingStep,
+        displayName: user.displayName,
       },
     });
   } catch (error) {

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getUserById } from '@/lib/db/queries/users';
+import { getBusinessesByUserId } from '@/lib/db/queries/businesses';
 import { getSession } from '@/lib/auth/session';
 
 export async function GET() {
@@ -12,7 +13,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const d1 = await getD1Database();
+    const d1 = getD1Database();
     const db = getDb(d1);
 
     const user = await getUserById(db, session.userId);
@@ -20,25 +21,17 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    const businesses = await getBusinessesByUserId(db, session.userId);
+
     return NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
-        subdomain: user.subdomain,
-        businessName: user.businessName,
-        businessCategory: user.businessCategory,
-        description: user.description,
-        logoUrl: user.logoUrl,
-        coverImageUrl: user.coverImageUrl,
+        displayName: user.displayName,
         phone: user.phone,
-        address: user.address,
-        businessHours: user.businessHours,
-        primaryColor: user.primaryColor,
-        accentColor: user.accentColor,
-        isPublished: user.isPublished,
-        onboardingStep: user.onboardingStep,
         createdAt: user.createdAt,
       },
+      businesses,
     });
   } catch (error) {
     console.error('Get user error:', error);
