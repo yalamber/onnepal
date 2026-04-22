@@ -150,16 +150,14 @@ export default function NewClassifiedPage() {
         </p>
       </div>
 
-      {/* Server error */}
       {serverError && (
-        <div className="mb-6 flex items-start gap-2 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
-          <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-          <span>{serverError}</span>
+        <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-100 text-sm text-red-600">
+          {serverError}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
           <div className="p-5 sm:p-6 space-y-5">
             {/* Title */}
             <div>
@@ -185,11 +183,11 @@ export default function NewClassifiedPage() {
               <select
                 value={form.category}
                 onChange={(e) => updateField('category', e.target.value)}
-                className="flex h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm shadow-sm transition-all duration-200 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-400 disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer"
+                className="flex h-10 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:border-gray-400 appearance-none cursor-pointer transition-colors"
               >
                 <option value="">Select a category</option>
                 {CLASSIFIED_CATEGORIES.map((cat) => (
-                  <option key={cat.slug} value={cat.slug}>
+                  <option key={cat.slug} value={cat.name}>
                     {cat.icon} {cat.name}
                   </option>
                 ))}
@@ -287,7 +285,7 @@ export default function NewClassifiedPage() {
             <Button
               type="submit"
               disabled={submitting}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white gap-1.5"
+              className="bg-gray-950 hover:bg-gray-800 text-white gap-1.5"
             >
               {submitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
