@@ -5,7 +5,7 @@ import { Search, Loader2, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Link from 'next/link';
 import { BusinessCard, BusinessCardSkeleton } from '@/components/business-card';
 import type { BusinessCardData } from '@/components/business-card';
-import { CATEGORIES, getSlugFromName } from '@/lib/categories';
+import { CATEGORIES } from '@/lib/categories';
 
 interface CategoryInfo { category: string; count: number; }
 const ALL_CATEGORIES = CATEGORIES.map((c) => c.name);
@@ -36,10 +36,7 @@ export default function DirectoryPage() {
       const res = await fetch(`/api/directory?${params}`);
       if (!res.ok) throw new Error();
       const data = await res.json() as { businesses: BusinessCardData[]; total: number; totalPages: number; categories: CategoryInfo[] };
-      setBusinesses(data.businesses);
-      setTotal(data.total);
-      setTotalPages(data.totalPages);
-      setCategories(data.categories);
+      setBusinesses(data.businesses); setTotal(data.total); setTotalPages(data.totalPages); setCategories(data.categories);
     } catch {} finally { setLoading(false); setInitialLoad(false); }
   }, []);
 
@@ -79,20 +76,16 @@ export default function DirectoryPage() {
   return (
     <main className="min-h-screen">
       {/* Header */}
-      <section className="pt-12 sm:pt-16 pb-8">
+      <section className="pt-12 sm:pt-16 pb-6">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight">Business directory</h1>
-          <p className="mt-2 text-gray-400 text-lg">Find and connect with businesses across Nepal.</p>
-
-          <div className="mt-8 max-w-md relative">
+          <p className="mt-2 text-gray-400">Find and connect with businesses across Nepal.</p>
+          <div className="mt-6 max-w-md relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300" />
             <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search businesses..."
-              defaultValue={search}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="w-full h-10 pl-10 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
+              ref={searchInputRef} type="text" placeholder="Search businesses..."
+              defaultValue={search} onChange={(e) => handleSearch(e.target.value)}
+              className="w-full h-10 pl-10 pr-8 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
             />
             {search && (
               <button onClick={() => { handleSearch(''); if (searchInputRef.current) searchInputRef.current.value = ''; }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500">
@@ -103,85 +96,104 @@ export default function DirectoryPage() {
         </div>
       </section>
 
-      {/* Category filters */}
-      <section className="sticky top-14 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
+
+      {/* Sidebar + Content */}
+      <section className="py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1 py-2.5 overflow-x-auto scrollbar-none">
-            <button
-              onClick={() => handleCategory('')}
-              className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${
-                !activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'
-              }`}
-            >
-              All
-            </button>
-            {categoryList.map(({ category, count }) => (
-              <button
-                key={category}
-                onClick={() => handleCategory(category)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${
-                  activeCategory === category ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'
-                }`}
-              >
-                {category}
-                {count > 0 && <span className={`ml-1 text-xs ${activeCategory === category ? 'text-gray-400' : 'text-gray-300'}`}>{count}</span>}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+          <div className="flex gap-10">
+            {/* Sidebar — categories */}
+            <aside className="hidden lg:block w-48 flex-shrink-0">
+              <p className="text-xs font-semibold text-gray-950 uppercase tracking-wider mb-3">Categories</p>
+              <nav className="space-y-0.5">
+                <button
+                  onClick={() => handleCategory('')}
+                  className={`block w-full text-left px-2 py-1.5 rounded text-sm transition-colors ${
+                    !activeCategory ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                  }`}
+                >
+                  All businesses
+                </button>
+                {categoryList.map(({ category, count }) => (
+                  <button
+                    key={category}
+                    onClick={() => handleCategory(category)}
+                    className={`flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm transition-colors ${
+                      activeCategory === category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                    }`}
+                  >
+                    <span className="truncate">{category}</span>
+                    {count > 0 && <span className="text-xs text-gray-300 ml-2">{count}</span>}
+                  </button>
+                ))}
+              </nav>
+            </aside>
 
-      {/* Results */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8" ref={gridRef}>
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-gray-400">
-            {loading ? (
-              <span className="flex items-center gap-2"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Searching...</span>
-            ) : (
-              <><span className="text-gray-950 font-medium">{total}</span> {total === 1 ? 'business' : 'businesses'}{activeCategory && <> in {activeCategory}</>}{search && <> matching &ldquo;{search}&rdquo;</>}</>
-            )}
-          </p>
-          {hasFilters && !loading && (
-            <button onClick={clearFilters} className="text-sm text-gray-400 hover:text-gray-950 transition-colors">Clear</button>
-          )}
-        </div>
-
-        {initialLoad && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {Array.from({ length: 6 }).map((_, i) => <BusinessCardSkeleton key={i} />)}
-          </div>
-        )}
-
-        {!loading && !initialLoad && businesses.length === 0 && (
-          <div className="text-center py-24">
-            <p className="text-sm text-gray-400 mb-4">{hasFilters ? 'No businesses match your filters.' : 'No businesses listed yet.'}</p>
-            {hasFilters && (
-              <button onClick={clearFilters} className="text-sm text-gray-950 font-medium hover:underline">Clear filters</button>
-            )}
-          </div>
-        )}
-
-        {!initialLoad && businesses.length > 0 && (
-          <>
-            <div className={`grid sm:grid-cols-2 lg:grid-cols-3 gap-3 ${loading && !initialLoad ? 'opacity-40' : ''} transition-opacity`}>
-              {businesses.map((b) => <BusinessCard key={b.id} business={b} />)}
+            {/* Mobile category bar */}
+            <div className="lg:hidden w-full mb-4 -mt-2">
+              <div className="flex gap-1 overflow-x-auto scrollbar-none pb-2">
+                <button onClick={() => handleCategory('')}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${!activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
+                  All
+                </button>
+                {categoryList.map(({ category }) => (
+                  <button key={category} onClick={() => handleCategory(category)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${activeCategory === category ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
+                    {category}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1 mt-10">
-                <button onClick={() => goToPage(page - 1)} disabled={page <= 1} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30 transition-colors">
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="px-3 py-1.5 text-sm text-gray-400">
-                  Page <span className="text-gray-950 font-medium">{page}</span> of {totalPages}
-                </span>
-                <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30 transition-colors">
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+            {/* Content */}
+            <div className="flex-1 min-w-0" ref={gridRef}>
+              <div className="flex items-center justify-between mb-5">
+                <p className="text-sm text-gray-400">
+                  {loading ? (
+                    <span className="flex items-center gap-2"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Searching...</span>
+                  ) : (
+                    <><span className="text-gray-950 font-medium">{total}</span> {total === 1 ? 'business' : 'businesses'}{activeCategory && <> in {activeCategory}</>}{search && <> matching &ldquo;{search}&rdquo;</>}</>
+                  )}
+                </p>
+                {hasFilters && !loading && (
+                  <button onClick={clearFilters} className="text-sm text-gray-400 hover:text-gray-950 transition-colors">Clear</button>
+                )}
               </div>
-            )}
-          </>
-        )}
+
+              {initialLoad && (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {Array.from({ length: 6 }).map((_, i) => <BusinessCardSkeleton key={i} />)}
+                </div>
+              )}
+
+              {!loading && !initialLoad && businesses.length === 0 && (
+                <div className="text-center py-20">
+                  <p className="text-sm text-gray-400 mb-4">{hasFilters ? 'No businesses match your filters.' : 'No businesses listed yet.'}</p>
+                  {hasFilters ? (
+                    <button onClick={clearFilters} className="text-sm text-gray-950 font-medium hover:underline">Clear filters</button>
+                  ) : (
+                    <Link href="/create-business" className="text-sm text-gray-950 font-medium hover:underline">List your business &rarr;</Link>
+                  )}
+                </div>
+              )}
+
+              {!initialLoad && businesses.length > 0 && (
+                <>
+                  <div className={`grid sm:grid-cols-2 gap-3 ${loading && !initialLoad ? 'opacity-40' : ''} transition-opacity`}>
+                    {businesses.map((b) => <BusinessCard key={b.id} business={b} />)}
+                  </div>
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-1 mt-10">
+                      <button onClick={() => goToPage(page - 1)} disabled={page <= 1} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronLeft className="h-4 w-4" /></button>
+                      <span className="px-3 py-1.5 text-sm text-gray-400">Page <span className="text-gray-950 font-medium">{page}</span> of {totalPages}</span>
+                      <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronRight className="h-4 w-4" /></button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );
