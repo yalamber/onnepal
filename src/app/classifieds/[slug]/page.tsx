@@ -84,8 +84,8 @@ export default function ClassifiedCategoryPage() {
 
   return (
     <main className="min-h-screen">
-      <section className="pt-12 sm:pt-16 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      <section className="pt-12 sm:pt-16 pb-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/classifieds" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">&larr; All classifieds</Link>
           <div className="mt-4 flex items-baseline justify-between">
             <div className="flex items-center gap-3">
@@ -122,7 +122,7 @@ export default function ClassifiedCategoryPage() {
         </div>
       </div>
 
-      <div className="h-px bg-gray-100 max-w-5xl mx-auto" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
       {/* Results */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

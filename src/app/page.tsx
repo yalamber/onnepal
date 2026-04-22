@@ -6,9 +6,9 @@ import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 export default function HomePage() {
   return (
     <main>
-      {/* Hero — typography-driven, no decorative noise */}
-      <section className="pt-28 sm:pt-36 pb-20 sm:pb-28 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      {/* Hero */}
+      <section className="pt-28 sm:pt-36 pb-20 sm:pb-28">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-[2.75rem] sm:text-6xl lg:text-7xl font-bold text-gray-950 tracking-tight leading-[1.05]">
             Nepal&apos;s business
             <br />
@@ -31,14 +31,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-px bg-gray-100" />
-      </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
-      {/* Directory categories — simple two-column text list */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      {/* Directory categories */}
+      <section className="py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between mb-8">
             <h2 className="text-lg font-semibold text-gray-950">Business directory</h2>
             <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
@@ -47,11 +44,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-4">
             {CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/directory/${cat.slug}`}
-                className="group flex items-baseline gap-3 py-1"
-              >
+              <Link key={cat.slug} href={`/directory/${cat.slug}`} className="group flex items-baseline gap-3 py-1">
                 <span className="text-base">{cat.icon}</span>
                 <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
               </Link>
@@ -61,8 +54,8 @@ export default function HomePage() {
       </section>
 
       {/* Classifieds categories */}
-      <section className="py-20 px-4 sm:px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between mb-8">
             <h2 className="text-lg font-semibold text-gray-950">Classifieds</h2>
             <Link href="/classifieds" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
@@ -71,11 +64,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-4">
             {CLASSIFIED_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/classifieds/${cat.slug}`}
-                className="group flex items-baseline gap-3 py-1"
-              >
+              <Link key={cat.slug} href={`/classifieds/${cat.slug}`} className="group flex items-baseline gap-3 py-1">
                 <span className="text-base">{cat.icon}</span>
                 <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
               </Link>
@@ -89,9 +78,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Business pages pitch — editorial style */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      {/* Business pages pitch */}
+      <section className="py-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-gray-400 mb-4 uppercase tracking-wider font-medium">For business owners</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight leading-tight">
             Your business deserves<br />more than a Facebook page.
@@ -99,7 +88,6 @@ export default function HomePage() {
           <p className="mt-6 text-lg text-gray-400 max-w-lg leading-relaxed">
             Get a real web presence in minutes. Your own subdomain, social links, products, announcements, and contact info — all in one place.
           </p>
-
           <div className="mt-12 grid sm:grid-cols-2 gap-8">
             <div>
               <p className="text-sm font-semibold text-gray-950 mb-1">Your own URL</p>
@@ -118,7 +106,6 @@ export default function HomePage() {
               <p className="text-sm text-gray-400 leading-relaxed">One account, multiple businesses. Each gets its own page.</p>
             </div>
           </div>
-
           <div className="mt-12">
             <SubdomainChecker />
           </div>
@@ -126,9 +113,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer — simple, no columns needed */}
-      <footer className="py-12 px-4 sm:px-6 border-t border-gray-100">
-        <div className="max-w-5xl mx-auto">
+      {/* Footer */}
+      <footer className="py-12 border-t border-gray-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
               <p className="text-sm font-semibold text-gray-950">OnNepal</p>

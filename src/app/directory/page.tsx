@@ -79,8 +79,8 @@ export default function DirectoryPage() {
   return (
     <main className="min-h-screen">
       {/* Header */}
-      <section className="pt-12 sm:pt-16 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      <section className="pt-12 sm:pt-16 pb-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight">Business directory</h1>
           <p className="mt-2 text-gray-400 text-lg">Find and connect with businesses across Nepal.</p>
 

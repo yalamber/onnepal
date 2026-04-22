@@ -83,8 +83,8 @@ export default function ClassifiedsPage() {
   return (
     <main className="min-h-screen">
       {/* Header */}
-      <section className="pt-12 sm:pt-16 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      <section className="pt-12 sm:pt-16 pb-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight">Classifieds</h1>
@@ -106,11 +106,11 @@ export default function ClassifiedsPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gray-100 max-w-5xl mx-auto" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
       {/* Categories */}
-      <section className="py-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm font-medium text-gray-950 mb-4">Browse by category</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-3">
             {CLASSIFIED_CATEGORIES.map((cat) => {
@@ -127,11 +127,11 @@ export default function ClassifiedsPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gray-100 max-w-5xl mx-auto" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
       {/* Latest listings */}
-      <section className="py-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between mb-6">
             <p className="text-sm font-medium text-gray-950">
               {activeSearch ? <>Results for &ldquo;{activeSearch}&rdquo;</> : 'Latest listings'}

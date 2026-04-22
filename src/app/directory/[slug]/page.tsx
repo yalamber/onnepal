@@ -65,8 +65,8 @@ export default function CategoryPage() {
 
   return (
     <main className="min-h-screen">
-      <section className="pt-12 sm:pt-16 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+      <section className="pt-12 sm:pt-16 pb-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">&larr; All categories</Link>
           <div className="mt-4 flex items-center gap-3">
             <span className="text-3xl">{category.icon}</span>
@@ -98,7 +98,7 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      <div className="h-px bg-gray-100 max-w-5xl mx-auto" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
       {/* Results */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8" ref={gridRef}>
