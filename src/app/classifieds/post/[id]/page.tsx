@@ -212,7 +212,7 @@ export default function ClassifiedDetailPage() {
           <p className="text-sm text-gray-400 mb-6">
             This classified ad may have been removed or doesn&apos;t exist.
           </p>
-          <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white">
+          <Button asChild className="bg-gray-950 hover:bg-gray-800 text-white">
             <Link href="/classifieds">Browse classifieds</Link>
           </Button>
         </div>
@@ -339,7 +339,7 @@ export default function ClassifiedDetailPage() {
               {phoneUrl && (
                 <a
                   href={phoneUrl}
-                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors"
                 >
                   <Phone className="h-4 w-4" />
                   Call {listing.contactPhone}
@@ -350,7 +350,7 @@ export default function ClassifiedDetailPage() {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg border border-gray-200 text-gray-950 font-medium text-sm hover:bg-gray-50 transition-colors"
                 >
                   <MessageCircle className="h-4 w-4" />
                   WhatsApp
