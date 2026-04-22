@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <main>
       {/* Hero — typography-driven, no decorative noise */}
-      <section className="pt-28 sm:pt-36 pb-20 sm:pb-28 px-4 sm:px-6">
+      <section className="pt-28 sm:pt-36 pb-20 sm:pb-28 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-[2.75rem] sm:text-6xl lg:text-7xl font-bold text-gray-950 tracking-tight leading-[1.05]">
             Nepal&apos;s business
@@ -32,12 +32,12 @@ export default function HomePage() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-px bg-gray-100" />
       </div>
 
       {/* Directory categories — simple two-column text list */}
-      <section className="py-20 px-4 sm:px-6">
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-baseline justify-between mb-8">
             <h2 className="text-lg font-semibold text-gray-950">Business directory</h2>
@@ -90,7 +90,7 @@ export default function HomePage() {
       </section>
 
       {/* Business pages pitch — editorial style */}
-      <section className="py-24 px-4 sm:px-6">
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <p className="text-sm text-gray-400 mb-4 uppercase tracking-wider font-medium">For business owners</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight leading-tight">
