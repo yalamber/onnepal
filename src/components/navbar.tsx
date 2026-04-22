@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -89,18 +89,22 @@ export function Navbar() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors px-2 py-1 rounded">
+                  <button className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer">
                     {user.displayName || user.email}
                     <ChevronDown className="h-3 w-3" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg rounded-lg p-1">
+                  <DropdownMenuItem onClick={() => router.push('/dashboard')} className="cursor-pointer rounded-md px-3 py-2 text-sm">
                     <LayoutDashboard className="h-4 w-4 mr-2" />
                     Dashboard
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
+                  <DropdownMenuItem onClick={() => router.push('/dashboard/account')} className="cursor-pointer rounded-md px-3 py-2 text-sm">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Account settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-1" />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer rounded-md px-3 py-2 text-sm text-red-600 focus:text-red-600">
                     <LogOut className="h-4 w-4 mr-2" />
                     Log out
                   </DropdownMenuItem>
