@@ -4,21 +4,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**OnNepal.com** is a business link-sharing platform for Nepal. Businesses register a subdomain (`businessname.onnepal.com`) and get a mini single-page website with social links, products, announcements, contact details, and CTAs. Think Linktree meets Carrd, localized for Nepal.
+**OnNepal.com** is Nepal's premier Yellow Pages and business directory platform. Businesses register a vanity URL (`businessname.onnepal.com`) and get a mini single-page website with social links, products, announcements, contact details, and CTAs. The platform also features a public browsable directory where anyone can discover businesses by category, search, and location.
+
+**Vision**: Build the best Yellow Pages and classified website for Nepal — a one-stop platform where Nepali businesses get discovered and customers find what they need.
 
 ### Core Features
+
+#### Business Pages (Vanity URLs)
 - **Subdomain-based pages**: Each business gets `name.onnepal.com`
 - **Social links**: Connect Facebook, Instagram, WhatsApp, TikTok, etc.
 - **Product showcase**: Display products with images, prices, descriptions
 - **Announcements**: Share news, offers, updates (pinnable, expirable)
 - **CTA buttons**: Configurable call-to-action buttons (Order, Book, Call)
 - **Contact info**: Phone, address, business hours
-- **Theme palettes**: 10 curated color palettes (Ocean, Forest, Sunset, Berry, Rose, Slate, Midnight, Coffee, Teal, Coral)
-- **Interactive page builder**: Homepage lets visitors build their page before signing up
-- **Onboarding wizard**: 3-step setup gets page live in minutes
+- **Theme palettes**: 10 curated color palettes
+
+#### Business Directory (Yellow Pages)
+- **Browsable directory**: Public listing of all published businesses at `/directory`
+- **Category filtering**: Browse by business category (Restaurant, Retail, Beauty, etc.)
+- **Search**: Find businesses by name or description
+- **Business cards**: Visual cards showing logo, name, category, description — link to vanity URL
+- **SEO-friendly**: Server-rendered directory pages for search engine discoverability
+
+#### Classifieds (Planned)
+- **Buy & Sell**: Users post items for sale with photos, price, contact
+- **Categories**: Vehicles, Electronics, Real Estate, Jobs, Services, etc.
+- **Location-based**: Filter by city/district
+- **Contact flow**: Connect buyers with sellers via phone/WhatsApp
 
 ### Technical Foundation
-Next.js 15.4 on Cloudflare Workers via vinext + Vite. App Router, TypeScript, React 19, Tailwind CSS v4. Subdomain routing via Next.js middleware.
+Next.js 15.4 on Cloudflare Workers via vinext + Vite. App Router, TypeScript, React 19, Tailwind CSS v4. Subdomain routing via Next.js middleware. Assets served from main domain (`base: https://onnepal.com` in production).
 
 ## Tech Stack
 
@@ -28,9 +43,9 @@ Next.js 15.4 on Cloudflare Workers via vinext + Vite. App Router, TypeScript, Re
 - **ORM**: Drizzle ORM with Cloudflare D1 (SQLite)
 - **Styling**: Tailwind CSS v4 with @tailwindcss/vite plugin
 - **Validation**: Zod v4
-- **Deployment**: Cloudflare Workers via vinext deploy
+- **Deployment**: Cloudflare Workers via vinext deploy (auto-deploys on push to main)
 - **Storage**: Cloudflare R2 for images
-- **Auth**: JWT with httpOnly cookies, bcryptjs
+- **Auth**: JWT (jose library) with httpOnly cookies, bcryptjs for passwords
 - **Language**: TypeScript 5
 
 ## Project Structure
@@ -42,9 +57,11 @@ src/
 │   │   ├── auth/          # signup, login, logout, me
 │   │   ├── subdomain/     # check availability
 │   │   ├── business/      # profile, links, announcements, products, ctas, publish
+│   │   ├── directory/     # public directory listing API
 │   │   ├── site/          # public page data API
 │   │   └── upload/        # R2 image upload
 │   ├── site/[subdomain]/  # Public business page (server component)
+│   ├── directory/         # Public business directory (Yellow Pages)
 │   ├── onboarding/        # 3-step setup wizard
 │   ├── dashboard/         # Management hub
 │   │   ├── links/         # Social links CRUD
@@ -54,17 +71,17 @@ src/
 │   ├── login/             # Login page
 │   ├── signup/            # Signup with subdomain claim
 │   ├── layout.tsx         # Root layout (Geist fonts)
-│   ├── page.tsx           # Interactive page builder (stepped wizard)
+│   ├── page.tsx           # Homepage with hero, features, directory preview
 │   └── globals.css        # Design tokens, animations
 ├── components/
 │   ├── navbar.tsx           # Main navigation (hidden on subdomain pages)
 │   ├── subdomain-checker.tsx # Real-time subdomain availability input
-│   ├── business-page.tsx    # Public page renderer
-│   ├── scroll-animate.tsx   # Scroll-triggered reveal animation component
+│   ├── business-page.tsx    # Public page renderer (subdomain pages)
+│   ├── business-card.tsx    # Directory listing card component
 │   └── ui/                  # Shadcn/Radix UI primitives
 ├── lib/
 │   ├── auth/
-│   │   ├── jwt.ts           # Token generation/verification
+│   │   ├── jwt.ts           # Token generation/verification (jose library)
 │   │   ├── session.ts       # Cookie management
 │   │   ├── middleware.ts    # Route protection HOF
 │   │   └── password.ts      # bcryptjs hashing
@@ -84,12 +101,12 @@ src/
 │   ├── themes.ts            # 10 curated color palettes for business pages
 │   ├── cloudflare.ts        # Context/binding accessors (D1, R2, JWT_SECRET)
 │   └── utils.ts             # Utility functions
-├── middleware.ts             # Subdomain routing
+├── middleware.ts             # Subdomain routing (skips /assets, /_next, /api)
 └── types/
     └── cloudflare.ts        # CloudflareEnv type
 worker/
 └── index.ts                 # Cloudflare Worker entry point (vinext + image optimization)
-vite.config.ts               # Vite config with vinext, cloudflare, tailwindcss plugins
+vite.config.ts               # Vite config (base: https://onnepal.com in prod)
 wrangler.jsonc               # Cloudflare Workers config (D1, R2, routes, assets)
 ```
 
@@ -105,11 +122,13 @@ npm run lint         # Run ESLint
 
 ## Design System
 
-- **Color palette**: Slate-based neutrals with blue accents for interactive elements
+- **Color palette**: Slate-based neutrals with indigo accents for interactive elements
 - **Components**: Shadcn/ui base with rounded-xl buttons, rounded-2xl cards, shadow-sm depth
 - **Typography**: Geist Sans (variable font), standard Tailwind sizes (text-xs through text-3xl)
-- **Inputs**: 48px height (h-12) on builder, 40px (h-10) elsewhere, rounded-xl, blue focus rings
-- **Animations**: Scroll-triggered reveals via IntersectionObserver (`src/components/scroll-animate.tsx`)
+- **Inputs**: 40px (h-10) standard, rounded-xl, indigo focus rings
+- **Animations**: CSS keyframe animations (fade-in, fade-in-up, float), hero gradient mesh
+- **Empty states**: Themed icon + description + CTA button
+- **Cards**: White bg, gray-200 border, hover shadow-md, rounded-xl
 
 ### Theme Palettes (`src/lib/themes.ts`)
 10 curated palettes replace individual color pickers in settings:
@@ -119,11 +138,13 @@ Default for new users: Ocean (blue).
 
 ## Subdomain Routing
 
-`src/middleware.ts` intercepts all requests, extracts subdomain from `Host` header, and rewrites to `/site/[subdomain]`. Reserved names (www, api, admin, etc.) pass through to main app.
+`src/middleware.ts` intercepts all requests, extracts subdomain from `Host` header, and rewrites to `/site/[subdomain]`. Reserved names (www, api, admin, etc.) pass through to main app. Asset paths (`/assets/`, `/_next/`, `/_vinext/`) are excluded from middleware.
 
 **Local dev**: Use `mybusiness.localhost:3000` to test subdomain pages.
 
 **Production DNS**: Requires wildcard CNAME `*.onnepal.com -> onnepal.com` in Cloudflare DNS.
+
+**Production assets**: Vite `base` set to `https://onnepal.com` so subdomain pages load CSS/JS from main domain.
 
 ## Database Schema
 
@@ -138,17 +159,18 @@ All tables indexed on `user_id` foreign key.
 
 ## Authentication Flow
 
-1. **Signup**: Email + password + business name + subdomain claim → JWT cookie
+1. **Signup**: Email + password + business name + subdomain claim → JWT cookie (jose, HS256)
 2. **Login**: Email + password → JWT cookie, redirect based on onboarding step
 3. **Session**: `getSession()` reads JWT from `auth_token` httpOnly cookie
-4. **Token payload**: `{ userId, email, subdomain }`
+4. **Token payload**: `{ userId, email, subdomain }`, 7-day expiry
 
 ## User Flow
 
-1. Homepage page builder → fill in details with live preview → claim subdomain → signup
+1. Homepage → claim subdomain → signup
 2. Onboarding wizard (3 steps): Welcome → Business details → Social links → Publish
 3. Dashboard → manage links, products, announcements, settings (theme palette)
 4. Public page live at `subdomain.onnepal.com`
+5. Business appears in public directory at `/directory`
 
 ## Onboarding Steps
 
@@ -167,6 +189,7 @@ Track via `users.onboardingStep` (0-4):
 - **Routes**: `*.onnepal.com` and `onnepal.com/*`
 - **Secret**: `JWT_SECRET` (set via `wrangler secret put JWT_SECRET`)
 - **Worker entry**: `worker/index.ts` handles image optimization + delegates to vinext
+- **Deploy**: Auto-deploys on push to main via Cloudflare Git integration
 
 ## Development Workflow
 
@@ -174,5 +197,25 @@ Track via `users.onboardingStep` (0-4):
 2. Run `npm run db:generate`
 3. Apply migration: `wrangler d1 execute onnepal-db --file=./drizzle/XXXX.sql`
 4. Test locally with `npm run dev`
-5. Build: `npm run build`
-6. Deploy: `npm run deploy`
+5. Push to main → auto-deploys to Cloudflare
+
+## Roadmap
+
+### Phase 1 (Current) — Business Directory
+- Vanity URL pages (subdomain-based)
+- Public directory with search and category filtering
+- Dashboard for business management
+
+### Phase 2 — Classifieds
+- Post classified ads (buy/sell/rent/jobs)
+- Category taxonomy for classifieds
+- Location-based filtering (city/district)
+- Contact flow (phone, WhatsApp, in-app messaging)
+- Image uploads for classified listings
+
+### Phase 3 — Growth
+- Reviews and ratings for businesses
+- Featured/promoted listings
+- SMS verification for businesses
+- Mobile app (React Native or PWA)
+- Analytics dashboard with visitor insights

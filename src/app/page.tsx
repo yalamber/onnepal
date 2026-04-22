@@ -1,5 +1,6 @@
 import { SubdomainChecker } from '@/components/subdomain-checker';
-import { Globe, LinkIcon, Megaphone, ShoppingBag, Smartphone, Zap, ArrowRight, Palette, BarChart3 } from 'lucide-react';
+import Link from 'next/link';
+import { Globe, LinkIcon, Megaphone, ShoppingBag, Smartphone, Zap, ArrowRight, Palette, BarChart3, Search, Building2 } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -215,6 +216,56 @@ export default function HomePage() {
             <div>
               <div className="text-3xl font-bold text-gray-900">24/7</div>
               <p className="text-sm text-gray-500 mt-1">Always online</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Directory CTA */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative rounded-3xl bg-gradient-to-br from-indigo-50 via-white to-violet-50 border border-indigo-100 p-8 sm:p-12 overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-100/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+            <div className="relative flex flex-col lg:flex-row items-center gap-8">
+              <div className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-medium mb-4">
+                  <Search className="h-3 w-3" />
+                  Nepal Business Directory
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                  Find any business in Nepal
+                </h2>
+                <p className="mt-3 text-gray-500 max-w-md leading-relaxed">
+                  Browse our growing directory of Nepali businesses. Search by name, category, or location to find exactly what you need.
+                </p>
+                <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                  <Link
+                    href="/directory"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white font-medium text-sm hover:bg-indigo-700 transition-colors"
+                  >
+                    <Building2 className="h-4 w-4" />
+                    Browse Directory
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-colors"
+                  >
+                    List Your Business
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 flex-shrink-0">
+                {['Restaurant & Cafe', 'Retail Shop', 'Beauty & Salon', 'Hotel & Travel', 'Education', 'Technology'].map((cat) => (
+                  <Link
+                    key={cat}
+                    href={`/directory?category=${encodeURIComponent(cat)}`}
+                    className="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm text-gray-600 hover:border-indigo-200 hover:text-indigo-600 hover:bg-indigo-50/50 transition-all text-center shadow-sm"
+                  >
+                    {cat}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
