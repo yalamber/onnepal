@@ -2,146 +2,187 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  ExternalLink, LinkIcon, Megaphone, ShoppingBag, ArrowRight, Loader2,
-  Copy, Check, Settings, TrendingUp, Eye,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowUpRight, Plus, Loader2, Tag, MapPin } from 'lucide-react';
 import { useActiveBusiness } from './layout';
 
+interface ClassifiedAd {
+  id: string;
+  title: string;
+  price: string | null;
+  category: string;
+  location: string | null;
+  status: string;
+  createdAt: string;
+}
+
+function timeAgo(date: string | Date): string {
+  const diff = Date.now() - new Date(date).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days > 0) return `${days}d ago`;
+  const hrs = Math.floor(diff / 3600000);
+  if (hrs > 0) return `${hrs}h ago`;
+  return 'just now';
+}
+
 export default function DashboardPage() {
-  const { business } = useActiveBusiness();
+  const { user, business, businesses } = useActiveBusiness();
+  const [classifieds, setClassifieds] = useState<ClassifiedAd[]>([]);
   const [stats, setStats] = useState({ links: 0, products: 0, announcements: 0 });
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!business) return;
     const fetchData = async () => {
-      setLoading(true);
       try {
-        const [linksRes, productsRes, announcementsRes] = await Promise.all([
-          fetch(`/api/business/links?businessId=${business.id}`),
-          fetch(`/api/business/products?businessId=${business.id}`),
-          fetch(`/api/business/announcements?businessId=${business.id}`),
-        ]);
-        const linksData = await linksRes.json() as { links?: unknown[] };
-        const productsData = await productsRes.json() as { products?: unknown[] };
-        const announcementsData = await announcementsRes.json() as { announcements?: unknown[] };
-        setStats({
-          links: linksData.links?.length || 0,
-          products: productsData.products?.length || 0,
-          announcements: announcementsData.announcements?.length || 0,
-        });
+        const classRes = await fetch('/api/classifieds?limit=5');
+        if (classRes.ok) {
+          const data = await classRes.json() as { listings: ClassifiedAd[] };
+          setClassifieds(data.listings || []);
+        }
+
+        if (business) {
+          const [linksRes, productsRes, announcementsRes] = await Promise.all([
+            fetch(`/api/business/links?businessId=${business.id}`),
+            fetch(`/api/business/products?businessId=${business.id}`),
+            fetch(`/api/business/announcements?businessId=${business.id}`),
+          ]);
+          const l = await linksRes.json() as { links?: unknown[] };
+          const p = await productsRes.json() as { products?: unknown[] };
+          const a = await announcementsRes.json() as { announcements?: unknown[] };
+          setStats({
+            links: l.links?.length || 0,
+            products: p.products?.length || 0,
+            announcements: a.announcements?.length || 0,
+          });
+        }
       } catch {}
       finally { setLoading(false); }
     };
     fetchData();
   }, [business]);
 
-  const copyUrl = () => {
-    if (!business) return;
-    navigator.clipboard.writeText(`https://${business.subdomain}.onnepal.com`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  if (!business || loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     );
   }
 
-  const siteUrl = `https://${business.subdomain}.onnepal.com`;
-
   return (
-    <div className="space-y-8">
-      {/* Welcome + Site URL */}
-      <div className="rounded-2xl bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-950 p-6 sm:p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-        <div className="relative">
-          <p className="text-gray-400 text-sm">Your page is live</p>
-          <h2 className="text-xl sm:text-2xl font-bold mt-1 tracking-tight">{business.businessName}</h2>
-          <div className="flex items-center gap-3 mt-4">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3.5 py-2 flex-1 min-w-0">
-              <span className="text-sm font-mono text-indigo-300 truncate">{business.subdomain}.onnepal.com</span>
-            </div>
-            <button
-              onClick={copyUrl}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm text-gray-300 hover:text-white transition-colors flex-shrink-0"
-            >
-              {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-              {copied ? 'Copied' : 'Copy'}
-            </button>
-            <a href={siteUrl} target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
-              <Button size="sm" className="h-9 bg-indigo-600 hover:bg-indigo-500 text-white border-0 gap-1.5">
-                <Eye className="h-3.5 w-3.5" /> View
-              </Button>
-            </a>
+    <div className="space-y-12">
+      {/* Welcome */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-950 tracking-tight">
+          {user?.displayName ? `Hi, ${user.displayName}` : 'Dashboard'}
+        </h1>
+        <p className="mt-1 text-gray-400">Manage your businesses and classified ads.</p>
+      </div>
+
+      {/* Businesses */}
+      <div>
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="text-sm font-semibold text-gray-950">Your businesses</h2>
+          {businesses.length < 5 && (
+            <Link href="/create-business" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
+              Add business &rarr;
+            </Link>
+          )}
+        </div>
+
+        {businesses.length === 0 ? (
+          <div className="border border-dashed border-gray-200 rounded-lg py-12 text-center">
+            <p className="text-sm text-gray-400 mb-4">You haven&apos;t created any businesses yet.</p>
+            <Link href="/create-business" className="px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
+              Create your first business
+            </Link>
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-3">
+            {businesses.map((b) => (
+              <div key={b.id} className="flex items-start justify-between p-4 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                    style={{ backgroundColor: b.primaryColor || '#1e293b' }}>
+                    {b.businessName.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-950 truncate">{b.businessName}</p>
+                    <p className="text-xs text-gray-400 font-mono mt-0.5">{b.subdomain}.onnepal.com</p>
+                    {b.businessCategory && <p className="text-xs text-gray-300 mt-1">{b.businessCategory}</p>}
+                  </div>
+                </div>
+                <a href={`https://${b.subdomain}.onnepal.com`} target="_blank" rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-gray-950 transition-colors flex-shrink-0 mt-1">
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </div>
+            ))}
+            {businesses.length < 5 && (
+              <Link href="/create-business"
+                className="flex items-center justify-center gap-2 p-4 border border-dashed border-gray-200 rounded-lg text-sm text-gray-400 hover:text-gray-950 hover:border-gray-300 transition-colors">
+                <Plus className="h-4 w-4" /> Add business
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Active business stats */}
+      {business && (
+        <div>
+          <h2 className="text-sm font-semibold text-gray-950 mb-4">
+            {business.businessName} &mdash; content
+          </h2>
+          <div className="grid grid-cols-3 gap-3">
+            <Link href="/dashboard/links" className="p-4 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors">
+              <p className="text-2xl font-bold text-gray-950">{stats.links}</p>
+              <p className="text-xs text-gray-400 mt-1">Links</p>
+            </Link>
+            <Link href="/dashboard/products" className="p-4 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors">
+              <p className="text-2xl font-bold text-gray-950">{stats.products}</p>
+              <p className="text-xs text-gray-400 mt-1">Products</p>
+            </Link>
+            <Link href="/dashboard/announcements" className="p-4 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors">
+              <p className="text-2xl font-bold text-gray-950">{stats.announcements}</p>
+              <p className="text-xs text-gray-400 mt-1">Announcements</p>
+            </Link>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Stats cards */}
+      {/* Classifieds */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Your content</h3>
-        <div className="grid sm:grid-cols-3 gap-3">
-          {[
-            { href: '/dashboard/links', icon: LinkIcon, label: 'Social Links', count: stats.links, color: 'text-indigo-600', bg: 'bg-indigo-50', ring: 'ring-indigo-100' },
-            { href: '/dashboard/products', icon: ShoppingBag, label: 'Products', count: stats.products, color: 'text-emerald-600', bg: 'bg-emerald-50', ring: 'ring-emerald-100' },
-            { href: '/dashboard/announcements', icon: Megaphone, label: 'Announcements', count: stats.announcements, color: 'text-amber-600', bg: 'bg-amber-50', ring: 'ring-amber-100' },
-          ].map((item) => (
-            <Link key={item.href} href={item.href}>
-              <div className="group relative p-5 rounded-xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all cursor-pointer">
-                <div className={`w-10 h-10 rounded-xl ${item.bg} ring-1 ${item.ring} flex items-center justify-center mb-3`}>
-                  <item.icon className={`h-5 w-5 ${item.color}`} />
-                </div>
-                <p className="text-2xl font-bold text-gray-900">{item.count}</p>
-                <p className="text-sm text-gray-500 mt-0.5">{item.label}</p>
-                <ArrowRight className="absolute top-5 right-5 h-4 w-4 text-gray-300 group-hover:text-gray-400 transition-all" />
-              </div>
-            </Link>
-          ))}
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="text-sm font-semibold text-gray-950">Your classified ads</h2>
+          <Link href="/classifieds/post/new" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
+            Post ad &rarr;
+          </Link>
         </div>
-      </div>
 
-      {/* Quick actions */}
-      <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick actions</h3>
-        <div className="grid sm:grid-cols-2 gap-3">
-          {[
-            { href: '/dashboard/links', icon: LinkIcon, label: 'Add social links', desc: 'Facebook, Instagram, WhatsApp...', color: 'bg-indigo-100 text-indigo-600', hover: 'hover:border-indigo-200 hover:bg-indigo-50/30' },
-            { href: '/dashboard/products', icon: ShoppingBag, label: 'Add products', desc: 'Showcase what you offer', color: 'bg-emerald-100 text-emerald-600', hover: 'hover:border-emerald-200 hover:bg-emerald-50/30' },
-            { href: '/dashboard/announcements', icon: Megaphone, label: 'Post announcement', desc: 'News, offers, updates', color: 'bg-amber-100 text-amber-600', hover: 'hover:border-amber-200 hover:bg-amber-50/30' },
-            { href: '/dashboard/settings', icon: Settings, label: 'Edit settings', desc: 'Profile, theme, contact info', color: 'bg-violet-100 text-violet-600', hover: 'hover:border-violet-200 hover:bg-violet-50/30' },
-          ].map((item) => (
-            <Link key={item.href} href={item.href}>
-              <div className={`flex items-center gap-3 p-4 rounded-xl bg-white border border-gray-200 ${item.hover} transition-all cursor-pointer group`}>
-                <div className={`w-9 h-9 rounded-lg ${item.color} flex items-center justify-center`}>
-                  <item.icon className="h-4 w-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">{item.label}</p>
-                  <p className="text-xs text-gray-400">{item.desc}</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-gray-400 transition-colors" />
-              </div>
+        {classifieds.length === 0 ? (
+          <div className="border border-dashed border-gray-200 rounded-lg py-12 text-center">
+            <p className="text-sm text-gray-400 mb-4">No classified ads yet.</p>
+            <Link href="/classifieds/post/new" className="px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
+              Post your first ad
             </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Tip */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-indigo-50 border border-indigo-100">
-        <TrendingUp className="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-medium text-indigo-900">Grow your reach</p>
-          <p className="text-sm text-indigo-700/70 mt-0.5 leading-relaxed">
-            Share <span className="font-mono font-semibold text-indigo-800">{business.subdomain}.onnepal.com</span> on social media, WhatsApp, and business cards.
-          </p>
-        </div>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {classifieds.map((ad) => (
+              <Link key={ad.id} href={`/classifieds/post/${ad.id}`} className="flex items-center justify-between py-3 group">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-950 group-hover:underline truncate">{ad.title}</p>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                    <span className="flex items-center gap-1"><Tag className="h-3 w-3" />{ad.category}</span>
+                    {ad.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{ad.location}</span>}
+                    <span>{timeAgo(ad.createdAt)}</span>
+                  </div>
+                </div>
+                {ad.price && <p className="text-sm font-medium text-gray-950 flex-shrink-0 ml-4">{ad.price}</p>}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
