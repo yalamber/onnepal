@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, ExternalLink, Loader2,
+  LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, ExternalLink, Loader2, Copy, Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
       </div>
     );
@@ -58,33 +58,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const siteUrl = `https://${user.subdomain}.onnepal.com`;
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-gray-50">
       {/* Top bar */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <div className="bg-white border-b border-gray-200 sticky top-14 z-40">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           {/* Header row */}
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3 min-w-0">
-              <h1 className="text-sm font-bold text-gray-900 truncate">{user.businessName}</h1>
-              <a
-                href={siteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:flex items-center gap-1 text-xs text-gray-400 hover:text-indigo-600 font-mono transition-colors"
-              >
-                {user.subdomain}.onnepal.com
-                <ExternalLink className="h-3 w-3" />
-              </a>
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                {user.businessName?.charAt(0) || 'B'}
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-sm font-bold text-gray-900 truncate">{user.businessName}</h1>
+                <a
+                  href={siteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] text-gray-400 hover:text-indigo-600 font-mono transition-colors flex items-center gap-1"
+                >
+                  {user.subdomain}.onnepal.com
+                  <ExternalLink className="h-2.5 w-2.5" />
+                </a>
+              </div>
             </div>
             <a href={siteUrl} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
+              <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-gray-200">
                 <Eye className="h-3.5 w-3.5" /> View site
               </Button>
             </a>
           </div>
 
           {/* Tab bar */}
-          <div className="-mb-px flex gap-1 overflow-x-auto scrollbar-none">
+          <div className="-mb-px flex gap-0.5 overflow-x-auto scrollbar-none">
             {TABS.map((tab) => {
               const isActive = tab.exact
                 ? pathname === tab.href
@@ -93,10 +98,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
                     isActive
                       ? 'border-indigo-600 text-indigo-600'
-                      : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-300'
+                      : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                   }`}
                 >
                   <tab.icon className="h-3.5 w-3.5" />
@@ -109,7 +114,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
 
       {/* Page content */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {children}
       </div>
     </div>
