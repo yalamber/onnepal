@@ -108,7 +108,7 @@ export default function DirectoryPage() {
               <nav className="space-y-0.5">
                 <button
                   onClick={() => handleCategory('')}
-                  className={`block w-full text-left px-2 py-1.5 rounded text-sm transition-colors ${
+                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
                     !activeCategory ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                   }`}
                 >
@@ -118,7 +118,7 @@ export default function DirectoryPage() {
                   <button
                     key={category}
                     onClick={() => handleCategory(category)}
-                    className={`flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm transition-colors ${
+                    className={`flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
                       activeCategory === category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                     }`}
                   >

@@ -107,7 +107,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <p className="text-xs font-semibold text-gray-950 uppercase tracking-wider mb-2">Business</p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 w-full text-left hover:bg-gray-50 rounded-lg px-2 py-1.5 -ml-2 transition-colors">
+                      <button className="flex items-center gap-2 w-full text-left hover:bg-gray-50 rounded-lg px-2 py-1.5 -ml-2 cursor-pointer transition-colors">
                         <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
                           style={{ backgroundColor: activeBusiness.primaryColor || '#1e293b' }}>
                           {activeBusiness.businessName.charAt(0)}
@@ -116,9 +116,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         {businesses.length > 1 && <ChevronDown className="h-3 w-3 text-gray-400 flex-shrink-0" />}
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-52">
+                    <DropdownMenuContent align="start" className="w-52 bg-white border border-gray-200 shadow-lg rounded-lg p-1">
                       {businesses.map((b) => (
-                        <DropdownMenuItem key={b.id} onClick={() => switchBusiness(b)} className="flex items-center gap-2">
+                        <DropdownMenuItem key={b.id} onClick={() => switchBusiness(b)} className="flex items-center gap-2 cursor-pointer rounded-md">
                           <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold"
                             style={{ backgroundColor: b.primaryColor || '#1e293b' }}>
                             {b.businessName.charAt(0)}
@@ -157,7 +157,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   if (needsBusiness && !activeBusiness) return null;
                   return (
                     <Link key={item.href} href={item.href}
-                      className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm transition-colors ${
+                      className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
                         isActive ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                       }`}>
                       <item.icon className="h-4 w-4" />
@@ -176,7 +176,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link href="/classifieds/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
                   <Tag className="h-4 w-4" /> Post ad
                 </Link>
-                <Link href="/dashboard/account" className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm transition-colors ${
+                <Link href="/dashboard/account" className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
                   pathname === '/dashboard/account' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                 }`}>
                   <User className="h-4 w-4" /> Account
