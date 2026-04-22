@@ -9,5 +9,9 @@ export function getR2Bucket(): R2Bucket {
 }
 
 export function getJwtSecret(): string {
-  return (env as { JWT_SECRET: string }).JWT_SECRET;
+  const secret = (env as { JWT_SECRET: string }).JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not set. Run: wrangler secret put JWT_SECRET');
+  }
+  return secret;
 }
