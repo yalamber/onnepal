@@ -49,7 +49,7 @@ export async function DELETE(
     const { id } = await params;
     const d1 = await getD1Database();
     const db = getDb(d1);
-    await deleteSocialLink(db, id);
+    await deleteSocialLink(db, id, session.userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

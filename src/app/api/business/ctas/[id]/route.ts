@@ -27,7 +27,7 @@ export async function PATCH(
 
     const d1 = await getD1Database();
     const db = getDb(d1);
-    await updateCtaButton(db, id, validation.data);
+    await updateCtaButton(db, id, session.userId, validation.data);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -49,7 +49,7 @@ export async function DELETE(
     const { id } = await params;
     const d1 = await getD1Database();
     const db = getDb(d1);
-    await deleteCtaButton(db, id);
+    await deleteCtaButton(db, id, session.userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

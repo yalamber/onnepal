@@ -1,4 +1,4 @@
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, and } from 'drizzle-orm';
 import { products } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
@@ -55,6 +55,7 @@ export async function createProduct(
 export async function updateProduct(
   db: Database,
   id: string,
+  userId: string,
   data: Partial<{
     name: string;
     description: string;
@@ -67,11 +68,13 @@ export async function updateProduct(
   await db
     .update(products)
     .set({ ...data, updatedAt: new Date() } as Partial<typeof products.$inferInsert>)
-    .where(eq(products.id, id));
+    .where(and(eq(products.id, id), eq(products.userId, userId)));
 }
 
-export async function deleteProduct(db: Database, id: string) {
-  await db.delete(products).where(eq(products.id, id));
+export async function deleteProduct(db: Database, id: string, userId?: string) {
+  const conditions = [eq(products.id, id)];
+  if (userId) conditions.push(eq(products.userId, userId));
+  await db.delete(products).where(and(...conditions));
 }
 
 export async function reorderProducts(db: Database, userId: string, orderedIds: string[]) {
@@ -79,6 +82,6 @@ export async function reorderProducts(db: Database, userId: string, orderedIds: 
     await db
       .update(products)
       .set({ displayOrder: i })
-      .where(eq(products.id, orderedIds[i]));
+      .where(and(eq(products.id, orderedIds[i]), eq(products.userId, userId)));
   }
 }

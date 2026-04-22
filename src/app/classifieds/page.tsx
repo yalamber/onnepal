@@ -16,19 +16,19 @@ import {
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 
 interface Listing {
-  id: number;
+  id: string;
   title: string;
-  description: string;
-  price: number | null;
+  description: string | null;
+  price: string | null;
   category: string;
-  location: string;
+  location: string | null;
   contactPhone: string | null;
   contactWhatsapp: string | null;
   imageUrls: string | null;
   status: string;
   createdAt: string;
-  userName: string;
-  userSubdomain: string;
+  userName: string | null;
+  userSubdomain: string | null;
 }
 
 interface CategoryCount {
@@ -67,10 +67,9 @@ function getFirstImageUrl(imageUrls: string | null): string | null {
   }
 }
 
-function formatPrice(price: number | null): string | null {
-  if (price === null || price === undefined) return null;
-  if (price === 0) return 'Free';
-  return `Rs. ${price.toLocaleString('en-NP')}`;
+function formatPrice(price: string | null): string | null {
+  if (!price) return null;
+  return price;
 }
 
 export default function ClassifiedsPage() {

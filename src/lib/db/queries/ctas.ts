@@ -1,4 +1,4 @@
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, and } from 'drizzle-orm';
 import { ctaButtons } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
@@ -39,6 +39,7 @@ export async function createCtaButton(
 export async function updateCtaButton(
   db: Database,
   id: string,
+  userId: string,
   data: Partial<{
     label: string;
     url: string;
@@ -48,11 +49,13 @@ export async function updateCtaButton(
   await db
     .update(ctaButtons)
     .set(data as Partial<typeof ctaButtons.$inferInsert>)
-    .where(eq(ctaButtons.id, id));
+    .where(and(eq(ctaButtons.id, id), eq(ctaButtons.userId, userId)));
 }
 
-export async function deleteCtaButton(db: Database, id: string) {
-  await db.delete(ctaButtons).where(eq(ctaButtons.id, id));
+export async function deleteCtaButton(db: Database, id: string, userId?: string) {
+  const conditions = [eq(ctaButtons.id, id)];
+  if (userId) conditions.push(eq(ctaButtons.userId, userId));
+  await db.delete(ctaButtons).where(and(...conditions));
 }
 
 export async function reorderCtaButtons(db: Database, userId: string, orderedIds: string[]) {
@@ -60,6 +63,6 @@ export async function reorderCtaButtons(db: Database, userId: string, orderedIds
     await db
       .update(ctaButtons)
       .set({ displayOrder: i })
-      .where(eq(ctaButtons.id, orderedIds[i]));
+      .where(and(eq(ctaButtons.id, orderedIds[i]), eq(ctaButtons.userId, userId)));
   }
 }

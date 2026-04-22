@@ -1,4 +1,4 @@
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, and } from 'drizzle-orm';
 import { socialLinks } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
@@ -41,7 +41,7 @@ export async function createSocialLink(
 export async function updateSocialLink(
   db: Database,
   id: string,
-  _userId: string,
+  userId: string,
   data: Partial<{
     platform: string;
     url: string;
@@ -51,11 +51,13 @@ export async function updateSocialLink(
   await db
     .update(socialLinks)
     .set(data as Partial<typeof socialLinks.$inferInsert>)
-    .where(eq(socialLinks.id, id));
+    .where(and(eq(socialLinks.id, id), eq(socialLinks.userId, userId)));
 }
 
-export async function deleteSocialLink(db: Database, id: string) {
-  await db.delete(socialLinks).where(eq(socialLinks.id, id));
+export async function deleteSocialLink(db: Database, id: string, userId?: string) {
+  const conditions = [eq(socialLinks.id, id)];
+  if (userId) conditions.push(eq(socialLinks.userId, userId));
+  await db.delete(socialLinks).where(and(...conditions));
 }
 
 export async function reorderSocialLinks(db: Database, userId: string, orderedIds: string[]) {

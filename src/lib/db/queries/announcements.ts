@@ -73,6 +73,8 @@ export async function updateAnnouncement(
   await db.update(announcements).set(updateData).where(eq(announcements.id, id));
 }
 
-export async function deleteAnnouncement(db: Database, id: string) {
-  await db.delete(announcements).where(eq(announcements.id, id));
+export async function deleteAnnouncement(db: Database, id: string, userId?: string) {
+  const conditions = [eq(announcements.id, id)];
+  if (userId) conditions.push(eq(announcements.userId, userId));
+  await db.delete(announcements).where(and(...conditions));
 }

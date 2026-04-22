@@ -27,7 +27,7 @@ export async function PATCH(
 
     const d1 = await getD1Database();
     const db = getDb(d1);
-    await updateProduct(db, id, validation.data);
+    await updateProduct(db, id, session.userId, validation.data);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -49,7 +49,7 @@ export async function DELETE(
     const { id } = await params;
     const d1 = await getD1Database();
     const db = getDb(d1);
-    await deleteProduct(db, id);
+    await deleteProduct(db, id, session.userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
