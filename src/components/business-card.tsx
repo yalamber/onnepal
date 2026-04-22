@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 export interface BusinessCardData {
   id: string;
@@ -16,66 +16,40 @@ interface BusinessCardProps {
 }
 
 export function BusinessCard({ business }: BusinessCardProps) {
-  const primary = business.primaryColor || '#2563eb';
-  const accent = business.accentColor || '#1d4ed8';
-  const name = business.businessName || 'Unnamed Business';
-  const initial = name.charAt(0).toUpperCase();
+  const primary = business.primaryColor || '#1e293b';
+  const accent = business.accentColor || '#334155';
+  const name = business.businessName || 'Unnamed';
 
   return (
     <a
       href={`https://${business.subdomain}.onnepal.com`}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block bg-white rounded-2xl border border-gray-200 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/50 hover:border-gray-300 hover:-translate-y-0.5"
+      className="group block p-5 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors"
     >
       <div className="flex items-start gap-4">
-        {/* Avatar */}
         {business.logoUrl ? (
-          <img
-            src={business.logoUrl}
-            alt={name}
-            className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
-          />
+          <img src={business.logoUrl} alt={name} className="w-11 h-11 rounded-lg object-cover flex-shrink-0" />
         ) : (
           <div
-            className="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0"
-            style={{
-              background: `linear-gradient(135deg, ${primary}, ${accent})`,
-            }}
+            className="w-11 h-11 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0"
+            style={{ backgroundColor: primary }}
           >
-            {initial}
+            {name.charAt(0)}
           </div>
         )}
-
-        {/* Content */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-bold text-gray-900 truncate group-hover:text-indigo-600 transition-colors">
-            {name}
-          </h3>
-
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-sm font-semibold text-gray-950 truncate">{name}</h3>
+            <ArrowUpRight className="h-3.5 w-3.5 text-gray-300 group-hover:text-gray-500 flex-shrink-0 mt-0.5 transition-colors" />
+          </div>
           {business.businessCategory && (
-            <span className="inline-block mt-1 px-2.5 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">
-              {business.businessCategory}
-            </span>
+            <p className="text-xs text-gray-400 mt-0.5">{business.businessCategory}</p>
           )}
-
           {business.description && (
-            <p className="mt-2 text-sm text-gray-500 leading-relaxed line-clamp-2">
-              {business.description}
-            </p>
+            <p className="text-sm text-gray-400 mt-2 leading-relaxed line-clamp-2">{business.description}</p>
           )}
         </div>
-      </div>
-
-      {/* Visit link */}
-      <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-        <span className="text-xs text-gray-400 font-mono truncate">
-          {business.subdomain}.onnepal.com
-        </span>
-        <span className="text-sm text-indigo-600 font-medium flex items-center gap-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-          Visit
-          <ArrowRight className="h-3.5 w-3.5" />
-        </span>
       </div>
     </a>
   );
@@ -83,20 +57,14 @@ export function BusinessCard({ business }: BusinessCardProps) {
 
 export function BusinessCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse">
+    <div className="p-5 border border-gray-100 rounded-lg animate-pulse">
       <div className="flex items-start gap-4">
-        <div className="w-14 h-14 rounded-xl bg-gray-200 flex-shrink-0" />
-        <div className="flex-1 min-w-0">
-          <div className="h-5 w-32 bg-gray-200 rounded-lg" />
-          <div className="mt-2 h-4 w-20 bg-gray-100 rounded-full" />
-          <div className="mt-3 space-y-1.5">
-            <div className="h-3.5 w-full bg-gray-100 rounded" />
-            <div className="h-3.5 w-3/4 bg-gray-100 rounded" />
-          </div>
+        <div className="w-11 h-11 rounded-lg bg-gray-100 flex-shrink-0" />
+        <div className="flex-1">
+          <div className="h-4 w-28 bg-gray-100 rounded" />
+          <div className="h-3 w-16 bg-gray-50 rounded mt-2" />
+          <div className="h-3 w-full bg-gray-50 rounded mt-3" />
         </div>
-      </div>
-      <div className="mt-4 pt-3 border-t border-gray-100">
-        <div className="h-3.5 w-36 bg-gray-100 rounded" />
       </div>
     </div>
   );

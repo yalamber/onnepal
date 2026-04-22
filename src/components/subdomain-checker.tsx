@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Check, X, Loader2, ArrowRight } from 'lucide-react';
+import { Check, X, Loader2 } from 'lucide-react';
 
 export function SubdomainChecker() {
   const [name, setName] = useState('');
@@ -19,7 +18,7 @@ export function SubdomainChecker() {
       const data = await res.json() as { available?: boolean; error?: string };
       if (!res.ok) { setStatus('invalid'); setError(data.error || 'Invalid name'); return; }
       setStatus(data.available ? 'available' : 'taken');
-      setError(data.available ? '' : 'This name is already taken');
+      setError(data.available ? '' : 'Already taken');
     } catch { setStatus('idle'); }
   }, []);
 
@@ -39,52 +38,43 @@ export function SubdomainChecker() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className={`flex items-center gap-0 bg-white rounded-xl border shadow-sm p-1.5 transition-all duration-200 ${
-        status === 'available'
-          ? 'border-emerald-300 shadow-emerald-100'
-          : status === 'taken' || status === 'invalid'
-          ? 'border-red-200 shadow-red-50'
-          : 'border-gray-200 focus-within:border-indigo-300 focus-within:shadow-md focus-within:shadow-indigo-500/5'
-      }`}>
-        <div className="flex-1 flex items-center pl-3">
-          <input
-            type="text"
-            value={name}
-            onChange={handleInputChange}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleClaim(); }}
-            placeholder="yourbusiness"
-            maxLength={30}
-            className="w-full bg-transparent text-[0.9375rem] text-gray-900 placeholder:text-gray-400 outline-none"
-          />
-          <span className="text-gray-300 text-sm pr-2 whitespace-nowrap">.onnepal.com</span>
-        </div>
-        <Button
+    <div className="w-full max-w-md">
+      <div className="flex items-center gap-0 border border-gray-200 rounded-lg p-1 focus-within:border-gray-400 transition-colors">
+        <input
+          type="text"
+          value={name}
+          onChange={handleInputChange}
+          onKeyDown={(e) => { if (e.key === 'Enter') handleClaim(); }}
+          placeholder="yourname"
+          maxLength={30}
+          className="flex-1 bg-transparent text-sm text-gray-900 placeholder:text-gray-300 outline-none pl-3 py-2"
+        />
+        <span className="text-gray-300 text-sm pr-2">.onnepal.com</span>
+        <button
           onClick={handleClaim}
           disabled={status !== 'available'}
-          size="sm"
-          className="h-9 px-5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40"
+          className="px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-20 disabled:cursor-default transition-colors"
         >
           {status === 'checking' ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <>Claim <ArrowRight className="h-3.5 w-3.5 ml-1" /></>
+            'Claim'
           )}
-        </Button>
+        </button>
       </div>
-      <div className="h-6 mt-2 px-3">
+      <div className="h-5 mt-1.5 px-1">
         {status === 'available' && (
-          <p className="text-sm text-emerald-600 flex items-center justify-center gap-1.5 font-medium">
-            <Check className="h-3.5 w-3.5" /> {name}.onnepal.com is yours!
+          <p className="text-xs text-green-600 flex items-center gap-1">
+            <Check className="h-3 w-3" /> {name}.onnepal.com is available
           </p>
         )}
         {(status === 'taken' || status === 'invalid') && (
-          <p className="text-sm text-red-500 flex items-center justify-center gap-1.5">
-            <X className="h-3.5 w-3.5" /> {error}
+          <p className="text-xs text-red-500 flex items-center gap-1">
+            <X className="h-3 w-3" /> {error}
           </p>
         )}
         {status === 'idle' && name.length > 0 && name.length < 3 && (
-          <p className="text-sm text-gray-400 text-center">Type at least 3 characters</p>
+          <p className="text-xs text-gray-300">At least 3 characters</p>
         )}
       </div>
     </div>
