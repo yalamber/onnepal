@@ -100,6 +100,29 @@ export const pageViews = sqliteTable('page_views', {
   index('page_views_viewed_at_idx').on(table.viewedAt),
 ]));
 
+// Classifieds table
+export const classifieds = sqliteTable('classifieds', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  price: text('price'),
+  category: text('category').notNull(),
+  location: text('location'),
+  contactPhone: text('contact_phone'),
+  contactWhatsapp: text('contact_whatsapp'),
+  imageUrls: text('image_urls'), // JSON array of URLs
+  status: text('status', { enum: ['active', 'sold', 'expired'] }).notNull().default('active'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }),
+}, (table) => ([
+  index('classifieds_user_idx').on(table.userId),
+  index('classifieds_category_idx').on(table.category),
+  index('classifieds_status_idx').on(table.status),
+  index('classifieds_created_idx').on(table.createdAt),
+]));
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   socialLinks: many(socialLinks),
@@ -107,6 +130,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   products: many(products),
   ctaButtons: many(ctaButtons),
   pageViews: many(pageViews),
+  classifieds: many(classifieds),
 }));
 
 export const socialLinksRelations = relations(socialLinks, ({ one }) => ({
@@ -140,6 +164,13 @@ export const ctaButtonsRelations = relations(ctaButtons, ({ one }) => ({
 export const pageViewsRelations = relations(pageViews, ({ one }) => ({
   user: one(users, {
     fields: [pageViews.userId],
+    references: [users.id],
+  }),
+}));
+
+export const classifiedsRelations = relations(classifieds, ({ one }) => ({
+  user: one(users, {
+    fields: [classifieds.userId],
     references: [users.id],
   }),
 }));

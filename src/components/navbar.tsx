@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ExternalLink, ChevronDown, Search } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ExternalLink, ChevronDown, Search, Tag } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -74,6 +74,10 @@ export function Navbar() {
                 <Search className="h-3.5 w-3.5" />
                 Directory
               </Link>
+              <Link href="/classifieds" className="text-sm text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1">
+                <Tag className="h-3.5 w-3.5" />
+                Classifieds
+              </Link>
               <Link href="/login" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">
                 Log in
               </Link>
@@ -105,6 +109,17 @@ export function Navbar() {
             >
               <Search className="h-3.5 w-3.5" />
               Directory
+            </Link>
+            <Link
+              href="/classifieds"
+              className={`hidden sm:flex items-center gap-1.5 text-sm font-medium transition-colors ${
+                pathname.startsWith('/classifieds')
+                  ? 'text-indigo-600'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <Tag className="h-3.5 w-3.5" />
+              Classifieds
             </Link>
           </div>
 
@@ -165,6 +180,9 @@ export function Navbar() {
                 <div className="flex flex-col gap-1 mt-8">
                   <Link href="/directory" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
                     <Search className="h-4 w-4" /> Browse Directory
+                  </Link>
+                  <Link href="/classifieds" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                    <Tag className="h-4 w-4" /> Classifieds
                   </Link>
                   <div className="h-px bg-slate-100 my-2" />
                   {user ? (
