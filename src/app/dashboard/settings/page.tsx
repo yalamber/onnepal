@@ -43,7 +43,7 @@ export default function SettingsPage() {
         if (!res.ok) { router.push('/login'); return; }
         const data = await res.json() as { profile: Profile };
         setProfile(data.profile);
-        const palette = findPalette(data.user.primaryColor || '', data.user.accentColor || '');
+        const palette = findPalette(data.profile.primaryColor || '', data.profile.accentColor || '');
         setSelectedPalette(palette || THEME_PALETTES[0]);
       } catch { router.push('/login'); }
       finally { setLoading(false); }
