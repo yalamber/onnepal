@@ -13,7 +13,7 @@ const createClassifiedSchema = z.object({
   location: z.string().max(200).nullish(),
   contactPhone: z.string().max(20).nullish(),
   contactWhatsapp: z.string().max(20).nullish(),
-  imageUrls: z.array(z.string().url()).max(5).optional(),
+  imageUrls: z.array(z.string().max(500)).max(5).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(48, Math.max(1, parseInt(searchParams.get('limit') || '12', 10)));
 
-    const d1 = await getD1Database();
+    const d1 = getD1Database();
     const db = getDb(d1);
 
     const [listings, total, categories] = await Promise.all([
@@ -63,7 +63,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const d1 = await getD1Database();
+    if (validation.data.imageUrls) {
+      const invalid = validation.data.imageUrls.some((url) => !url.startsWith(session.userId + '/'));
+      if (invalid) {
+        return NextResponse.json({ error: 'Invalid image' }, { status: 400 });
+      }
+    }
+
+    const d1 = getD1Database();
     const db = getDb(d1);
 
     const result = await createClassified(db, session.userId, validation.data);

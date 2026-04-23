@@ -29,7 +29,16 @@ export async function PATCH(request: Request) {
       );
     }
 
-    await updateBusinessProfile(auth.db, auth.businessId, validation.data);
+    const data = validation.data;
+
+    if (data.logoUrl && !data.logoUrl.startsWith(auth.session.userId + '/') && data.logoUrl !== '') {
+      return NextResponse.json({ error: 'Invalid logo image' }, { status: 400 });
+    }
+    if (data.coverImageUrl && !data.coverImageUrl.startsWith(auth.session.userId + '/') && data.coverImageUrl !== '') {
+      return NextResponse.json({ error: 'Invalid cover image' }, { status: 400 });
+    }
+
+    await updateBusinessProfile(auth.db, auth.businessId, data);
 
     return NextResponse.json({ success: true });
   } catch (error) {
