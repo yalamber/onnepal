@@ -37,212 +37,170 @@ const PLATFORM_LABELS: Record<string, string> = {
 export function BusinessPage({ business, links, announcements, products, ctas }: BusinessPageProps) {
   const primary = business.primaryColor;
   const accent = business.accentColor;
+  const hasContact = business.phone || business.address || business.businessHours;
+  const hasRightContent = products.length > 0 || announcements.length > 0;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       {/* Cover */}
       <div
-        className="relative h-48 sm:h-56"
+        className="h-40 sm:h-52 lg:h-64"
         style={{
           background: business.coverImageUrl
             ? `url(${business.coverImageUrl}) center/cover`
-            : `linear-gradient(135deg, ${primary} 0%, ${accent} 50%, ${primary}dd 100%)`,
+            : `linear-gradient(135deg, ${primary}, ${accent})`,
         }}
-      >
-        {/* Subtle pattern overlay */}
-        {!business.coverImageUrl && (
-          <div className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)',
-              backgroundSize: '40px 40px',
-            }}
-          />
-        )}
-      </div>
+      />
 
-      <div className="max-w-lg mx-auto px-5 -mt-14 relative z-10 pb-20">
-        {/* Profile */}
-        <div className="text-center mb-8">
+      {/* Main content */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10 pb-20">
+        {/* Profile header */}
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4 mb-8">
           {business.logoUrl ? (
-            <img
-              src={business.logoUrl}
-              alt={business.businessName || ''}
-              className="w-24 h-24 rounded-2xl border-4 border-white mx-auto object-cover bg-white shadow-lg"
-            />
+            <img src={business.logoUrl} alt={business.businessName || ''}
+              className="w-28 h-28 lg:w-32 lg:h-32 rounded-2xl border-4 border-white object-cover bg-white shadow-sm" />
           ) : (
-            <div
-              className="w-24 h-24 rounded-2xl border-4 border-white mx-auto flex items-center justify-center text-white text-2xl font-bold shadow-lg"
-              style={{ background: `linear-gradient(135deg, ${primary}, ${accent})` }}
-            >
+            <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-2xl border-4 border-white flex items-center justify-center text-white text-3xl font-bold shadow-sm"
+              style={{ backgroundColor: primary }}>
               {business.businessName?.charAt(0) || '?'}
             </div>
           )}
-          <h1 className="mt-4 text-xl font-bold text-slate-900 tracking-tight">
-            {business.businessName}
-          </h1>
-          {business.businessCategory && (
-            <span
-              className="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-medium"
-              style={{ backgroundColor: `${primary}15`, color: primary }}
-            >
-              {business.businessCategory}
-            </span>
-          )}
-          {business.description && (
-            <p className="mt-3 text-slate-500 text-sm max-w-xs mx-auto leading-relaxed">{business.description}</p>
-          )}
+          <div className="pb-1">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-950 tracking-tight">{business.businessName}</h1>
+            {business.businessCategory && (
+              <p className="text-sm text-gray-400 mt-1">{business.businessCategory}</p>
+            )}
+            {business.description && (
+              <p className="text-gray-500 text-sm mt-2 max-w-lg leading-relaxed">{business.description}</p>
+            )}
+          </div>
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTA Buttons — full width on mobile, inline on desktop */}
         {ctas.length > 0 && (
-          <div className="flex flex-col gap-2.5 mb-8">
+          <div className="flex flex-col sm:flex-row gap-2 mb-10">
             {ctas.map((cta) => (
-              <a
-                key={cta.id}
-                href={cta.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`block w-full text-center py-3.5 px-6 rounded-xl font-semibold text-sm shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 ${
-                  cta.style === 'primary'
-                    ? 'text-white'
-                    : cta.style === 'secondary'
-                    ? 'text-white opacity-90'
-                    : 'border-2 bg-white'
+              <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
+                className={`text-center py-3 px-6 rounded-lg font-medium text-sm transition-colors ${
+                  cta.style === 'outline' ? 'border-2 bg-white' : 'text-white'
                 }`}
                 style={
                   cta.style === 'outline'
                     ? { borderColor: primary, color: primary }
                     : { backgroundColor: cta.style === 'primary' ? primary : accent }
-                }
-              >
+                }>
                 {cta.label}
               </a>
             ))}
           </div>
         )}
 
-        {/* Social Links */}
-        {links.length > 0 && (
-          <div className="mb-8">
-            <div className="flex flex-col gap-2">
-              {links.map((link) => {
-                const Icon = PLATFORM_ICONS[link.platform] || Globe;
-                return (
-                  <a
-                    key={link.id}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center gap-3 p-3.5 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-                  >
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: `${primary}10` }}
-                    >
-                      <Icon className="h-4 w-4" style={{ color: primary }} />
-                    </div>
-                    <span className="font-medium text-sm text-slate-800">
-                      {link.label || PLATFORM_LABELS[link.platform] || link.platform}
-                    </span>
-                    <ExternalLink className="h-3 w-3 text-slate-300 ml-auto group-hover:text-slate-400 transition-colors" />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Announcements */}
-        {announcements.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-widest">Announcements</h2>
-            <div className="flex flex-col gap-2">
-              {announcements.map((item) => (
-                <div key={item.id} className="p-4 bg-white rounded-xl border border-slate-200/60 shadow-sm">
-                  <div className="flex items-start gap-2">
-                    {item.isPinned && <Pin className="h-3 w-3 mt-0.5 flex-shrink-0" style={{ color: primary }} />}
-                    <div>
-                      <h3 className="font-semibold text-sm text-slate-900">{item.title}</h3>
-                      {item.content && <p className="text-slate-500 text-sm mt-1.5 leading-relaxed">{item.content}</p>}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Products */}
-        {products.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-widest">Products & Services</h2>
-            <div className="grid grid-cols-2 gap-2.5">
-              {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-xl border border-slate-200/60 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
-                  {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} className="w-full h-32 object-cover" />
-                  ) : (
-                    <div
-                      className="w-full h-24 flex items-center justify-center"
-                      style={{ backgroundColor: `${primary}08` }}
-                    >
-                      <span className="text-2xl font-bold" style={{ color: `${primary}30` }}>
-                        {product.name.charAt(0)}
-                      </span>
+        {/* Two-column layout on desktop */}
+        <div className={`flex flex-col ${hasRightContent ? 'lg:flex-row lg:gap-12' : ''}`}>
+          {/* Left column — links + contact */}
+          <div className={`${hasRightContent ? 'lg:w-80 lg:flex-shrink-0' : 'max-w-lg'}`}>
+            {/* Contact info */}
+            {hasContact && (
+              <div className="mb-8">
+                <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Contact</h2>
+                <div className="space-y-2">
+                  {business.phone && (
+                    <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-sm text-gray-600 hover:text-gray-950 transition-colors py-1">
+                      <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      {business.phone}
+                    </a>
+                  )}
+                  {business.address && (
+                    <div className="flex items-center gap-3 text-sm text-gray-600 py-1">
+                      <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      {business.address}
                     </div>
                   )}
-                  <div className="p-3">
-                    <h3 className="font-semibold text-slate-900 text-sm">{product.name}</h3>
-                    {product.description && <p className="text-slate-400 text-xs mt-0.5 line-clamp-2">{product.description}</p>}
-                    {product.price && (
-                      <p className="mt-2 font-bold text-sm" style={{ color: primary }}>{product.price}</p>
-                    )}
-                  </div>
+                  {business.businessHours && (
+                    <div className="flex items-center gap-3 text-sm text-gray-600 py-1">
+                      <Clock className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      {business.businessHours}
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </div>
+            )}
 
-        {/* Contact */}
-        {(business.phone || business.address || business.businessHours) && (
-          <div className="mb-8">
-            <h2 className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-widest">Contact</h2>
-            <div className="bg-white rounded-xl border border-slate-200/60 shadow-sm p-4 space-y-3">
-              {business.phone && (
-                <a href={`tel:${business.phone}`} className="flex items-center gap-3 text-sm text-slate-600 hover:text-slate-900 transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
-                    <Phone className="h-4 w-4 text-slate-400" />
+            {/* Social Links */}
+            {links.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Links</h2>
+                <div className="space-y-1">
+                  {links.map((link) => {
+                    const Icon = PLATFORM_ICONS[link.platform] || Globe;
+                    return (
+                      <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
+                        className="group flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-gray-950 transition-colors">
+                        <Icon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0 transition-colors" />
+                        <span>{link.label || PLATFORM_LABELS[link.platform] || link.platform}</span>
+                        <ExternalLink className="h-3 w-3 text-gray-300 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right column — products + announcements */}
+          {hasRightContent && (
+            <div className="flex-1 min-w-0">
+              {/* Products */}
+              {products.length > 0 && (
+                <div className="mb-10">
+                  <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Products & Services</h2>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {products.map((product) => (
+                      <div key={product.id} className="border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 transition-colors">
+                        {product.imageUrl ? (
+                          <img src={product.imageUrl} alt={product.name} className="w-full h-32 lg:h-40 object-cover" />
+                        ) : (
+                          <div className="w-full h-24 lg:h-32 bg-gray-50 flex items-center justify-center">
+                            <span className="text-xl font-bold text-gray-200">{product.name.charAt(0)}</span>
+                          </div>
+                        )}
+                        <div className="p-3">
+                          <h3 className="font-medium text-sm text-gray-950">{product.name}</h3>
+                          {product.description && <p className="text-gray-400 text-xs mt-0.5 line-clamp-2">{product.description}</p>}
+                          {product.price && <p className="mt-2 font-semibold text-sm" style={{ color: primary }}>{product.price}</p>}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  {business.phone}
-                </a>
-              )}
-              {business.address && (
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="h-4 w-4 text-slate-400" />
-                  </div>
-                  {business.address}
                 </div>
               )}
-              {business.businessHours && (
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
-                    <Clock className="h-4 w-4 text-slate-400" />
+
+              {/* Announcements */}
+              {announcements.length > 0 && (
+                <div className="mb-10">
+                  <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Announcements</h2>
+                  <div className="space-y-3">
+                    {announcements.map((item) => (
+                      <div key={item.id} className="border border-gray-100 rounded-lg p-4">
+                        <div className="flex items-start gap-2">
+                          {item.isPinned && <Pin className="h-3 w-3 mt-0.5 flex-shrink-0" style={{ color: primary }} />}
+                          <div>
+                            <h3 className="font-medium text-sm text-gray-950">{item.title}</h3>
+                            {item.content && <p className="text-gray-500 text-sm mt-1 leading-relaxed">{item.content}</p>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  {business.businessHours}
                 </div>
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Footer */}
-        <div className="text-center mt-16">
-          <a href="https://onnepal.com" className="inline-flex items-center gap-1.5 text-xs text-slate-300 hover:text-slate-500 transition-colors">
-            <div className="w-3.5 h-3.5 rounded bg-slate-200 flex items-center justify-center">
-              <span className="text-[0.35rem] font-bold text-slate-400">ON</span>
-            </div>
+        <div className="mt-16 pt-6 border-t border-gray-100">
+          <a href="https://onnepal.com" className="text-xs text-gray-300 hover:text-gray-500 transition-colors">
             Powered by OnNepal
           </a>
         </div>
