@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
+import { ImageUpload } from '@/components/image-upload';
 
 interface FormData {
   title: string;
@@ -40,6 +41,7 @@ export default function NewClassifiedPage() {
     contactPhone: '',
     contactWhatsapp: '',
   });
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -104,6 +106,7 @@ export default function NewClassifiedPage() {
           location: form.location.trim() || null,
           contactPhone: form.contactPhone.trim() || null,
           contactWhatsapp: form.contactWhatsapp.trim() || null,
+          imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
         }),
       });
 
@@ -236,6 +239,9 @@ export default function NewClassifiedPage() {
                 />
               </div>
             </div>
+
+            {/* Images */}
+            <ImageUpload value={imageUrls} onChange={setImageUrls} max={5} label="Photos (optional)" />
 
             {/* Divider */}
             <div className="border-t border-gray-100" />

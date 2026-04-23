@@ -8,12 +8,15 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Save, Check, Palette, Building2, Phone, MapPin, Clock } from 'lucide-react';
 import { THEME_PALETTES, findPalette, type ThemePalette } from '@/lib/themes';
+import { SingleImageUpload } from '@/components/image-upload';
 
 interface Profile {
   subdomain: string;
   businessName: string;
   businessCategory: string | null;
   description: string | null;
+  logoUrl: string | null;
+  coverImageUrl: string | null;
   phone: string | null;
   address: string | null;
   businessHours: string | null;
@@ -67,6 +70,8 @@ export default function SettingsPage() {
           businessName: profile.businessName,
           businessCategory: profile.businessCategory,
           description: profile.description,
+          logoUrl: profile.logoUrl,
+          coverImageUrl: profile.coverImageUrl,
           phone: profile.phone,
           address: profile.address,
           businessHours: profile.businessHours,
@@ -101,6 +106,10 @@ export default function SettingsPage() {
           <p className="text-sm font-semibold text-gray-900">Business information</p>
         </div>
         <div className="p-5 space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <SingleImageUpload value={profile.logoUrl} onChange={(url) => setProfile({ ...profile, logoUrl: url })} label="Logo" />
+            <SingleImageUpload value={profile.coverImageUrl} onChange={(url) => setProfile({ ...profile, coverImageUrl: url })} label="Cover image" />
+          </div>
           <div>
             <label className="text-xs font-medium text-gray-600 mb-1.5 block">Business Name</label>
             <Input
