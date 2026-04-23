@@ -36,9 +36,7 @@ export async function POST(request: NextRequest) {
       httpMetadata: { contentType: file.type },
     });
 
-    const url = `https://images.onnepal.com/${key}`;
-
-    return NextResponse.json({ url, key });
+    return NextResponse.json({ url: key, key });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });

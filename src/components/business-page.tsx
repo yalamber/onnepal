@@ -4,6 +4,12 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 
+function imgSrc(key: string | null): string | null {
+  if (!key) return null;
+  if (key.startsWith('http')) return key;
+  return `https://images.onnepal.com/${key}`;
+}
+
 interface BusinessPageProps {
   business: {
     businessName: string | null;
@@ -47,8 +53,8 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3">
-              {business.logoUrl ? (
-                <img src={business.logoUrl} alt={name} className="w-8 h-8 rounded-lg object-cover" />
+              {imgSrc(business.logoUrl) ? (
+                <img src={imgSrc(business.logoUrl)} alt={name} className="w-8 h-8 rounded-lg object-cover" />
               ) : (
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: primary }}>
                   {name.charAt(0)}
@@ -78,8 +84,8 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
       <section
         className="relative"
         style={{
-          background: business.coverImageUrl
-            ? `url(${business.coverImageUrl}) center/cover`
+          background: imgSrc(business.coverImageUrl)
+            ? `url(${imgSrc(business.coverImageUrl)}) center/cover`
             : `linear-gradient(135deg, ${primary}, ${business.accentColor})`,
         }}
       >
@@ -147,8 +153,8 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {products.map((product) => (
                 <div key={product.id} className="group">
-                  {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} className="w-full h-48 lg:h-56 object-cover rounded-lg" />
+                  {imgSrc(product.imageUrl) ? (
+                    <img src={imgSrc(product.imageUrl)} alt={product.name} className="w-full h-48 lg:h-56 object-cover rounded-lg" />
                   ) : (
                     <div className="w-full h-40 bg-gray-50 rounded-lg flex items-center justify-center">
                       <span className="text-3xl font-bold text-gray-200">{product.name.charAt(0)}</span>
@@ -217,8 +223,8 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              {business.logoUrl ? (
-                <img src={business.logoUrl} alt={name} className="w-7 h-7 rounded-md object-cover" />
+              {imgSrc(business.logoUrl) ? (
+                <img src={imgSrc(business.logoUrl)} alt={name} className="w-7 h-7 rounded-md object-cover" />
               ) : (
                 <div className="w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: primary }}>
                   {name.charAt(0)}

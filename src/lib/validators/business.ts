@@ -17,8 +17,8 @@ export const updateProfileSchema = z.object({
   businessName: z.string().min(2).max(100).optional(),
   businessCategory: z.string().max(50).optional(),
   description: z.string().max(500).optional(),
-  logoUrl: z.string().url().optional().or(z.literal('')).or(z.null()),
-  coverImageUrl: z.string().url().optional().or(z.literal('')).or(z.null()),
+  logoUrl: z.string().max(500).optional().or(z.literal('')).or(z.null()),
+  coverImageUrl: z.string().max(500).optional().or(z.literal('')).or(z.null()),
   phone: z.string().max(20).optional(),
   address: z.string().max(200).optional(),
   businessHours: z.string().max(500).optional(), // JSON string

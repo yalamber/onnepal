@@ -3,6 +3,12 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Loader2 } from 'lucide-react';
 
+export function imageUrl(key: string | null | undefined): string | null {
+  if (!key) return null;
+  if (key.startsWith('http')) return key;
+  return `https://images.onnepal.com/${key}`;
+}
+
 interface ImageUploadProps {
   value: string[];
   onChange: (urls: string[]) => void;
@@ -58,7 +64,7 @@ export function ImageUpload({ value, onChange, max = 5, label = 'Upload images' 
         <div className="flex gap-2 mb-3 flex-wrap">
           {value.map((url, i) => (
             <div key={url} className="relative group">
-              <img src={url} alt="" className="w-20 h-20 rounded-lg object-cover border border-gray-200" />
+              <img src={imageUrl(url) || url} alt="" className="w-20 h-20 rounded-lg object-cover border border-gray-200" />
               <button onClick={() => remove(i)}
                 className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-950 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                 <X className="h-3 w-3" />
@@ -124,7 +130,7 @@ export function SingleImageUpload({ value, onChange, label = 'Upload image' }: S
       <p className="text-sm font-medium text-gray-700 mb-2">{label}</p>
       {value ? (
         <div className="relative inline-block group">
-          <img src={value} alt="" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
+          <img src={imageUrl(value) || value} alt="" className="w-24 h-24 rounded-lg object-cover border border-gray-200" />
           <button onClick={() => onChange(null)}
             className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-950 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
             <X className="h-3 w-3" />
