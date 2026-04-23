@@ -88,9 +88,9 @@ function CreateBusinessForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subdomain, businessName, businessCategory: category || undefined }),
       });
-      const data = await res.json() as { id?: string; error?: string };
+      const data = await res.json() as { business?: { id: string }; id?: string; error?: string };
       if (!res.ok) { setError(data.error || 'Failed to create'); return; }
-      setBusinessId(data.id!);
+      setBusinessId(data.business?.id || data.id || '');
       setStep(2);
     } finally { setSaving(false); }
   };
