@@ -3,10 +3,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BusinessCard, BusinessCardSkeleton } from '@/components/business-card';
 import type { BusinessCardData } from '@/components/business-card';
-import { getCategoryBySlug, getSubcategoryBySlug, CATEGORIES } from '@/lib/categories';
+import { getCategoryBySlug, getSubcategoryBySlug } from '@/lib/categories';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -18,6 +18,7 @@ export default function CategoryPage() {
   const categoryName = parentCat ? parentCat.name : subCat ? subCat.sub.name : null;
   const categoryLabel = parentCat ? parentCat.name : subCat ? subCat.sub.name : null;
   const parentLabel = subCat ? subCat.parent.name : null;
+  const isParent = !!parentCat;
 
   const [businesses, setBusinesses] = useState<BusinessCardData[]>([]);
   const [total, setTotal] = useState(0);
@@ -69,38 +70,41 @@ export default function CategoryPage() {
 
   return (
     <main className="min-h-screen">
-      <section className="pt-12 sm:pt-16 pb-8">
+      <section className="pt-12 sm:pt-16 pb-6">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">&larr; All categories</Link>
+          <Link href={parentLabel ? `/directory/${subCat!.parent.slug}` : '/directory'} className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
+            &larr; {parentLabel || 'All categories'}
+          </Link>
           <div className="mt-4">
             {parentLabel && <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{parentLabel}</p>}
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">{categoryLabel}</h1>
-              <p className="text-gray-400 text-sm mt-0.5">{total} {total === 1 ? 'business' : 'businesses'}</p>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">{categoryLabel}</h1>
+            <p className="text-gray-400 text-sm mt-0.5">{total} {total === 1 ? 'business' : 'businesses'}</p>
           </div>
 
           <div className="mt-6 max-w-md relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300" />
-            <input
-              type="text" value={search} onChange={(e) => handleSearch(e.target.value)}
+            <input type="text" value={search} onChange={(e) => handleSearch(e.target.value)}
               placeholder={`Search in ${categoryLabel}...`}
-              className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
-            />
+              className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors" />
           </div>
         </div>
       </section>
 
-      {/* Other categories */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-        <div className="flex gap-2 overflow-x-auto scrollbar-none">
-          {CATEGORIES.filter((c) => c.slug !== slug).map((c) => (
-            <Link key={c.slug} href={`/directory/${c.slug}`} className="flex-shrink-0 px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 transition-colors whitespace-nowrap">
-              {c.name}
-            </Link>
-          ))}
-        </div>
-      </div>
+      {/* Sub-categories — only show when on parent category */}
+      {isParent && parentCat.subcategories.length > 0 && (
+        <section className="pb-6">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap gap-2">
+              {parentCat.subcategories.map((sub) => (
+                <Link key={sub.slug} href={`/directory/${sub.slug}`}
+                  className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 hover:text-gray-950 hover:border-gray-300 cursor-pointer transition-colors">
+                  {sub.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
@@ -111,7 +115,7 @@ export default function CategoryPage() {
             {Array.from({ length: 6 }).map((_, i) => <BusinessCardSkeleton key={i} />)}
           </div>
         ) : businesses.length === 0 ? (
-          <div className="text-center py-24">
+          <div className="text-center py-20">
             <p className="text-sm text-gray-400 mb-4">
               {search ? `No businesses match "${search}".` : `No businesses listed in ${categoryLabel} yet.`}
             </p>
@@ -126,9 +130,9 @@ export default function CategoryPage() {
             </div>
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-1 mt-10">
-                <button onClick={() => goToPage(page - 1)} disabled={page <= 1} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronLeft className="h-4 w-4" /></button>
+                <button onClick={() => goToPage(page - 1)} disabled={page <= 1} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronLeft className="h-4 w-4" /></button>
                 <span className="px-3 py-1.5 text-sm text-gray-400">Page <span className="text-gray-950 font-medium">{page}</span> of {totalPages}</span>
-                <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronRight className="h-4 w-4" /></button>
+                <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronRight className="h-4 w-4" /></button>
               </div>
             )}
           </>

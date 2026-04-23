@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Search, MapPin, ChevronLeft, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 
 interface Listing {
@@ -54,6 +54,7 @@ export default function ClassifiedsPage() {
   const [activeCategory, setActiveCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const fetchListings = useCallback(async (p: number, s: string, c: string) => {
     setLoading(true);
@@ -88,6 +89,14 @@ export default function ClassifiedsPage() {
 
   const catCounts = new Map(categories.map((c) => [c.category, c.count]));
 
+  const toggleGroup = (slug: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug); else next.add(slug);
+      return next;
+    });
+  };
+
   return (
     <main className="min-h-screen">
       {/* Header */}
@@ -121,28 +130,45 @@ export default function ClassifiedsPage() {
             <aside className="hidden lg:block w-52 flex-shrink-0">
               <nav>
                 <Link href="/classifieds"
-                  className={`block px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-1 ${
+                  className={`block px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-2 ${
                     !activeCategory ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                   }`}>
                   All classifieds
                 </Link>
-                {CLASSIFIED_CATEGORIES.map((parent) => (
-                  <div key={parent.slug} className="mt-3">
-                    <Link href={`/classifieds/${parent.slug}`} className="block px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 hover:text-gray-950 cursor-pointer transition-colors">{parent.name}</Link>
-                    {parent.subcategories.map((sub) => {
-                      const count = catCounts.get(sub.name) || 0;
-                      return (
-                        <Link key={sub.slug} href={`/classifieds/${sub.slug}`}
-                          className={`flex items-center justify-between px-2 py-1 rounded text-sm cursor-pointer transition-colors ${
-                            activeCategory === sub.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                          }`}>
-                          <span className="truncate">{sub.name}</span>
-                          {count > 0 && <span className="text-xs text-gray-300">{count}</span>}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ))}
+                {CLASSIFIED_CATEGORIES.map((parent) => {
+                  const isExpanded = expandedGroups.has(parent.slug);
+                  const parentCount = parent.subcategories.reduce((sum, s) => sum + (catCounts.get(s.name) || 0), 0);
+                  return (
+                    <div key={parent.slug} className="mt-1">
+                      <button onClick={() => toggleGroup(parent.slug)}
+                        className="flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors text-gray-950 hover:bg-gray-50">
+                        <span className="font-medium">{parent.name}</span>
+                        <span className="flex items-center gap-1">
+                          {parentCount > 0 && <span className="text-xs text-gray-300">{parentCount}</span>}
+                          <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </span>
+                      </button>
+                      {isExpanded && (
+                        <div className="ml-2 mt-0.5 space-y-0.5">
+                          <Link href={`/classifieds/${parent.slug}`}
+                            className="block px-2 py-1 rounded text-xs cursor-pointer text-gray-400 hover:text-gray-950 transition-colors">
+                            All {parent.name}
+                          </Link>
+                          {parent.subcategories.map((sub) => {
+                            const count = catCounts.get(sub.name) || 0;
+                            return (
+                              <Link key={sub.slug} href={`/classifieds/${sub.slug}`}
+                                className="flex items-center justify-between px-2 py-1 rounded text-sm cursor-pointer transition-colors text-gray-500 hover:text-gray-950">
+                                <span className="truncate">{sub.name}</span>
+                                {count > 0 && <span className="text-xs text-gray-300">{count}</span>}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </nav>
               <div className="mt-6 pt-4 border-t border-gray-100">
                 <Link href="/classifieds/post/new" className="text-sm text-gray-400 hover:text-gray-950 cursor-pointer transition-colors">

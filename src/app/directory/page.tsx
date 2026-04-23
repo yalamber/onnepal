@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Search, Loader2, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Search, Loader2, ChevronLeft, ChevronRight, ChevronDown, X } from 'lucide-react';
 import Link from 'next/link';
 import { BusinessCard, BusinessCardSkeleton } from '@/components/business-card';
 import type { BusinessCardData } from '@/components/business-card';
@@ -20,6 +20,7 @@ export default function DirectoryPage() {
   const [activeCategory, setActiveCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const gridRef = useRef<HTMLDivElement>(null);
@@ -47,13 +48,6 @@ export default function DirectoryPage() {
     searchTimeoutRef.current = setTimeout(() => { setPage(1); fetchBusinesses(1, v, activeCategory); }, 350);
   };
 
-  const handleCategory = (c: string) => {
-    const next = c === activeCategory ? '' : c;
-    setActiveCategory(next);
-    setPage(1);
-    fetchBusinesses(1, search, next);
-  };
-
   const goToPage = (p: number) => {
     setPage(p);
     fetchBusinesses(p, search, activeCategory);
@@ -66,23 +60,28 @@ export default function DirectoryPage() {
     if (searchInputRef.current) searchInputRef.current.value = '';
   };
 
+  const toggleGroup = (slug: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug); else next.add(slug);
+      return next;
+    });
+  };
+
   const hasFilters = search || activeCategory;
   const catCounts = new Map(categories.map((c) => [c.category, c.count]));
 
   return (
     <main className="min-h-screen">
-      {/* Header */}
       <section className="pt-12 sm:pt-16 pb-6">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight">Business directory</h1>
           <p className="mt-2 text-gray-400">Find and connect with businesses across Nepal.</p>
           <div className="mt-6 max-w-md relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300" />
-            <input
-              ref={searchInputRef} type="text" placeholder="Search businesses..."
+            <input ref={searchInputRef} type="text" placeholder="Search businesses..."
               defaultValue={search} onChange={(e) => handleSearch(e.target.value)}
-              className="w-full h-10 pl-10 pr-8 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
-            />
+              className="w-full h-10 pl-10 pr-8 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors" />
             {search && (
               <button onClick={() => { handleSearch(''); if (searchInputRef.current) searchInputRef.current.value = ''; }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500">
                 <X className="h-4 w-4" />
@@ -94,50 +93,66 @@ export default function DirectoryPage() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
-      {/* Sidebar + Content */}
       <section className="py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-10">
-            {/* Sidebar — categories */}
+            {/* Sidebar */}
             <aside className="hidden lg:block w-52 flex-shrink-0">
               <nav>
                 <Link href="/directory"
-                  className={`block px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-1 ${
+                  className={`block px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-2 ${
                     !activeCategory ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                   }`}>
                   All businesses
                 </Link>
-                {CATEGORIES.map((parent) => (
-                  <div key={parent.slug} className="mt-3">
-                    <Link href={`/directory/${parent.slug}`} className="block px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 hover:text-gray-950 cursor-pointer transition-colors">{parent.name}</Link>
-                    {parent.subcategories.map((sub) => {
-                      const count = catCounts.get(sub.name) || 0;
-                      return (
-                        <Link key={sub.slug} href={`/directory/${sub.slug}`}
-                          className={`flex items-center justify-between px-2 py-1 rounded text-sm cursor-pointer transition-colors ${
-                            activeCategory === sub.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                          }`}>
-                          <span className="truncate">{sub.name}</span>
-                          {count > 0 && <span className="text-xs text-gray-300">{count}</span>}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ))}
+                {CATEGORIES.map((parent) => {
+                  const isExpanded = expandedGroups.has(parent.slug);
+                  const parentCount = parent.subcategories.reduce((sum, s) => sum + (catCounts.get(s.name) || 0), 0);
+                  return (
+                    <div key={parent.slug} className="mt-1">
+                      <button onClick={() => toggleGroup(parent.slug)}
+                        className="flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors text-gray-950 hover:bg-gray-50">
+                        <span className="font-medium">{parent.name}</span>
+                        <span className="flex items-center gap-1">
+                          {parentCount > 0 && <span className="text-xs text-gray-300">{parentCount}</span>}
+                          <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </span>
+                      </button>
+                      {isExpanded && (
+                        <div className="ml-2 mt-0.5 space-y-0.5">
+                          <Link href={`/directory/${parent.slug}`}
+                            className="block px-2 py-1 rounded text-xs cursor-pointer text-gray-400 hover:text-gray-950 transition-colors">
+                            All {parent.name}
+                          </Link>
+                          {parent.subcategories.map((sub) => {
+                            const count = catCounts.get(sub.name) || 0;
+                            return (
+                              <Link key={sub.slug} href={`/directory/${sub.slug}`}
+                                className="flex items-center justify-between px-2 py-1 rounded text-sm cursor-pointer transition-colors text-gray-500 hover:text-gray-950">
+                                <span className="truncate">{sub.name}</span>
+                                {count > 0 && <span className="text-xs text-gray-300">{count}</span>}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </nav>
             </aside>
 
-            {/* Mobile category bar */}
+            {/* Mobile */}
             <div className="lg:hidden w-full mb-4 -mt-2">
               <div className="flex gap-1 overflow-x-auto scrollbar-none pb-2">
                 <Link href="/directory"
-                  className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors ${!activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
+                  className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors ${!activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500'}`}>
                   All
                 </Link>
-                {CATEGORIES.flatMap((p) => p.subcategories).map((sub) => (
-                  <Link key={sub.slug} href={`/directory/${sub.slug}`}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors whitespace-nowrap ${activeCategory === sub.name ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
-                    {sub.name}
+                {CATEGORIES.map((p) => (
+                  <Link key={p.slug} href={`/directory/${p.slug}`}
+                    className="flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer text-gray-500 hover:text-gray-950 transition-colors whitespace-nowrap">
+                    {p.name}
                   </Link>
                 ))}
               </div>
@@ -154,7 +169,7 @@ export default function DirectoryPage() {
                   )}
                 </p>
                 {hasFilters && !loading && (
-                  <button onClick={clearFilters} className="text-sm text-gray-400 hover:text-gray-950 transition-colors">Clear</button>
+                  <button onClick={clearFilters} className="text-sm text-gray-400 hover:text-gray-950 cursor-pointer transition-colors">Clear</button>
                 )}
               </div>
 
@@ -168,7 +183,7 @@ export default function DirectoryPage() {
                 <div className="text-center py-20">
                   <p className="text-sm text-gray-400 mb-4">{hasFilters ? 'No businesses match your filters.' : 'No businesses listed yet.'}</p>
                   {hasFilters ? (
-                    <button onClick={clearFilters} className="text-sm text-gray-950 font-medium hover:underline">Clear filters</button>
+                    <button onClick={clearFilters} className="text-sm text-gray-950 font-medium hover:underline cursor-pointer">Clear filters</button>
                   ) : (
                     <Link href="/create-business" className="text-sm text-gray-950 font-medium hover:underline">List your business &rarr;</Link>
                   )}
@@ -182,9 +197,9 @@ export default function DirectoryPage() {
                   </div>
                   {totalPages > 1 && (
                     <div className="flex items-center justify-center gap-1 mt-10">
-                      <button onClick={() => goToPage(page - 1)} disabled={page <= 1} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronLeft className="h-4 w-4" /></button>
+                      <button onClick={() => goToPage(page - 1)} disabled={page <= 1} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronLeft className="h-4 w-4" /></button>
                       <span className="px-3 py-1.5 text-sm text-gray-400">Page <span className="text-gray-950 font-medium">{page}</span> of {totalPages}</span>
-                      <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronRight className="h-4 w-4" /></button>
+                      <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronRight className="h-4 w-4" /></button>
                     </div>
                   )}
                 </>
