@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, Loader2,
-  Plus, ChevronDown, Check, Tag, Building2, User,
+  Plus, ChevronDown, Check, Tag, Building2, User, QrCode,
 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -48,6 +48,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/products', label: 'Products', icon: ShoppingBag, exact: false },
   { href: '/dashboard/announcements', label: 'Announcements', icon: Megaphone, exact: false },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false },
+  { href: '/dashboard/qr-sticker', label: 'QR Sticker', icon: QrCode, exact: false },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
