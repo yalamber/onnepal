@@ -101,25 +101,25 @@ export default function DirectoryPage() {
             {/* Sidebar — categories */}
             <aside className="hidden lg:block w-52 flex-shrink-0">
               <nav>
-                <button onClick={() => handleCategory('')}
-                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-1 ${
+                <Link href="/directory"
+                  className={`block px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-1 ${
                     !activeCategory ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                   }`}>
                   All businesses
-                </button>
+                </Link>
                 {CATEGORIES.map((parent) => (
                   <div key={parent.slug} className="mt-3">
-                    <p className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{parent.name}</p>
+                    <Link href={`/directory/${parent.slug}`} className="block px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 hover:text-gray-950 cursor-pointer transition-colors">{parent.name}</Link>
                     {parent.subcategories.map((sub) => {
                       const count = catCounts.get(sub.name) || 0;
                       return (
-                        <button key={sub.slug} onClick={() => handleCategory(sub.name)}
-                          className={`flex items-center justify-between w-full text-left px-2 py-1 rounded text-sm cursor-pointer transition-colors ${
+                        <Link key={sub.slug} href={`/directory/${sub.slug}`}
+                          className={`flex items-center justify-between px-2 py-1 rounded text-sm cursor-pointer transition-colors ${
                             activeCategory === sub.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                           }`}>
                           <span className="truncate">{sub.name}</span>
                           {count > 0 && <span className="text-xs text-gray-300">{count}</span>}
-                        </button>
+                        </Link>
                       );
                     })}
                   </div>
@@ -130,15 +130,15 @@ export default function DirectoryPage() {
             {/* Mobile category bar */}
             <div className="lg:hidden w-full mb-4 -mt-2">
               <div className="flex gap-1 overflow-x-auto scrollbar-none pb-2">
-                <button onClick={() => handleCategory('')}
+                <Link href="/directory"
                   className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors ${!activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
                   All
-                </button>
+                </Link>
                 {CATEGORIES.flatMap((p) => p.subcategories).map((sub) => (
-                  <button key={sub.slug} onClick={() => handleCategory(sub.name)}
+                  <Link key={sub.slug} href={`/directory/${sub.slug}`}
                     className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors whitespace-nowrap ${activeCategory === sub.name ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
                     {sub.name}
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>

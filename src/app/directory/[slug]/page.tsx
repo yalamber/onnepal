@@ -6,14 +6,18 @@ import Link from 'next/link';
 import { Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BusinessCard, BusinessCardSkeleton } from '@/components/business-card';
 import type { BusinessCardData } from '@/components/business-card';
-import { getCategoryBySlug, CATEGORIES } from '@/lib/categories';
+import { getCategoryBySlug, getSubcategoryBySlug, CATEGORIES } from '@/lib/categories';
 
 const ITEMS_PER_PAGE = 12;
 
 export default function CategoryPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const category = getCategoryBySlug(slug);
+  const parentCat = getCategoryBySlug(slug);
+  const subCat = !parentCat ? getSubcategoryBySlug(slug) : null;
+  const categoryName = parentCat ? parentCat.name : subCat ? subCat.sub.name : null;
+  const categoryLabel = parentCat ? parentCat.name : subCat ? subCat.sub.name : null;
+  const parentLabel = subCat ? subCat.parent.name : null;
 
   const [businesses, setBusinesses] = useState<BusinessCardData[]>([]);
   const [total, setTotal] = useState(0);
@@ -26,12 +30,12 @@ export default function CategoryPage() {
   const gridRef = useRef<HTMLDivElement>(null);
 
   const fetchBusinesses = useCallback(async (p: number, s: string) => {
-    if (!category) return;
+    if (!categoryName) return;
     setLoading(true);
     const params = new URLSearchParams();
     params.set('page', String(p));
     params.set('limit', String(ITEMS_PER_PAGE));
-    params.set('category', category.name);
+    params.set('category', categoryName);
     if (s) params.set('search', s);
     try {
       const res = await fetch(`/api/directory?${params}`);
@@ -39,9 +43,9 @@ export default function CategoryPage() {
       setBusinesses(data.businesses); setTotal(data.total); setTotalPages(data.totalPages);
     } catch { setBusinesses([]); }
     finally { setLoading(false); setInitialLoad(false); }
-  }, [category]);
+  }, [categoryName]);
 
-  useEffect(() => { if (category) fetchBusinesses(1, ''); }, [category, fetchBusinesses]);
+  useEffect(() => { if (categoryName) fetchBusinesses(1, ''); }, [categoryName, fetchBusinesses]);
 
   const handleSearch = (v: string) => {
     setSearch(v);
@@ -54,7 +58,7 @@ export default function CategoryPage() {
     gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  if (!category) {
+  if (!categoryName) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
         <p className="text-sm text-gray-400 mb-4">Category not found.</p>
@@ -68,10 +72,10 @@ export default function CategoryPage() {
       <section className="pt-12 sm:pt-16 pb-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">&larr; All categories</Link>
-          <div className="mt-4 flex items-center gap-3">
-            <span className="text-3xl">{category.icon}</span>
+          <div className="mt-4">
+            {parentLabel && <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{parentLabel}</p>}
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">{category.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">{categoryLabel}</h1>
               <p className="text-gray-400 text-sm mt-0.5">{total} {total === 1 ? 'business' : 'businesses'}</p>
             </div>
           </div>
@@ -80,7 +84,7 @@ export default function CategoryPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300" />
             <input
               type="text" value={search} onChange={(e) => handleSearch(e.target.value)}
-              placeholder={`Search in ${category.name}...`}
+              placeholder={`Search in ${categoryLabel}...`}
               className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
             />
           </div>
@@ -109,7 +113,7 @@ export default function CategoryPage() {
         ) : businesses.length === 0 ? (
           <div className="text-center py-24">
             <p className="text-sm text-gray-400 mb-4">
-              {search ? `No businesses match "${search}".` : `No businesses listed in ${category.name} yet.`}
+              {search ? `No businesses match "${search}".` : `No businesses listed in ${categoryLabel} yet.`}
             </p>
             {!search && (
               <Link href="/create-business" className="text-sm text-gray-950 font-medium hover:underline">List your business &rarr;</Link>

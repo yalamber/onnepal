@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getClassifiedCategoryBySlug, CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
+import { getClassifiedCategoryBySlug, getClassifiedSubcategoryBySlug, CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 
 interface Listing {
   id: string;
@@ -37,7 +37,11 @@ const PER_PAGE = 12;
 export default function ClassifiedCategoryPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const category = getClassifiedCategoryBySlug(slug);
+  const parentCat = getClassifiedCategoryBySlug(slug);
+  const subCat = !parentCat ? getClassifiedSubcategoryBySlug(slug) : null;
+  const categoryName = parentCat ? parentCat.name : subCat ? subCat.sub.name : null;
+  const categoryLabel = parentCat ? parentCat.name : subCat ? subCat.sub.name : null;
+  const parentLabel = subCat ? subCat.parent.name : null;
 
   const [listings, setListings] = useState<Listing[]>([]);
   const [total, setTotal] = useState(0);
@@ -49,11 +53,11 @@ export default function ClassifiedCategoryPage() {
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const fetchListings = useCallback(async (p: number, s: string) => {
-    if (!category) return;
+    if (!categoryName) return;
     setLoading(true);
     const params = new URLSearchParams();
     params.set('page', String(p)); params.set('limit', String(PER_PAGE));
-    params.set('category', category.name);
+    params.set('category', categoryName);
     if (s) params.set('search', s);
     try {
       const res = await fetch(`/api/classifieds?${params}`);
@@ -61,9 +65,9 @@ export default function ClassifiedCategoryPage() {
       setListings(data.listings); setTotal(data.total); setTotalPages(data.totalPages);
     } catch { setListings([]); }
     finally { setLoading(false); setInitialLoad(false); }
-  }, [category]);
+  }, [categoryName]);
 
-  useEffect(() => { if (category) fetchListings(1, ''); }, [category, fetchListings]);
+  useEffect(() => { if (categoryName) fetchListings(1, ''); }, [categoryName, fetchListings]);
 
   const handleSearch = (v: string) => {
     setSearch(v);
@@ -73,7 +77,7 @@ export default function ClassifiedCategoryPage() {
 
   const goToPage = (p: number) => { setPage(p); fetchListings(p, search); };
 
-  if (!category) {
+  if (!categoryName) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center">
         <p className="text-sm text-gray-400 mb-4">Category not found.</p>
@@ -88,10 +92,10 @@ export default function ClassifiedCategoryPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/classifieds" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">&larr; All classifieds</Link>
           <div className="mt-4 flex items-baseline justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{category.icon}</span>
+            <div>
+              {parentLabel && <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{parentLabel}</p>}
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">{category.name}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">{categoryLabel}</h1>
                 <p className="text-gray-400 text-sm">{total} {total === 1 ? 'listing' : 'listings'}</p>
               </div>
             </div>
@@ -104,7 +108,7 @@ export default function ClassifiedCategoryPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300" />
             <input
               type="text" value={search} onChange={(e) => handleSearch(e.target.value)}
-              placeholder={`Search in ${category.name}...`}
+              placeholder={`Search in ${categoryName}...`}
               className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
             />
           </div>
@@ -132,7 +136,7 @@ export default function ClassifiedCategoryPage() {
           </div>
         ) : listings.length === 0 ? (
           <div className="text-center py-24">
-            <p className="text-sm text-gray-400 mb-4">{search ? `No results for "${search}".` : `No listings in ${category.name} yet.`}</p>
+            <p className="text-sm text-gray-400 mb-4">{search ? `No results for "${search}".` : `No listings in ${categoryName} yet.`}</p>
             <Link href="/classifieds/post/new" className="text-sm text-gray-950 font-medium hover:underline">Post a free ad &rarr;</Link>
           </div>
         ) : (
