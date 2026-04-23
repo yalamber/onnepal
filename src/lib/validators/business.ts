@@ -19,6 +19,7 @@ export const updateProfileSchema = z.object({
   description: z.string().max(500).nullish(),
   logoUrl: z.string().max(500).nullish(),
   coverImageUrl: z.string().max(500).nullish(),
+  coverPosition: z.string().max(20).nullish(),
   phone: z.string().max(20).nullish(),
   address: z.string().max(200).nullish(),
   businessHours: z.string().max(500).nullish(),

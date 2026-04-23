@@ -86,6 +86,7 @@ export async function updateBusinessProfile(
     description: string;
     logoUrl: string;
     coverImageUrl: string;
+    coverPosition: string;
     phone: string;
     address: string;
     businessHours: string;

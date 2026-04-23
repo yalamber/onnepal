@@ -17,6 +17,7 @@ interface BusinessPageProps {
     description: string | null;
     logoUrl: string | null;
     coverImageUrl: string | null;
+    coverPosition: string | null;
     phone: string | null;
     address: string | null;
     businessHours: string | null;
@@ -85,8 +86,13 @@ export function BusinessPage({ business, links, announcements, products, ctas }:
         className="relative"
         style={{
           background: imgSrc(business.coverImageUrl)
-            ? `url(${imgSrc(business.coverImageUrl)}) center/cover`
+            ? undefined
             : `linear-gradient(135deg, ${primary}, ${business.accentColor})`,
+          backgroundImage: imgSrc(business.coverImageUrl) ? `url(${imgSrc(business.coverImageUrl)})` : undefined,
+          backgroundSize: imgSrc(business.coverImageUrl) ? 'cover' : undefined,
+          backgroundPosition: imgSrc(business.coverImageUrl)
+            ? `${(business.coverPosition || '50 50').split(' ')[0]}% ${(business.coverPosition || '50 50').split(' ')[1]}%`
+            : undefined,
         }}
       >
         <div className="relative bg-black/30">

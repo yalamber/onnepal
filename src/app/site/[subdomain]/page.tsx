@@ -64,6 +64,7 @@ export default async function SitePage({
         description: business.description,
         logoUrl: business.logoUrl,
         coverImageUrl: business.coverImageUrl,
+        coverPosition: business.coverPosition,
         phone: business.phone,
         address: business.address,
         businessHours: business.businessHours,

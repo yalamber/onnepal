@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Save, Check, Palette, Building2, Phone, MapPin, Clock } from 'lucide-react';
 import { THEME_PALETTES, findPalette, type ThemePalette } from '@/lib/themes';
 import { SingleImageUpload } from '@/components/image-upload';
+import { CoverReposition } from '@/components/cover-reposition';
 
 interface Profile {
   subdomain: string;
@@ -17,6 +18,7 @@ interface Profile {
   description: string | null;
   logoUrl: string | null;
   coverImageUrl: string | null;
+  coverPosition: string | null;
   phone: string | null;
   address: string | null;
   businessHours: string | null;
@@ -73,6 +75,7 @@ export default function SettingsPage() {
           description: profile.description,
           logoUrl: profile.logoUrl,
           coverImageUrl: profile.coverImageUrl,
+          coverPosition: profile.coverPosition,
           phone: profile.phone,
           address: profile.address,
           businessHours: profile.businessHours,
@@ -115,9 +118,27 @@ export default function SettingsPage() {
           <p className="text-sm font-semibold text-gray-900">Business information</p>
         </div>
         <div className="p-5 space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-4">
             <SingleImageUpload value={profile.logoUrl} onChange={(url) => setProfile({ ...profile, logoUrl: url })} label="Logo" target="logo" businessId={business.id} />
-            <SingleImageUpload value={profile.coverImageUrl} onChange={(url) => setProfile({ ...profile, coverImageUrl: url })} label="Cover image" target="cover" businessId={business.id} />
+            <div>
+              <SingleImageUpload value={profile.coverImageUrl} onChange={(url) => setProfile({ ...profile, coverImageUrl: url })} label="Cover image" target="cover" businessId={business.id} />
+              {profile.coverImageUrl && (
+                <div className="mt-3">
+                  <CoverReposition
+                    imageKey={profile.coverImageUrl}
+                    position={profile.coverPosition || '50 50'}
+                    onSave={async (pos) => {
+                      setProfile({ ...profile, coverPosition: pos });
+                      await fetch(`/api/business/profile?businessId=${business.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ coverPosition: pos }),
+                      });
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600 mb-1.5 block">Business Name</label>

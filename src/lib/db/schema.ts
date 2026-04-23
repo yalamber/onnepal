@@ -22,6 +22,7 @@ export const businesses = sqliteTable('businesses', {
   description: text('description'),
   logoUrl: text('logo_url'),
   coverImageUrl: text('cover_image_url'),
+  coverPosition: text('cover_position').default('50 50'),
   phone: text('phone'),
   address: text('address'),
   businessHours: text('business_hours'),
