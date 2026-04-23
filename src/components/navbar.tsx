@@ -12,12 +12,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2 } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield } from 'lucide-react';
 
 interface UserData {
   id: string;
   email: string;
   displayName: string | null;
+  isAdmin?: boolean;
 }
 
 export function Navbar() {
@@ -107,6 +108,12 @@ export function Navbar() {
                     <Settings className="h-4 w-4 mr-2" />
                     Account settings
                   </DropdownMenuItem>
+                  {user.isAdmin && (
+                    <DropdownMenuItem onClick={() => router.push('/admin')} className="cursor-pointer rounded-md px-3 py-2 text-sm">
+                      <Shield className="h-4 w-4 mr-2" />
+                      Admin panel
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator className="my-1" />
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer rounded-md px-3 py-2 text-sm text-red-600 focus:text-red-600">
                     <LogOut className="h-4 w-4 mr-2" />

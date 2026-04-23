@@ -29,6 +29,7 @@ export async function GET() {
         email: user.email,
         displayName: user.displayName,
         phone: user.phone,
+        isAdmin: user.isAdmin,
         createdAt: user.createdAt,
       },
       businesses,
