@@ -97,9 +97,11 @@ interface SingleImageUploadProps {
   value: string | null;
   onChange: (url: string | null) => void;
   label?: string;
+  target?: string;
+  businessId?: string;
 }
 
-export function SingleImageUpload({ value, onChange, label = 'Upload image' }: SingleImageUploadProps) {
+export function SingleImageUpload({ value, onChange, label = 'Upload image', target, businessId }: SingleImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -110,6 +112,8 @@ export function SingleImageUpload({ value, onChange, label = 'Upload image' }: S
     try {
       const formData = new FormData();
       formData.append('file', file);
+      if (target) formData.append('target', target);
+      if (businessId) formData.append('businessId', businessId);
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       if (!res.ok) {
         const data = await res.json() as { error?: string };

@@ -31,6 +31,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [selectedPalette, setSelectedPalette] = useState<ThemePalette | null>(null);
 
   const { business } = useActiveBusiness();
@@ -79,7 +80,15 @@ export default function SettingsPage() {
           accentColor: profile.accentColor,
         }),
       });
-      if (res.ok) setSaved(true);
+      if (res.ok) {
+        setSaved(true);
+        setSaveError('');
+      } else {
+        const data = await res.json().catch(() => null) as { error?: string } | null;
+        setSaveError(data?.error || 'Failed to save. Please try again.');
+      }
+    } catch {
+      setSaveError('Something went wrong.');
     } finally { setSaving(false); }
   };
 
@@ -107,8 +116,8 @@ export default function SettingsPage() {
         </div>
         <div className="p-5 space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
-            <SingleImageUpload value={profile.logoUrl} onChange={(url) => setProfile({ ...profile, logoUrl: url })} label="Logo" />
-            <SingleImageUpload value={profile.coverImageUrl} onChange={(url) => setProfile({ ...profile, coverImageUrl: url })} label="Cover image" />
+            <SingleImageUpload value={profile.logoUrl} onChange={(url) => setProfile({ ...profile, logoUrl: url })} label="Logo" target="logo" businessId={business.id} />
+            <SingleImageUpload value={profile.coverImageUrl} onChange={(url) => setProfile({ ...profile, coverImageUrl: url })} label="Cover image" target="cover" businessId={business.id} />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600 mb-1.5 block">Business Name</label>
@@ -244,15 +253,13 @@ export default function SettingsPage() {
       </div>
 
       {/* Save */}
-      <div className="flex items-center gap-3 sticky bottom-4 bg-white/95 backdrop-blur-sm p-4 rounded-xl border border-gray-200 shadow-lg">
-        <Button onClick={handleSave} disabled={saving} className="bg-indigo-600 text-white hover:bg-indigo-700 gap-1.5">
+      <div className="flex items-center gap-3 sticky bottom-4 bg-white/95 backdrop-blur-sm p-4 rounded-lg border border-gray-200 shadow-lg">
+        <button onClick={handleSave} disabled={saving}
+          className="h-9 px-4 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-30 transition-colors flex items-center gap-2 cursor-pointer">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Save changes</>}
-        </Button>
-        {saved && (
-          <span className="text-sm text-emerald-600 flex items-center gap-1.5 font-medium">
-            <Check className="h-4 w-4" /> Changes saved
-          </span>
-        )}
+        </button>
+        {saved && <span className="text-sm text-green-600 flex items-center gap-1"><Check className="h-3.5 w-3.5" /> Saved</span>}
+        {saveError && <span className="text-sm text-red-500">{saveError}</span>}
       </div>
     </div>
   );
