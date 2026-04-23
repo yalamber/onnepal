@@ -86,10 +86,10 @@ export function Navbar() {
             </div>
           </div>
 
-          {/* Desktop */}
-          <div className="hidden sm:flex items-center gap-1">
+          {/* Desktop — min-h prevents CLS during auth check */}
+          <div className="hidden sm:flex items-center gap-1 min-h-[36px]">
             {authLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin text-gray-300" />
+              <div className="w-16" />
             ) : user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
