@@ -16,8 +16,11 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "OnNepal - Create Your Business Page",
-  description: "Get a free mini website for your business. Claim your subdomain and share your business with the world.",
+  title: "OnNepal — Nepal's Business Directory & Classifieds",
+  description: "Find local businesses, post classifieds, and create your own business page at yourname.onnepal.com. Nepal's Yellow Pages.",
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
