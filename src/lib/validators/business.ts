@@ -15,15 +15,15 @@ export const createBusinessSchema = z.object({
 
 export const updateProfileSchema = z.object({
   businessName: z.string().min(2).max(100).optional(),
-  businessCategory: z.string().max(50).optional(),
-  description: z.string().max(500).optional(),
-  logoUrl: z.string().max(500).optional().or(z.literal('')).or(z.null()),
-  coverImageUrl: z.string().max(500).optional().or(z.literal('')).or(z.null()),
-  phone: z.string().max(20).optional(),
-  address: z.string().max(200).optional(),
-  businessHours: z.string().max(500).optional(), // JSON string
-  primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
-  accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  businessCategory: z.string().max(50).nullish(),
+  description: z.string().max(500).nullish(),
+  logoUrl: z.string().max(500).nullish(),
+  coverImageUrl: z.string().max(500).nullish(),
+  phone: z.string().max(20).nullish(),
+  address: z.string().max(200).nullish(),
+  businessHours: z.string().max(500).nullish(),
+  primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullish(),
+  accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullish(),
 });
 
 export const socialLinkSchema = z.object({
