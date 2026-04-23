@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2 } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -22,6 +22,7 @@ interface UserData {
 
 export function Navbar() {
   const [user, setUser] = useState<UserData | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -37,6 +38,7 @@ export function Navbar() {
           setUser(data.user);
         }
       } catch {}
+      finally { setAuthLoading(false); }
     };
 
     fetchUser();
@@ -86,7 +88,9 @@ export function Navbar() {
 
           {/* Desktop */}
           <div className="hidden sm:flex items-center gap-1">
-            {user ? (
+            {authLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin text-gray-300" />
+            ) : user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer">
@@ -143,7 +147,9 @@ export function Navbar() {
                     </Link>
                   ))}
                   <div className="h-px bg-gray-100 my-3" />
-                  {user ? (
+                  {authLoading ? (
+                    <div className="px-3 py-2.5"><Loader2 className="h-4 w-4 animate-spin text-gray-300" /></div>
+                  ) : user ? (
                     <>
                       <p className="px-3 text-sm font-medium text-gray-950">{user.displayName || user.email}</p>
                       <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">
