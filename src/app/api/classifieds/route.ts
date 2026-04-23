@@ -7,12 +7,13 @@ import { z } from 'zod';
 
 const createClassifiedSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(200),
-  description: z.string().max(2000).optional(),
-  price: z.string().max(50).optional(),
+  description: z.string().max(2000).nullish(),
+  price: z.string().max(50).nullish(),
   category: z.string().min(1, 'Category is required'),
-  location: z.string().max(200).optional(),
-  contactPhone: z.string().max(20).optional(),
-  contactWhatsapp: z.string().max(20).optional(),
+  location: z.string().max(200).nullish(),
+  contactPhone: z.string().max(20).nullish(),
+  contactWhatsapp: z.string().max(20).nullish(),
+  imageUrls: z.array(z.string().url()).max(5).optional(),
 });
 
 export async function GET(request: NextRequest) {
