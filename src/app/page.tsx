@@ -42,11 +42,11 @@ export default function HomePage() {
               View all &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3">
             {CATEGORIES.map((cat) => (
-              <Link key={cat.slug} href={`/directory/${cat.slug}`} className="group flex items-baseline gap-3 py-1">
-                <span className="text-base">{cat.icon}</span>
+              <Link key={cat.slug} href={`/directory/${cat.slug}`} className="group py-0.5">
                 <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
+                <span className="text-xs text-gray-300 ml-1">{cat.subcategories.length}</span>
               </Link>
             ))}
           </div>
@@ -62,11 +62,11 @@ export default function HomePage() {
               View all &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3">
             {CLASSIFIED_CATEGORIES.map((cat) => (
-              <Link key={cat.slug} href={`/classifieds/${cat.slug}`} className="group flex items-baseline gap-3 py-1">
-                <span className="text-base">{cat.icon}</span>
+              <Link key={cat.slug} href={`/classifieds/${cat.slug}`} className="group py-0.5">
                 <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
+                <span className="text-xs text-gray-300 ml-1">{cat.subcategories.length}</span>
               </Link>
             ))}
           </div>

@@ -8,7 +8,6 @@ import type { BusinessCardData } from '@/components/business-card';
 import { CATEGORIES } from '@/lib/categories';
 
 interface CategoryInfo { category: string; count: number; }
-const ALL_CATEGORIES = CATEGORIES.map((c) => c.name);
 const ITEMS_PER_PAGE = 12;
 
 export default function DirectoryPage() {
@@ -68,10 +67,7 @@ export default function DirectoryPage() {
   };
 
   const hasFilters = search || activeCategory;
-  const categoryList = ALL_CATEGORIES.map((cat) => ({
-    category: cat,
-    count: categories.find((c) => c.category === cat)?.count ?? 0,
-  }));
+  const catCounts = new Map(categories.map((c) => [c.category, c.count]));
 
   return (
     <main className="min-h-screen">
@@ -103,28 +99,30 @@ export default function DirectoryPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-10">
             {/* Sidebar — categories */}
-            <aside className="hidden lg:block w-48 flex-shrink-0">
-              <p className="text-xs font-semibold text-gray-950 uppercase tracking-wider mb-3">Categories</p>
-              <nav className="space-y-0.5">
-                <button
-                  onClick={() => handleCategory('')}
-                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+            <aside className="hidden lg:block w-52 flex-shrink-0">
+              <nav>
+                <button onClick={() => handleCategory('')}
+                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-1 ${
                     !activeCategory ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                  }`}
-                >
+                  }`}>
                   All businesses
                 </button>
-                {categoryList.map(({ category, count }) => (
-                  <button
-                    key={category}
-                    onClick={() => handleCategory(category)}
-                    className={`flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                      activeCategory === category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                    }`}
-                  >
-                    <span className="truncate">{category}</span>
-                    {count > 0 && <span className="text-xs text-gray-300 ml-2">{count}</span>}
-                  </button>
+                {CATEGORIES.map((parent) => (
+                  <div key={parent.slug} className="mt-3">
+                    <p className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{parent.name}</p>
+                    {parent.subcategories.map((sub) => {
+                      const count = catCounts.get(sub.name) || 0;
+                      return (
+                        <button key={sub.slug} onClick={() => handleCategory(sub.name)}
+                          className={`flex items-center justify-between w-full text-left px-2 py-1 rounded text-sm cursor-pointer transition-colors ${
+                            activeCategory === sub.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                          }`}>
+                          <span className="truncate">{sub.name}</span>
+                          {count > 0 && <span className="text-xs text-gray-300">{count}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
                 ))}
               </nav>
             </aside>
@@ -133,13 +131,13 @@ export default function DirectoryPage() {
             <div className="lg:hidden w-full mb-4 -mt-2">
               <div className="flex gap-1 overflow-x-auto scrollbar-none pb-2">
                 <button onClick={() => handleCategory('')}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${!activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
+                  className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors ${!activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
                   All
                 </button>
-                {categoryList.map(({ category }) => (
-                  <button key={category} onClick={() => handleCategory(category)}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${activeCategory === category ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
-                    {category}
+                {CATEGORIES.flatMap((p) => p.subcategories).map((sub) => (
+                  <button key={sub.slug} onClick={() => handleCategory(sub.name)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors whitespace-nowrap ${activeCategory === sub.name ? 'bg-gray-950 text-white' : 'text-gray-500 hover:text-gray-950'}`}>
+                    {sub.name}
                   </button>
                 ))}
               </div>

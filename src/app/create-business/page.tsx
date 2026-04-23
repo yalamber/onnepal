@@ -7,11 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, ArrowRight, ArrowLeft, Check, Plus, Trash2 } from 'lucide-react';
 
-const CATEGORIES = [
-  'Restaurant & Cafe', 'Retail Shop', 'Beauty & Salon', 'Hotel & Travel',
-  'Education', 'Health & Fitness', 'Technology', 'Construction',
-  'Agriculture', 'Fashion', 'Photography', 'Other',
-];
+import { CATEGORIES } from '@/lib/categories';
 
 const SOCIAL_PLATFORMS = [
   { value: 'facebook', label: 'Facebook' },
@@ -187,7 +183,13 @@ function CreateBusinessForm() {
                 <select value={category} onChange={(e) => setCategory(e.target.value)}
                   className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:border-gray-400 transition-colors">
                   <option value="">Select category</option>
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  {CATEGORIES.map((parent) => (
+                    <optgroup key={parent.slug} label={parent.name}>
+                      {parent.subcategories.map((sub) => (
+                        <option key={sub.slug} value={sub.name}>{sub.name}</option>
+                      ))}
+                    </optgroup>
+                  ))}
                 </select>
               </div>
 

@@ -186,10 +186,12 @@ export default function NewClassifiedPage() {
                 className="flex h-10 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:border-gray-400 appearance-none cursor-pointer transition-colors"
               >
                 <option value="">Select a category</option>
-                {CLASSIFIED_CATEGORIES.map((cat) => (
-                  <option key={cat.slug} value={cat.name}>
-                    {cat.icon} {cat.name}
-                  </option>
+                {CLASSIFIED_CATEGORIES.map((parent) => (
+                  <optgroup key={parent.slug} label={parent.name}>
+                    {parent.subcategories.map((sub) => (
+                      <option key={sub.slug} value={sub.name}>{sub.name}</option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
               {errors.category && (

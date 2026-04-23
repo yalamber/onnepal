@@ -118,30 +118,34 @@ export default function ClassifiedsPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-10">
             {/* Sidebar */}
-            <aside className="hidden lg:block w-48 flex-shrink-0">
-              <p className="text-xs font-semibold text-gray-950 uppercase tracking-wider mb-3">Categories</p>
-              <nav className="space-y-0.5">
+            <aside className="hidden lg:block w-52 flex-shrink-0">
+              <nav>
                 <button onClick={() => handleCategory('')}
-                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors mb-1 ${
                     !activeCategory ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                   }`}>
                   All classifieds
                 </button>
-                {CLASSIFIED_CATEGORIES.map((cat) => {
-                  const count = catCounts.get(cat.name) || 0;
-                  return (
-                    <button key={cat.slug} onClick={() => handleCategory(cat.name)}
-                      className={`flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                        activeCategory === cat.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                      }`}>
-                      <span className="truncate">{cat.name}</span>
-                      {count > 0 && <span className="text-xs text-gray-300 ml-2">{count}</span>}
-                    </button>
-                  );
-                })}
+                {CLASSIFIED_CATEGORIES.map((parent) => (
+                  <div key={parent.slug} className="mt-3">
+                    <p className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{parent.name}</p>
+                    {parent.subcategories.map((sub) => {
+                      const count = catCounts.get(sub.name) || 0;
+                      return (
+                        <button key={sub.slug} onClick={() => handleCategory(sub.name)}
+                          className={`flex items-center justify-between w-full text-left px-2 py-1 rounded text-sm cursor-pointer transition-colors ${
+                            activeCategory === sub.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                          }`}>
+                          <span className="truncate">{sub.name}</span>
+                          {count > 0 && <span className="text-xs text-gray-300">{count}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
               </nav>
               <div className="mt-6 pt-4 border-t border-gray-100">
-                <Link href="/classifieds/post/new" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
+                <Link href="/classifieds/post/new" className="text-sm text-gray-400 hover:text-gray-950 cursor-pointer transition-colors">
                   Post a free ad &rarr;
                 </Link>
               </div>
@@ -154,10 +158,10 @@ export default function ClassifiedsPage() {
                   className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${!activeCategory ? 'bg-gray-950 text-white' : 'text-gray-500'}`}>
                   All
                 </button>
-                {CLASSIFIED_CATEGORIES.map((cat) => (
-                  <button key={cat.slug} onClick={() => handleCategory(cat.name)}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm transition-colors ${activeCategory === cat.name ? 'bg-gray-950 text-white' : 'text-gray-500'}`}>
-                    {cat.name}
+                {CLASSIFIED_CATEGORIES.flatMap((p) => p.subcategories).map((sub) => (
+                  <button key={sub.slug} onClick={() => handleCategory(sub.name)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors whitespace-nowrap ${activeCategory === sub.name ? 'bg-gray-950 text-white' : 'text-gray-500'}`}>
+                    {sub.name}
                   </button>
                 ))}
               </div>
