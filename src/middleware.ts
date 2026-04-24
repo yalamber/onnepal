@@ -38,6 +38,7 @@ export function middleware(request: NextRequest) {
     url.pathname.startsWith('/_next/') ||
     url.pathname.startsWith('/assets/') ||
     url.pathname.startsWith('/favicon') ||
+    url.pathname === '/icon.svg' ||
     url.pathname.startsWith('/_vinext')
   ) {
     return NextResponse.next();
@@ -49,5 +50,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next|api|assets|static|_vinext|favicon\\.ico).*)'],
+  matcher: ['/((?!_next|api|assets|static|_vinext|favicon\\.ico|icon\\.svg).*)'],
 };
