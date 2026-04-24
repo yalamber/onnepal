@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 
 import { ReviewForm } from './review-form';
+import { BookingForm } from './booking-form';
 
 function imgSrc(key: string | null): string | null {
   if (!key) return null;
@@ -83,55 +84,55 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Nav */}
-      <nav className="border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            <div className="flex items-center gap-3">
-              {imgSrc(business.logoUrl) ? (
-                <img src={imgSrc(business.logoUrl)!} alt={name} className="w-8 h-8 rounded-lg object-cover" />
-              ) : (
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: primary }}>{name.charAt(0)}</div>
-              )}
-              <span className="text-sm font-bold text-gray-950">{name}</span>
-            </div>
-            <div className="flex items-center gap-4">
-              {business.phone && (
-                <a href={`tel:${business.phone}`} className="hidden sm:flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                  <Phone className="h-3.5 w-3.5" /> {business.phone}
-                </a>
-              )}
-              {ctas.length > 0 && (
-                <a href={ctas[0].url} target="_blank" rel="noopener noreferrer" className="px-4 py-1.5 text-sm font-medium rounded-lg text-white" style={{ backgroundColor: primary }}>{ctas[0].label}</a>
-              )}
-            </div>
-          </div>
+      {/* Cover image — Facebook-style */}
+      <section className="relative">
+        <div className="h-48 sm:h-64 lg:h-80 relative overflow-hidden" style={{
+          backgroundImage: imgSrc(business.coverImageUrl) ? `url(${imgSrc(business.coverImageUrl)})` : undefined,
+          backgroundSize: imgSrc(business.coverImageUrl) ? 'cover' : undefined,
+          backgroundPosition: imgSrc(business.coverImageUrl) ? `${(business.coverPosition || '50 50').split(' ')[0]}% ${(business.coverPosition || '50 50').split(' ')[1]}%` : undefined,
+          background: !imgSrc(business.coverImageUrl) ? `linear-gradient(135deg, ${primary}, ${business.accentColor})` : undefined,
+        }}>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         </div>
-      </nav>
 
-      {/* Hero */}
-      <section className="relative" style={{
-        backgroundImage: imgSrc(business.coverImageUrl) ? `url(${imgSrc(business.coverImageUrl)})` : undefined,
-        backgroundSize: imgSrc(business.coverImageUrl) ? 'cover' : undefined,
-        backgroundPosition: imgSrc(business.coverImageUrl) ? `${(business.coverPosition || '50 50').split(' ')[0]}% ${(business.coverPosition || '50 50').split(' ')[1]}%` : undefined,
-        background: !imgSrc(business.coverImageUrl) ? `linear-gradient(135deg, ${primary}, ${business.accentColor})` : undefined,
-      }}>
-        <div className="bg-black/30">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-3 mb-3">
-                {business.businessCategory && <p className="text-white/70 text-sm">{business.businessCategory}</p>}
-                {averageRating && averageRating.count > 0 && (
-                  <span className="text-sm text-yellow-300">{stars(averageRating.average)} ({averageRating.count})</span>
+        {/* Profile info overlapping cover */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative -mt-16 sm:-mt-20 pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-5">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                {imgSrc(business.logoUrl) ? (
+                  <img src={imgSrc(business.logoUrl)!} alt={name}
+                    className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl object-cover border-4 border-white shadow-sm bg-white" />
+                ) : (
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl border-4 border-white shadow-sm flex items-center justify-center text-white text-3xl sm:text-4xl font-bold"
+                    style={{ backgroundColor: primary }}>
+                    {name.charAt(0)}
+                  </div>
                 )}
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">{name}</h1>
-              {business.description && <p className="mt-4 text-white/80 text-lg leading-relaxed max-w-lg">{business.description}</p>}
+
+              {/* Name + meta */}
+              <div className="flex-1 min-w-0 pb-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">{name}</h1>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                  {business.businessCategory && <span className="text-sm text-gray-500">{business.businessCategory}</span>}
+                  {averageRating && averageRating.count > 0 && (
+                    <span className="text-sm text-yellow-500">{stars(averageRating.average)} <span className="text-gray-400">({averageRating.count})</span></span>
+                  )}
+                </div>
+                {business.description && <p className="mt-2 text-gray-500 text-sm leading-relaxed max-w-lg line-clamp-2">{business.description}</p>}
+              </div>
+
+              {/* CTA buttons */}
               {ctas.length > 0 && (
-                <div className="mt-8 flex flex-wrap gap-3">
+                <div className="flex gap-2 flex-shrink-0 sm:pb-1">
                   {ctas.map((cta, i) => (
                     <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
-                      className={`px-6 py-3 rounded-lg text-sm font-medium transition-colors ${i === 0 ? 'bg-white text-gray-950 hover:bg-gray-100' : 'bg-white/20 text-white hover:bg-white/30'}`}>
+                      className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                        i === 0 ? 'text-white' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                      }`}
+                      style={i === 0 ? { backgroundColor: primary } : undefined}>
                       {cta.label}
                     </a>
                   ))}
@@ -358,16 +359,32 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
         </section>
       )}
 
-      {/* Booking CTA */}
+      {/* Booking */}
       {business.bookingEnabled && (
         <section className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="border border-gray-200 rounded-lg p-8 text-center">
-              <h2 className="text-2xl font-bold text-gray-950 tracking-tight">Book an appointment</h2>
-              <p className="text-gray-500 mt-2">Get in touch to schedule a visit or book a service.</p>
-              <div className="mt-6 flex flex-wrap gap-3 justify-center">
-                {business.phone && <a href={`tel:${business.phone}`} className="px-6 py-3 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: primary }}>Call now</a>}
-                {business.whatsappNumber && <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-lg text-sm font-medium border border-gray-200 text-gray-950 hover:bg-gray-50">WhatsApp</a>}
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-950 tracking-tight">Book an appointment</h2>
+                <p className="text-gray-500 mt-2">Fill out the form to request a booking. We&apos;ll confirm your appointment shortly.</p>
+                {(business.phone || business.whatsappNumber) && (
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {business.phone && (
+                      <a href={`tel:${business.phone}`} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
+                        <Phone className="h-4 w-4" /> {business.phone}
+                      </a>
+                    )}
+                    {business.whatsappNumber && (
+                      <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
+                        <MessageCircle className="h-4 w-4" /> WhatsApp
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div>
+                <BookingForm businessId={business.id} primaryColor={primary} />
               </div>
             </div>
           </div>
