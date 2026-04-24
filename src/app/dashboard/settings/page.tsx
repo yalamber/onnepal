@@ -3,12 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useActiveBusiness } from '../layout';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Save, Check, Palette, Building2, Phone, MapPin, Clock } from 'lucide-react';
+import { Loader2, Save, Check, Palette, Phone, MapPin, Clock } from 'lucide-react';
 import { THEME_PALETTES, findPalette, type ThemePalette } from '@/lib/themes';
-import { SingleImageUpload } from '@/components/image-upload';
 import { CoverReposition } from '@/components/cover-reposition';
 
 interface Profile {
@@ -106,7 +104,7 @@ export default function SettingsPage() {
   if (loading || !profile) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -119,35 +117,41 @@ export default function SettingsPage() {
         <p className="text-sm text-gray-500 mt-0.5">Manage your business profile and appearance</p>
       </div>
 
+      {/* Facebook-style cover + logo */}
+      <div className="relative mb-14">
+        <CoverReposition
+          imageKey={profile.coverImageUrl}
+          position={profile.coverPosition || '50 50'}
+          onSave={async (pos) => {
+            setProfile({ ...profile, coverPosition: pos });
+            await fetch(`/api/business/profile?businessId=${business!.id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ coverPosition: pos }),
+            });
+          }}
+          onUpload={(key) => setProfile({ ...profile, coverImageUrl: key })}
+          onRemove={() => setProfile({ ...profile, coverImageUrl: null })}
+          logoUrl={profile.logoUrl}
+          businessName={profile.businessName || 'B'}
+          primaryColor={profile.primaryColor || '#1e293b'}
+          onLogoUpload={(key) => setProfile({ ...profile, logoUrl: key })}
+          onLogoRemove={() => setProfile({ ...profile, logoUrl: null })}
+          businessId={business!.id}
+        />
+        {/* Name + category under the logo */}
+        <div className="ml-28 sm:ml-32 mt-2">
+          <p className="text-lg font-bold text-gray-950">{profile.businessName}</p>
+          {profile.businessCategory && <p className="text-sm text-gray-500">{profile.businessCategory}</p>}
+        </div>
+      </div>
+
       {/* Business Info */}
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-          <Building2 className="h-4 w-4 text-gray-400" />
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100">
           <p className="text-sm font-semibold text-gray-900">Business information</p>
         </div>
         <div className="p-5 space-y-4">
-          <div className="space-y-4">
-            <SingleImageUpload value={profile.logoUrl} onChange={(url) => setProfile({ ...profile, logoUrl: url })} label="Logo" target="logo" businessId={business.id} />
-            <div>
-              <SingleImageUpload value={profile.coverImageUrl} onChange={(url) => setProfile({ ...profile, coverImageUrl: url })} label="Cover image" target="cover" businessId={business.id} />
-              {profile.coverImageUrl && (
-                <div className="mt-3">
-                  <CoverReposition
-                    imageKey={profile.coverImageUrl}
-                    position={profile.coverPosition || '50 50'}
-                    onSave={async (pos) => {
-                      setProfile({ ...profile, coverPosition: pos });
-                      await fetch(`/api/business/profile?businessId=${business.id}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ coverPosition: pos }),
-                      });
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
           <div>
             <label className="text-xs font-medium text-gray-600 mb-1.5 block">Business Name</label>
             <Input
@@ -176,7 +180,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Contact Info */}
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
           <Phone className="h-4 w-4 text-gray-400" />
           <p className="text-sm font-semibold text-gray-900">Contact details</p>
@@ -213,6 +217,7 @@ export default function SettingsPage() {
               onChange={(e) => setProfile({ ...profile, address: e.target.value })}
               placeholder="Kathmandu, Nepal"
             />
+          </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-medium text-gray-600 mb-1.5 block">WhatsApp Number</label>
@@ -237,12 +242,11 @@ export default function SettingsPage() {
               className="rounded" />
             <span className="text-sm text-gray-700">Enable booking section on business page</span>
           </label>
-          </div>
         </div>
       </div>
 
       {/* Modules */}
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100">
           <p className="text-sm font-semibold text-gray-900">Page sections</p>
           <p className="text-xs text-gray-400 mt-0.5">Choose which sections to show on your business page</p>
@@ -280,7 +284,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Theme */}
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
           <Palette className="h-4 w-4 text-gray-400" />
           <p className="text-sm font-semibold text-gray-900">Theme</p>
@@ -293,9 +297,9 @@ export default function SettingsPage() {
                 <button
                   key={palette.id}
                   onClick={() => selectPalette(palette)}
-                  className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 transition-all duration-200 ${
+                  className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-lg border-2 transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-gray-900 bg-gray-50 shadow-sm'
+                      ? 'border-gray-900 bg-gray-50'
                       : 'border-transparent hover:border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -319,11 +323,10 @@ export default function SettingsPage() {
             })}
           </div>
 
-          {/* Mini preview */}
           {selectedPalette && (
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 border border-gray-100">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
                 style={{ background: `linear-gradient(135deg, ${selectedPalette.primary}, ${selectedPalette.accent})` }}
               >
                 {profile.businessName?.charAt(0) || 'B'}

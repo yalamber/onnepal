@@ -1,27 +1,69 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { Move, Check, X } from 'lucide-react';
+import { Move, Check, X, Camera, Upload, Loader2 } from 'lucide-react';
 import { imageUrl } from './image-upload';
 
 interface CoverRepositionProps {
-  imageKey: string;
+  imageKey: string | null;
   position: string;
   onSave: (position: string) => void;
+  onUpload: (key: string) => void;
+  onRemove: () => void;
+  logoUrl: string | null;
+  businessName: string;
+  primaryColor: string;
+  onLogoUpload: (key: string) => void;
+  onLogoRemove: () => void;
+  businessId: string;
 }
 
-export function CoverReposition({ imageKey, position, onSave }: CoverRepositionProps) {
+export function CoverReposition({
+  imageKey, position, onSave, onUpload, onRemove,
+  logoUrl, businessName, primaryColor, onLogoUpload, onLogoRemove,
+  businessId,
+}: CoverRepositionProps) {
   const [editing, setEditing] = useState(false);
   const [pos, setPos] = useState(position || '50 50');
   const [dragging, setDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const startY = useRef(0);
   const startPos = useRef(50);
 
   const src = imageUrl(imageKey);
-  if (!src) return null;
-
+  const logoSrc = imageUrl(logoUrl);
   const yPercent = parseInt(pos.split(' ')[1] || '50');
+
+  const uploadFile = async (file: File, target: string): Promise<string | null> => {
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('target', target);
+      fd.append('businessId', businessId);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      if (!res.ok) return null;
+      const data = await res.json() as { url: string };
+      return data.url;
+    } catch { return null; }
+  };
+
+  const handleCoverUpload = async (file: File) => {
+    setUploading(true);
+    const key = await uploadFile(file, 'cover');
+    if (key) onUpload(key);
+    setUploading(false);
+  };
+
+  const handleLogoUpload = async (file: File) => {
+    setUploadingLogo(true);
+    const key = await uploadFile(file, 'logo');
+    if (key) onLogoUpload(key);
+    setUploadingLogo(false);
+  };
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (!editing) return;
@@ -72,9 +114,12 @@ export function CoverReposition({ imageKey, position, onSave }: CoverRepositionP
 
   return (
     <div className="relative">
+      {/* Cover image area */}
       <div
         ref={containerRef}
-        className={`w-full h-40 rounded-lg overflow-hidden ${editing ? 'cursor-grab ring-2 ring-gray-950' : ''} ${dragging ? 'cursor-grabbing' : ''}`}
+        className={`w-full h-48 sm:h-56 rounded-xl overflow-hidden relative ${
+          editing ? 'cursor-grab ring-2 ring-gray-950' : ''
+        } ${dragging ? 'cursor-grabbing' : ''}`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -83,13 +128,22 @@ export function CoverReposition({ imageKey, position, onSave }: CoverRepositionP
         onTouchMove={handleTouchMove}
         onTouchEnd={handleMouseUp}
       >
-        <img
-          src={src}
-          alt="Cover"
-          className="w-full h-full object-cover select-none"
-          style={{ objectPosition: `${pos.split(' ')[0]}% ${pos.split(' ')[1]}%` }}
-          draggable={false}
-        />
+        {src ? (
+          <img
+            src={src}
+            alt="Cover"
+            className="w-full h-full object-cover select-none"
+            style={{ objectPosition: `${pos.split(' ')[0]}% ${pos.split(' ')[1]}%` }}
+            draggable={false}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center"
+            style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}>
+            <p className="text-white/50 text-sm">No cover image</p>
+          </div>
+        )}
+
+        {/* Drag overlay */}
         {editing && (
           <div className="absolute inset-0 bg-black/20 flex items-center justify-center pointer-events-none">
             <div className="flex items-center gap-2 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full">
@@ -97,22 +151,77 @@ export function CoverReposition({ imageKey, position, onSave }: CoverRepositionP
             </div>
           </div>
         )}
+
+        {/* Cover action buttons */}
+        {!editing && (
+          <div className="absolute top-3 right-3 flex gap-1.5">
+            {src && (
+              <button onClick={() => { setEditing(true); setPos(position || '50 50'); }}
+                className="px-2.5 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs rounded-lg flex items-center gap-1.5 cursor-pointer transition-colors backdrop-blur-sm">
+                <Move className="h-3 w-3" /> Reposition
+              </button>
+            )}
+            <label className="px-2.5 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs rounded-lg flex items-center gap-1.5 cursor-pointer transition-colors backdrop-blur-sm">
+              {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+              {src ? 'Change' : 'Add cover'}
+              <input ref={coverInputRef} type="file" accept="image/*" className="hidden" disabled={uploading}
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
+            </label>
+            {src && (
+              <button onClick={onRemove}
+                className="p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-lg cursor-pointer transition-colors backdrop-blur-sm">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Reposition save/cancel buttons */}
+        {editing && (
+          <div className="absolute top-3 right-3 flex gap-1.5">
+            <button onClick={save}
+              className="px-3 py-1.5 bg-white text-gray-950 text-xs font-medium rounded-lg flex items-center gap-1.5 cursor-pointer shadow-sm hover:bg-gray-50">
+              <Check className="h-3 w-3" /> Save
+            </button>
+            <button onClick={cancel}
+              className="px-3 py-1.5 bg-white/90 text-gray-600 text-xs rounded-lg flex items-center gap-1.5 cursor-pointer shadow-sm hover:bg-white">
+              <X className="h-3 w-3" /> Cancel
+            </button>
+          </div>
+        )}
       </div>
 
-      {editing ? (
-        <div className="absolute top-2 right-2 flex gap-1">
-          <button onClick={save} className="p-1.5 bg-white rounded-md shadow-sm text-gray-950 hover:bg-gray-50 cursor-pointer">
-            <Check className="h-4 w-4" />
-          </button>
-          <button onClick={cancel} className="p-1.5 bg-white rounded-md shadow-sm text-gray-400 hover:text-gray-950 cursor-pointer">
-            <X className="h-4 w-4" />
-          </button>
+      {/* Logo overlapping bottom-left */}
+      <div className="absolute -bottom-10 left-5 sm:left-6">
+        <div className="relative group">
+          {logoSrc ? (
+            <img src={logoSrc} alt={businessName}
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-4 border-white shadow-sm bg-white" />
+          ) : (
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
+              style={{ backgroundColor: primaryColor }}>
+              {businessName.charAt(0)}
+            </div>
+          )}
+          <label className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/40 rounded-xl cursor-pointer transition-colors group">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              {uploadingLogo ? (
+                <Loader2 className="h-5 w-5 text-white animate-spin" />
+              ) : (
+                <Camera className="h-5 w-5 text-white" />
+              )}
+            </div>
+            <input ref={logoInputRef} type="file" accept="image/*" className="hidden" disabled={uploadingLogo}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f); }} />
+          </label>
+          {logoSrc && (
+            <button onClick={onLogoRemove}
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gray-950 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity shadow-sm">
+              <X className="h-3 w-3" />
+            </button>
+          )}
         </div>
-      ) : (
-        <button onClick={() => setEditing(true)} className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-md shadow-sm text-gray-500 hover:text-gray-950 cursor-pointer text-xs flex items-center gap-1">
-          <Move className="h-3 w-3" /> Reposition
-        </button>
-      )}
+      </div>
     </div>
   );
 }
