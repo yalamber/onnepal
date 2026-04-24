@@ -1,5 +1,11 @@
 import { ArrowUpRight } from 'lucide-react';
 
+function imgSrc(key: string | null): string | null {
+  if (!key) return null;
+  if (key.startsWith('http')) return key;
+  return `https://images.onnepal.com/${key}`;
+}
+
 export interface BusinessCardData {
   id: string;
   subdomain: string | null;
@@ -28,8 +34,8 @@ export function BusinessCard({ business }: BusinessCardProps) {
       className="group block p-5 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors"
     >
       <div className="flex items-start gap-4">
-        {business.logoUrl ? (
-          <img src={business.logoUrl} alt={name} className="w-11 h-11 rounded-lg object-cover flex-shrink-0" />
+        {imgSrc(business.logoUrl) ? (
+          <img src={imgSrc(business.logoUrl)!} alt={name} className="w-11 h-11 rounded-lg object-cover flex-shrink-0" />
         ) : (
           <div
             className="w-11 h-11 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0"
