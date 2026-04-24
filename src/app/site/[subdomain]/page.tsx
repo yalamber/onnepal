@@ -86,6 +86,7 @@ export default async function SitePage({
         primaryColor: business.primaryColor || '#1e293b',
         accentColor: business.accentColor || '#334155',
         subdomain: business.subdomain,
+        enabledModules: business.enabledModules,
       }}
       links={links}
       announcements={announcements}

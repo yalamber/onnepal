@@ -25,6 +25,10 @@ export const updateProfileSchema = z.object({
   businessHours: z.string().max(500).nullish(),
   primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullish(),
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullish(),
+  whatsappNumber: z.string().max(20).nullish(),
+  mapAddress: z.string().max(500).nullish(),
+  bookingEnabled: z.boolean().nullish(),
+  enabledModules: z.string().max(500).nullish(),
 });
 
 export const socialLinkSchema = z.object({

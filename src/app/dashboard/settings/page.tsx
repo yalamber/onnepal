@@ -25,6 +25,10 @@ interface Profile {
   primaryColor: string | null;
   accentColor: string | null;
   isPublished: boolean;
+  whatsappNumber: string | null;
+  mapAddress: string | null;
+  bookingEnabled: boolean;
+  enabledModules: string | null;
 }
 
 export default function SettingsPage() {
@@ -81,6 +85,10 @@ export default function SettingsPage() {
           businessHours: profile.businessHours,
           primaryColor: profile.primaryColor,
           accentColor: profile.accentColor,
+          whatsappNumber: profile.whatsappNumber,
+          mapAddress: profile.mapAddress,
+          bookingEnabled: profile.bookingEnabled,
+          enabledModules: profile.enabledModules,
         }),
       });
       if (res.ok) {
@@ -205,6 +213,68 @@ export default function SettingsPage() {
               onChange={(e) => setProfile({ ...profile, address: e.target.value })}
               placeholder="Kathmandu, Nepal"
             />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1.5 block">WhatsApp Number</label>
+              <Input
+                value={profile.whatsappNumber || ''}
+                onChange={(e) => setProfile({ ...profile, whatsappNumber: e.target.value })}
+                placeholder="+977-98XXXXXXXX"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1.5 block">Map Address</label>
+              <Input
+                value={profile.mapAddress || ''}
+                onChange={(e) => setProfile({ ...profile, mapAddress: e.target.value })}
+                placeholder="Full address for Google Maps"
+              />
+            </div>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={profile.bookingEnabled || false}
+              onChange={(e) => setProfile({ ...profile, bookingEnabled: e.target.checked })}
+              className="rounded" />
+            <span className="text-sm text-gray-700">Enable booking section on business page</span>
+          </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Modules */}
+      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100">
+          <p className="text-sm font-semibold text-gray-900">Page sections</p>
+          <p className="text-xs text-gray-400 mt-0.5">Choose which sections to show on your business page</p>
+        </div>
+        <div className="p-5">
+          <div className="grid sm:grid-cols-2 gap-2">
+            {[
+              { key: 'products', label: 'Products & Services' },
+              { key: 'links', label: 'Social Links' },
+              { key: 'announcements', label: 'Announcements' },
+              { key: 'menu', label: 'Menu / Price List' },
+              { key: 'gallery', label: 'Photo Gallery' },
+              { key: 'reviews', label: 'Reviews' },
+              { key: 'offers', label: 'Special Offers' },
+              { key: 'team', label: 'Team' },
+              { key: 'faq', label: 'FAQ' },
+              { key: 'hours', label: 'Business Hours' },
+            ].map(mod => {
+              const modules: string[] = (() => { try { return JSON.parse(profile.enabledModules || '[]'); } catch { return []; } })();
+              const enabled = modules.includes(mod.key);
+              return (
+                <label key={mod.key} className="flex items-center gap-2.5 py-1.5 cursor-pointer">
+                  <input type="checkbox" checked={enabled}
+                    onChange={() => {
+                      const next = enabled ? modules.filter(m => m !== mod.key) : [...modules, mod.key];
+                      setProfile({ ...profile, enabledModules: JSON.stringify(next) });
+                    }}
+                    className="rounded" />
+                  <span className="text-sm text-gray-700">{mod.label}</span>
+                </label>
+              );
+            })}
           </div>
         </div>
       </div>

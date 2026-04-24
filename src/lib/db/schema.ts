@@ -29,6 +29,7 @@ export const businesses = sqliteTable('businesses', {
   whatsappNumber: text('whatsapp_number'),
   mapAddress: text('map_address'), // for map embed
   bookingEnabled: integer('booking_enabled', { mode: 'boolean' }).notNull().default(false),
+  enabledModules: text('enabled_modules').default('["products","links","announcements"]'),
   primaryColor: text('primary_color').default('#2563eb'),
   accentColor: text('accent_color').default('#1d4ed8'),
   isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),

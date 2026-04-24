@@ -31,6 +31,7 @@ interface BusinessPageProps {
     primaryColor: string;
     accentColor: string;
     subdomain: string;
+    enabledModules: string | null;
   };
   links: Array<{ id: string; platform: string; url: string; label: string | null }>;
   announcements: Array<{ id: string; title: string; content: string | null; isPinned: boolean; createdAt: Date }>;
@@ -66,6 +67,8 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
   const primary = business.primaryColor;
   const name = business.businessName || 'Business';
   const hasContact = business.phone || business.address || business.businessHours;
+  const modules: string[] = (() => { try { return JSON.parse(business.enabledModules || '["products","links","announcements"]'); } catch { return []; } })();
+  const mod = (key: string) => modules.includes(key);
   const hours = business.businessHours ? (() => { try { return JSON.parse(business.businessHours!) as Record<string, string>; } catch { return null; } })() : null;
 
   const menuByCategory = menuItems.reduce((acc, item) => {
@@ -151,7 +154,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Special Offers */}
-      {offers.length > 0 && (
+      {mod("offers") && offers.length > 0 && (
         <section className="py-12 bg-amber-50/50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-6">Special Offers</h2>
@@ -173,7 +176,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Business Hours */}
-      {hours && (
+      {mod("hours") && hours && (
         <section className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-6">Business Hours</h2>
@@ -192,7 +195,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Menu */}
-      {menuItems.length > 0 && (
+      {mod("menu") && menuItems.length > 0 && (
         <section className="py-12 bg-gray-50/50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Menu</h2>
@@ -217,7 +220,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Products */}
-      {products.length > 0 && (
+      {mod("products") && products.length > 0 && (
         <section className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Products & Services</h2>
@@ -242,7 +245,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Gallery */}
-      {gallery.length > 0 && (
+      {mod("gallery") && gallery.length > 0 && (
         <section className="py-12 bg-gray-50/50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-6">Gallery</h2>
@@ -261,7 +264,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Reviews */}
-      {(reviews.length > 0 || averageRating) && (
+      {mod("reviews") && (reviews.length > 0 || averageRating) && (
         <section className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-baseline gap-4 mb-8">
@@ -289,7 +292,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Team */}
-      {teamMembers.length > 0 && (
+      {mod("team") && teamMembers.length > 0 && (
         <section className="py-12 bg-gray-50/50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Our Team</h2>
@@ -311,7 +314,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Announcements */}
-      {announcements.length > 0 && (
+      {mod("announcements") && announcements.length > 0 && (
         <section className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">News & Updates</h2>
@@ -333,7 +336,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* FAQ */}
-      {faqs.length > 0 && (
+      {mod("faq") && faqs.length > 0 && (
         <section className="py-12 bg-gray-50/50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Frequently Asked Questions</h2>
@@ -366,7 +369,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Social Links */}
-      {links.length > 0 && (
+      {mod("links") && links.length > 0 && (
         <section className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Connect</h2>
