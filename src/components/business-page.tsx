@@ -101,7 +101,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
     <div className="min-h-screen bg-gray-50">
       {/* Header card: cover + profile + tabs */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
+        <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
           {/* Cover image */}
           {imgSrc(business.coverImageUrl) ? (
             <div className="h-40 sm:h-52 lg:h-60 overflow-hidden">
@@ -122,11 +122,11 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
               <div className="flex-shrink-0">
                 {imgSrc(business.logoUrl) ? (
                   <img src={imgSrc(business.logoUrl)!} alt={name}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-[3px] border-white shadow-sm bg-white"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover border-[2px] border-white shadow-sm bg-white"
                     loading="eager" fetchPriority="high" decoding="async"
                     width="96" height="96" />
                 ) : (
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-[3px] border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg border-[2px] border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
                     style={{ backgroundColor: primary }}>
                     {name.charAt(0)}
                   </div>
@@ -158,7 +158,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                   <div className="flex gap-2">
                     {ctas.map((cta, i) => (
                       <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
-                        className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                        className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                           i === 0 ? 'text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
                         }`}
                         style={i === 0 ? { backgroundColor: primary } : undefined}>
@@ -181,11 +181,11 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Special Offers */}
         {mod("offers") && offers.length > 0 && (
-          <div id="offers" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="offers" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Special Offers</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {offers.map((offer) => (
-                <div key={offer.id} className="border border-amber-200 bg-amber-50/30 rounded-lg p-4">
+                <div key={offer.id} className="border border-amber-200 bg-amber-50/30 rounded-md p-4">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="font-semibold text-sm text-gray-950">{offer.title}</h3>
                     {offer.discountText && <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[11px] font-semibold rounded">{offer.discountText}</span>}
@@ -201,7 +201,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Business Hours */}
         {mod("hours") && hours && (
-          <div id="hours" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="hours" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Business Hours</h2>
             <div className="max-w-xs space-y-0.5">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((day) => (
@@ -218,7 +218,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Menu */}
         {mod("menu") && menuItems.length > 0 && (
-          <div id="menu" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="menu" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Menu</h2>
             {Object.entries(menuByCategory).map(([category, items]) => (
               <div key={category} className="mb-6 last:mb-0">
@@ -246,12 +246,12 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Products */}
         {mod("products") && products.length > 0 && (
-          <div id="products" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="products" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Products & Services</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
                 <div key={product.id} className="group">
-                  <div className="aspect-[4/3] bg-gray-50 rounded-lg overflow-hidden">
+                  <div className="aspect-[4/3] bg-gray-50 rounded-md overflow-hidden">
                     {imgSrc(product.imageUrl) ? (
                       <img src={imgSrc(product.imageUrl)!} alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -273,11 +273,11 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Gallery */}
         {mod("gallery") && gallery.length > 0 && (
-          <div id="gallery" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="gallery" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Gallery</h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
               {gallery.map((img) => (
-                <div key={img.id} className="relative group aspect-square overflow-hidden rounded-lg bg-gray-50">
+                <div key={img.id} className="relative group aspect-square overflow-hidden rounded-md bg-gray-50">
                   <img src={imgSrc(img.imageKey)!} alt={img.caption || ''}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy" decoding="async" width="400" height="400" />
@@ -292,11 +292,11 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Announcements */}
         {mod("announcements") && announcements.length > 0 && (
-          <div id="announcements" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="announcements" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">News & Updates</h2>
             <div className="space-y-2.5">
               {[...announcements].sort((a, b) => Number(b.isPinned) - Number(a.isPinned)).map((item) => (
-                <div key={item.id} className={`p-4 rounded-lg border ${item.isPinned ? 'border-amber-200 bg-amber-50/40' : 'border-gray-100 bg-gray-50'}`}>
+                <div key={item.id} className={`p-4 rounded-md border ${item.isPinned ? 'border-amber-200 bg-amber-50/40' : 'border-gray-100 bg-gray-50'}`}>
                   <div className="flex items-start gap-2">
                     {item.isPinned && <Pin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-600" />}
                     <div className="flex-1 min-w-0">
@@ -315,7 +315,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Team */}
         {mod("team") && teamMembers.length > 0 && (
-          <div id="team" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="team" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Our Team</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {teamMembers.map((member) => (
@@ -336,7 +336,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Reviews */}
         {mod("reviews") && (
-          <div id="reviews" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="reviews" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <div className="flex items-baseline gap-3 mb-5">
               <h2 className="text-lg font-bold text-gray-950">Reviews</h2>
               {averageRating && averageRating.count > 0 && (
@@ -348,7 +348,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
             {reviews.length > 0 && (
               <div className="space-y-3 mb-6">
                 {reviews.map((review) => (
-                  <div key={review.id} className="flex gap-3 p-4 bg-gray-50 rounded-lg">
+                  <div key={review.id} className="flex gap-3 p-4 bg-gray-50 rounded-md">
                     <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold"
                       style={{ backgroundColor: primary }}>
                       {review.reviewerName.charAt(0).toUpperCase()}
@@ -371,7 +371,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* FAQ */}
         {mod("faq") && faqs.length > 0 && (
-          <div id="faq" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="faq" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Frequently Asked Questions</h2>
             <div className="space-y-4">
               {faqs.map((faq) => (
@@ -386,7 +386,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Booking */}
         {business.bookingEnabled && (
-          <div id="booking" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="booking" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <div className="grid lg:grid-cols-2 gap-6">
               <div>
                 <h2 className="text-lg font-bold text-gray-950">Book an appointment</h2>
@@ -394,13 +394,13 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                 {(business.phone || business.whatsappNumber) && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     {business.phone && (
-                      <a href={`tel:${business.phone}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                      <a href={`tel:${business.phone}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
                         <Phone className="h-3.5 w-3.5" /> Call
                       </a>
                     )}
                     {business.whatsappNumber && (
                       <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
                         <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                       </a>
                     )}
@@ -414,13 +414,13 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Social Links */}
         {mod("links") && links.length > 0 && (
-          <div id="links" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="links" className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Connect</h2>
             <div className="grid sm:grid-cols-2 gap-2">
               {links.map((link) => {
                 const Icon = PLATFORM_ICONS[link.platform] || Globe;
                 return (
-                  <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                  <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 p-3 rounded-md hover:bg-gray-50 transition-colors">
                     <Icon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
                     <span className="text-sm text-gray-700 group-hover:text-gray-950">{link.label || PLATFORM_LABELS[link.platform] || link.platform}</span>
                     <ArrowUpRight className="h-3 w-3 text-gray-300 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />

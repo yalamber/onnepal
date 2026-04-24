@@ -48,7 +48,7 @@ export function BookingForm({ businessId, primaryColor }: BookingFormProps) {
 
   if (submitted) {
     return (
-      <div className="border border-gray-100 rounded-lg p-8 text-center">
+      <div className="border border-gray-100 rounded-md p-8 text-center">
         <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
           <svg className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -60,7 +60,7 @@ export function BookingForm({ businessId, primaryColor }: BookingFormProps) {
     );
   }
 
-  const inputClass = "w-full h-10 px-3 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors";
+  const inputClass = "w-full h-10 px-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -114,13 +114,13 @@ export function BookingForm({ businessId, primaryColor }: BookingFormProps) {
           onChange={(e) => setForm({ ...form, message: e.target.value })}
           placeholder="Any additional details..."
           rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
+          className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       <button type="submit" disabled={submitting || !form.customerName.trim() || !form.date}
-        className="h-10 px-6 text-white text-sm font-medium rounded-lg disabled:opacity-30 cursor-pointer transition-colors"
+        className="h-10 px-6 text-white text-sm font-medium rounded-md disabled:opacity-30 cursor-pointer transition-colors"
         style={{ backgroundColor: primaryColor }}>
         {submitting ? 'Sending...' : 'Request booking'}
       </button>
