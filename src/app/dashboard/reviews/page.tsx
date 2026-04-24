@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useActiveBusiness } from '../layout';
+import { ModuleToggle } from '@/components/module-toggle';
 import { Button } from '@/components/ui/button';
 import { Loader2, Star, Trash2, Check, Clock } from 'lucide-react';
 
@@ -80,6 +81,7 @@ export default function ReviewsPage() {
 
   return (
     <div className="space-y-6">
+      {business && <ModuleToggle moduleKey="reviews" label="Reviews" businessId={business.id} enabledModules={business.enabledModules} />}
       {/* Header */}
       <div>
         <h2 className="text-lg font-bold text-gray-900">Reviews</h2>

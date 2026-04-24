@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Trash2, Loader2, UtensilsCrossed, X, Upload, Edit2, Check } from 'lucide-react';
 import { imageUrl } from '@/components/image-upload';
+import { ModuleToggle } from '@/components/module-toggle';
 
 interface MenuItem {
   id: string;
@@ -125,6 +126,7 @@ export default function MenuPage() {
 
   return (
     <div className="space-y-6">
+      {business && <ModuleToggle moduleKey="menu" label="Menu" businessId={business.id} enabledModules={business.enabledModules} />}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-gray-900">Menu</h2>

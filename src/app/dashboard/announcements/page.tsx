@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useActiveBusiness } from '../layout';
+import { ModuleToggle } from '@/components/module-toggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -70,6 +71,7 @@ export default function AnnouncementsPage() {
 
   return (
     <div className="space-y-6">
+      {business && <ModuleToggle moduleKey="announcements" label="Announcements" businessId={business.id} enabledModules={business.enabledModules} />}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

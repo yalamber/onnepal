@@ -20,6 +20,7 @@ interface Business {
   isPublished: boolean;
   primaryColor: string | null;
   accentColor: string | null;
+  enabledModules: string | null;
 }
 
 interface UserData {

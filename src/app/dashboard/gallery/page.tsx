@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useActiveBusiness } from '../layout';
+import { ModuleToggle } from '@/components/module-toggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Trash2, Loader2, Image as ImageIcon, Upload, X } from 'lucide-react';
@@ -94,6 +95,7 @@ export default function GalleryPage() {
 
   return (
     <div className="space-y-6">
+      {business && <ModuleToggle moduleKey="gallery" label="Gallery" businessId={business.id} enabledModules={business.enabledModules} />}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
