@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, Loader2,
   Plus, ChevronDown, Check, Tag, Building2, User, QrCode,
+  UtensilsCrossed, Gift, Image, Star, Users, HelpCircle, Calendar,
 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -46,7 +47,14 @@ const NAV_ITEMS = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
   { href: '/dashboard/links', label: 'Links', icon: LinkIcon, exact: false },
   { href: '/dashboard/products', label: 'Products', icon: ShoppingBag, exact: false },
+  { href: '/dashboard/menu', label: 'Menu', icon: UtensilsCrossed, exact: false },
+  { href: '/dashboard/gallery', label: 'Gallery', icon: Image, exact: false },
   { href: '/dashboard/announcements', label: 'Announcements', icon: Megaphone, exact: false },
+  { href: '/dashboard/offers', label: 'Offers', icon: Gift, exact: false },
+  { href: '/dashboard/reviews', label: 'Reviews', icon: Star, exact: false },
+  { href: '/dashboard/team', label: 'Team', icon: Users, exact: false },
+  { href: '/dashboard/faq', label: 'FAQ', icon: HelpCircle, exact: false },
+  { href: '/dashboard/bookings', label: 'Bookings', icon: Calendar, exact: false },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false },
   { href: '/dashboard/qr-sticker', label: 'QR Sticker', icon: QrCode, exact: false },
 ];
