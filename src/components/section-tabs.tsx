@@ -30,28 +30,30 @@ export function SectionTabs({ tabs, accentColor }: { tabs: Tab[]; accentColor: s
   }, [tabs]);
 
   return (
-    <div className="sticky top-0 z-40 bg-gray-50/95 backdrop-blur-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 border-b border-gray-200/60">
-      <div className="flex gap-0 overflow-x-auto scrollbar-none">
-        {tabs.map((tab) => {
-          const isActive = active === tab.id;
-          return (
-            <a
-              key={tab.id}
-              href={`#${tab.id}`}
-              className={`relative flex-shrink-0 px-3.5 py-3 text-sm font-medium transition-colors ${
-                isActive ? 'text-gray-950' : 'text-gray-500 hover:text-gray-950'
-              }`}
-            >
-              {tab.label}
-              {isActive && (
+    <div className="sticky top-0 z-40 bg-gray-50/90 backdrop-blur-md border-b border-gray-200/60 mt-3">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-0 overflow-x-auto scrollbar-none">
+          {tabs.map((tab) => {
+            const isActive = active === tab.id;
+            return (
+              <a
+                key={tab.id}
+                href={`#${tab.id}`}
+                className={`relative flex-shrink-0 px-3.5 py-3 text-sm font-medium transition-colors ${
+                  isActive ? 'text-gray-950' : 'text-gray-500 hover:text-gray-950'
+                }`}
+              >
+                {tab.label}
                 <span
-                  className="absolute bottom-0 left-3.5 right-3.5 h-0.5 rounded-full"
+                  className={`absolute bottom-0 left-3.5 right-3.5 h-0.5 rounded-full transition-opacity ${
+                    isActive ? 'opacity-100' : 'opacity-0'
+                  }`}
                   style={{ backgroundColor: accentColor }}
                 />
-              )}
-            </a>
-          );
-        })}
+              </a>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

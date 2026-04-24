@@ -174,11 +174,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       </div>
 
       {/* Sticky section tabs with scroll-spy */}
-      {tabs.length > 0 && (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
-          <SectionTabs tabs={tabs} accentColor={primary} />
-        </div>
-      )}
+      {tabs.length > 0 && <SectionTabs tabs={tabs} accentColor={primary} />}
 
       {/* Content sections — each in a white card */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 space-y-4">
