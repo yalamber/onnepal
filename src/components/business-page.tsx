@@ -6,6 +6,7 @@ import {
 
 import { ReviewForm } from './review-form';
 import { BookingForm } from './booking-form';
+import { SectionTabs } from './section-tabs';
 
 function imgSrc(key: string | null): string | null {
   if (!key) return null;
@@ -82,6 +83,20 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
     return acc;
   }, {} as Record<string, typeof menuItems>);
 
+  const tabs = [
+    mod("offers") && offers.length > 0 && { id: 'offers', label: 'Offers' },
+    mod("hours") && hours && { id: 'hours', label: 'Hours' },
+    mod("menu") && menuItems.length > 0 && { id: 'menu', label: 'Menu' },
+    mod("products") && products.length > 0 && { id: 'products', label: 'Products' },
+    mod("gallery") && gallery.length > 0 && { id: 'gallery', label: 'Gallery' },
+    mod("announcements") && announcements.length > 0 && { id: 'announcements', label: 'Updates' },
+    mod("team") && teamMembers.length > 0 && { id: 'team', label: 'Team' },
+    mod("reviews") && { id: 'reviews', label: 'Reviews' },
+    mod("faq") && faqs.length > 0 && { id: 'faq', label: 'FAQ' },
+    business.bookingEnabled && { id: 'booking', label: 'Book' },
+    mod("links") && links.length > 0 && { id: 'links', label: 'Links' },
+  ].filter(Boolean) as Array<{ id: string; label: string }>;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header card: cover + profile + tabs */}
@@ -91,7 +106,9 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
           {imgSrc(business.coverImageUrl) ? (
             <div className="h-40 sm:h-52 lg:h-60 overflow-hidden">
               <img src={imgSrc(business.coverImageUrl)!} alt="" className="w-full h-full object-cover"
-                style={{ objectPosition: `${(business.coverPosition || '50 50').split(' ')[0]}% ${(business.coverPosition || '50 50').split(' ')[1]}%` }} />
+                style={{ objectPosition: `${(business.coverPosition || '50 50').split(' ')[0]}% ${(business.coverPosition || '50 50').split(' ')[1]}%` }}
+                loading="eager" fetchPriority="high" decoding="async"
+                width="1280" height="480" />
             </div>
           ) : (
             <div className="h-28 sm:h-36"
@@ -99,13 +116,15 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
           )}
 
           {/* Profile row */}
-          <div className="px-5 sm:px-6">
+          <div className="px-5 sm:px-6 pb-5">
             <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 -mt-10 sm:-mt-12">
               {/* Logo */}
               <div className="flex-shrink-0">
                 {imgSrc(business.logoUrl) ? (
                   <img src={imgSrc(business.logoUrl)!} alt={name}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-[3px] border-white shadow-sm bg-white" />
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-[3px] border-white shadow-sm bg-white"
+                    loading="eager" fetchPriority="high" decoding="async"
+                    width="96" height="96" />
                 ) : (
                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-[3px] border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
                     style={{ backgroundColor: primary }}>
@@ -154,41 +173,19 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
         </div>
       </div>
 
-      {/* Sticky tab bar */}
-      <div className="sticky top-0 z-40 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1 overflow-x-auto scrollbar-none py-2">
-            {[
-              mod("offers") && offers.length > 0 && { id: 'offers', label: 'Offers' },
-              mod("hours") && hours && { id: 'hours', label: 'Hours' },
-              mod("menu") && menuItems.length > 0 && { id: 'menu', label: 'Menu' },
-              mod("products") && products.length > 0 && { id: 'products', label: 'Products' },
-              mod("gallery") && gallery.length > 0 && { id: 'gallery', label: 'Gallery' },
-              mod("announcements") && announcements.length > 0 && { id: 'announcements', label: 'Updates' },
-              mod("team") && teamMembers.length > 0 && { id: 'team', label: 'Team' },
-              mod("reviews") && { id: 'reviews', label: 'Reviews' },
-              mod("faq") && faqs.length > 0 && { id: 'faq', label: 'FAQ' },
-              business.bookingEnabled && { id: 'booking', label: 'Book' },
-              mod("links") && links.length > 0 && { id: 'links', label: 'Links' },
-            ].filter(Boolean).map((tab) => {
-              const t = tab as { id: string; label: string };
-              return (
-                <a key={t.id} href={`#${t.id}`}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-950 hover:bg-white transition-colors">
-                  {t.label}
-                </a>
-              );
-            })}
-          </div>
+      {/* Sticky section tabs with scroll-spy */}
+      {tabs.length > 0 && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-3">
+          <SectionTabs tabs={tabs} accentColor={primary} />
         </div>
-      </div>
+      )}
 
       {/* Content sections — each in a white card */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 space-y-4">
 
         {/* Special Offers */}
         {mod("offers") && offers.length > 0 && (
-          <div id="offers" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="offers" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Special Offers</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {offers.map((offer) => (
@@ -208,7 +205,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Business Hours */}
         {mod("hours") && hours && (
-          <div id="hours" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="hours" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Business Hours</h2>
             <div className="max-w-xs space-y-0.5">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((day) => (
@@ -225,19 +222,24 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Menu */}
         {mod("menu") && menuItems.length > 0 && (
-          <div id="menu" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="menu" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Menu</h2>
             {Object.entries(menuByCategory).map(([category, items]) => (
               <div key={category} className="mb-6 last:mb-0">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{category}</h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {items.map((item) => (
-                    <div key={item.id} className="flex items-start justify-between gap-4 py-1.5 border-b border-gray-50 last:border-0">
-                      <div>
+                    <div key={item.id} className="flex items-start gap-3">
+                      <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium text-gray-950 ${!item.isAvailable ? 'line-through text-gray-400' : ''}`}>{item.name}</p>
-                        {item.description && <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>}
+                        {item.description && <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{item.description}</p>}
                       </div>
-                      {item.price && <p className="text-sm font-semibold text-gray-950 flex-shrink-0">{item.price}</p>}
+                      {item.price && (
+                        <>
+                          <div className="flex-1 border-b border-dotted border-gray-200 mt-2.5" aria-hidden="true" />
+                          <p className="text-sm font-semibold text-gray-950 flex-shrink-0">{item.price}</p>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -248,19 +250,23 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Products */}
         {mod("products") && products.length > 0 && (
-          <div id="products" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="products" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Products & Services</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
-                <div key={product.id}>
-                  {imgSrc(product.imageUrl) ? (
-                    <img src={imgSrc(product.imageUrl)!} alt={product.name} className="w-full h-44 object-cover rounded-lg" />
-                  ) : (
-                    <div className="w-full h-32 bg-gray-50 rounded-lg flex items-center justify-center"><span className="text-2xl font-bold text-gray-200">{product.name.charAt(0)}</span></div>
-                  )}
+                <div key={product.id} className="group">
+                  <div className="aspect-[4/3] bg-gray-50 rounded-lg overflow-hidden">
+                    {imgSrc(product.imageUrl) ? (
+                      <img src={imgSrc(product.imageUrl)!} alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy" decoding="async" width="400" height="300" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center"><span className="text-2xl font-bold text-gray-200">{product.name.charAt(0)}</span></div>
+                    )}
+                  </div>
                   <div className="mt-2.5">
-                    <h3 className="text-sm font-semibold text-gray-950">{product.name}</h3>
-                    {product.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{product.description}</p>}
+                    <h3 className="text-sm font-semibold text-gray-950 group-hover:text-gray-700 transition-colors">{product.name}</h3>
+                    {product.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">{product.description}</p>}
                     {product.price && <p className="mt-1.5 text-sm font-semibold" style={{ color: primary }}>{product.price}</p>}
                   </div>
                 </div>
@@ -271,14 +277,16 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Gallery */}
         {mod("gallery") && gallery.length > 0 && (
-          <div id="gallery" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="gallery" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Gallery</h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
               {gallery.map((img) => (
-                <div key={img.id} className="relative group">
-                  <img src={imgSrc(img.imageKey)!} alt={img.caption || ''} className="w-full h-40 lg:h-48 object-cover rounded-lg" />
+                <div key={img.id} className="relative group aspect-square overflow-hidden rounded-lg bg-gray-50">
+                  <img src={imgSrc(img.imageKey)!} alt={img.caption || ''}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy" decoding="async" width="400" height="400" />
                   {img.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity">{img.caption}</div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white text-xs p-3 opacity-0 group-hover:opacity-100 transition-opacity">{img.caption}</div>
                   )}
                 </div>
               ))}
@@ -288,15 +296,20 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Announcements */}
         {mod("announcements") && announcements.length > 0 && (
-          <div id="announcements" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="announcements" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">News & Updates</h2>
-            <div className="space-y-3">
-              {announcements.map((item) => (
-                <div key={item.id} className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
-                  {item.isPinned && <Pin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: primary }} />}
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-950">{item.title}</h3>
-                    {item.content && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{item.content}</p>}
+            <div className="space-y-2.5">
+              {[...announcements].sort((a, b) => Number(b.isPinned) - Number(a.isPinned)).map((item) => (
+                <div key={item.id} className={`p-4 rounded-lg border ${item.isPinned ? 'border-amber-200 bg-amber-50/40' : 'border-gray-100 bg-gray-50'}`}>
+                  <div className="flex items-start gap-2">
+                    {item.isPinned && <Pin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-600" />}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <h3 className="text-sm font-semibold text-gray-950">{item.title}</h3>
+                        <span className="text-[11px] text-gray-400 flex-shrink-0">{new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                      </div>
+                      {item.content && <p className="text-sm text-gray-600 mt-1 leading-relaxed">{item.content}</p>}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -306,13 +319,14 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Team */}
         {mod("team") && teamMembers.length > 0 && (
-          <div id="team" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="team" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Our Team</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {teamMembers.map((member) => (
                 <div key={member.id} className="text-center">
                   {imgSrc(member.imageKey) ? (
-                    <img src={imgSrc(member.imageKey)!} alt={member.name} className="w-20 h-20 rounded-full object-cover mx-auto" />
+                    <img src={imgSrc(member.imageKey)!} alt={member.name} className="w-20 h-20 rounded-full object-cover mx-auto"
+                      loading="lazy" decoding="async" width="80" height="80" />
                   ) : (
                     <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto text-lg font-bold text-gray-300">{member.name.charAt(0)}</div>
                   )}
@@ -326,7 +340,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Reviews */}
         {mod("reviews") && (
-          <div id="reviews" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="reviews" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <div className="flex items-baseline gap-3 mb-5">
               <h2 className="text-lg font-bold text-gray-950">Reviews</h2>
               {averageRating && averageRating.count > 0 && (
@@ -338,13 +352,19 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
             {reviews.length > 0 && (
               <div className="space-y-3 mb-6">
                 {reviews.map((review) => (
-                  <div key={review.id} className="bg-gray-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-gray-950">{review.reviewerName}</p>
-                      <span className="text-yellow-500 text-sm">{stars(review.rating)}</span>
+                  <div key={review.id} className="flex gap-3 p-4 bg-gray-50 rounded-lg">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold"
+                      style={{ backgroundColor: primary }}>
+                      {review.reviewerName.charAt(0).toUpperCase()}
                     </div>
-                    {review.content && <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">{review.content}</p>}
-                    <p className="text-[11px] text-gray-300 mt-2">{new Date(review.createdAt).toLocaleDateString()}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-medium text-gray-950">{review.reviewerName}</p>
+                        <span className="text-yellow-500 text-xs">{stars(review.rating)}</span>
+                        <span className="text-[11px] text-gray-400 ml-auto">{new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      </div>
+                      {review.content && <p className="text-sm text-gray-600 mt-1 leading-relaxed">{review.content}</p>}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -355,7 +375,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* FAQ */}
         {mod("faq") && faqs.length > 0 && (
-          <div id="faq" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="faq" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Frequently Asked Questions</h2>
             <div className="space-y-4">
               {faqs.map((faq) => (
@@ -370,7 +390,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Booking */}
         {business.bookingEnabled && (
-          <div id="booking" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="booking" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <div className="grid lg:grid-cols-2 gap-6">
               <div>
                 <h2 className="text-lg font-bold text-gray-950">Book an appointment</h2>
@@ -398,7 +418,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Social Links */}
         {mod("links") && links.length > 0 && (
-          <div id="links" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
+          <div id="links" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-20">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Connect</h2>
             <div className="grid sm:grid-cols-2 gap-2">
               {links.map((link) => {
