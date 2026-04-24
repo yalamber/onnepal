@@ -4,6 +4,8 @@ import {
   ArrowUpRight, Star, Tag, ChevronDown,
 } from 'lucide-react';
 
+import { ReviewForm } from './review-form';
+
 function imgSrc(key: string | null): string | null {
   if (!key) return null;
   if (key.startsWith('http')) return key;
@@ -31,6 +33,7 @@ interface BusinessPageProps {
     primaryColor: string;
     accentColor: string;
     subdomain: string;
+    id: string;
     enabledModules: string | null;
   };
   links: Array<{ id: string; platform: string; url: string; label: string | null }>;
@@ -264,7 +267,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       )}
 
       {/* Reviews */}
-      {mod("reviews") && (reviews.length > 0 || averageRating) && (
+      {mod("reviews") && (
         <section className="py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-baseline gap-4 mb-8">
@@ -275,18 +278,21 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                 </span>
               )}
             </div>
-            <div className="space-y-4">
-              {reviews.map((review) => (
-                <div key={review.id} className="border border-gray-100 rounded-lg p-5">
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium text-gray-950">{review.reviewerName}</p>
-                    <span className="text-yellow-500 text-sm">{stars(review.rating)}</span>
+            {reviews.length > 0 && (
+              <div className="space-y-4 mb-8">
+                {reviews.map((review) => (
+                  <div key={review.id} className="border border-gray-100 rounded-lg p-5">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-gray-950">{review.reviewerName}</p>
+                      <span className="text-yellow-500 text-sm">{stars(review.rating)}</span>
+                    </div>
+                    {review.content && <p className="text-sm text-gray-500 mt-2 leading-relaxed">{review.content}</p>}
+                    <p className="text-xs text-gray-300 mt-3">{new Date(review.createdAt).toLocaleDateString()}</p>
                   </div>
-                  {review.content && <p className="text-sm text-gray-500 mt-2 leading-relaxed">{review.content}</p>}
-                  <p className="text-xs text-gray-300 mt-3">{new Date(review.createdAt).toLocaleDateString()}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
+            <ReviewForm businessId={business.id} />
           </div>
         </section>
       )}
