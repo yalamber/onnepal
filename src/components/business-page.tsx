@@ -83,28 +83,28 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
   }, {} as Record<string, typeof menuItems>);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Nav bar */}
       <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            <div className="flex items-center gap-3">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-12">
+            <div className="flex items-center gap-2.5">
               {imgSrc(business.logoUrl) ? (
-                <img src={imgSrc(business.logoUrl)!} alt={name} className="w-8 h-8 rounded-lg object-cover" />
+                <img src={imgSrc(business.logoUrl)!} alt={name} className="w-7 h-7 rounded-lg object-cover" />
               ) : (
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: primary }}>{name.charAt(0)}</div>
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: primary }}>{name.charAt(0)}</div>
               )}
-              <span className="text-sm font-bold text-gray-950">{name}</span>
+              <span className="text-sm font-semibold text-gray-950">{name}</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               {business.phone && (
-                <a href={`tel:${business.phone}`} className="hidden sm:flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                  <Phone className="h-3.5 w-3.5" /> {business.phone}
+                <a href={`tel:${business.phone}`} className="hidden sm:flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-950 transition-colors">
+                  <Phone className="h-3 w-3" /> {business.phone}
                 </a>
               )}
               {ctas.length > 0 && (
                 <a href={ctas[0].url} target="_blank" rel="noopener noreferrer"
-                  className="px-4 py-1.5 text-sm font-medium rounded-lg text-white transition-colors"
+                  className="px-3.5 py-1.5 text-xs font-medium rounded-lg text-white transition-colors"
                   style={{ backgroundColor: primary }}>{ctas[0].label}</a>
               )}
             </div>
@@ -112,177 +112,173 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
         </div>
       </nav>
 
-      {/* Cover image */}
-      <div className="relative">
-        {imgSrc(business.coverImageUrl) ? (
-          <div className="h-48 sm:h-64 lg:h-72 overflow-hidden">
-            <img src={imgSrc(business.coverImageUrl)!} alt="" className="w-full h-full object-cover"
-              style={{ objectPosition: `${(business.coverPosition || '50 50').split(' ')[0]}% ${(business.coverPosition || '50 50').split(' ')[1]}%` }} />
-          </div>
-        ) : (
-          <div className="h-36 sm:h-48 lg:h-56"
-            style={{ background: `linear-gradient(135deg, ${primary}, ${business.accentColor})` }} />
-        )}
-      </div>
+      {/* Header card: cover + profile */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
+          {/* Cover image */}
+          {imgSrc(business.coverImageUrl) ? (
+            <div className="h-40 sm:h-52 lg:h-60 overflow-hidden">
+              <img src={imgSrc(business.coverImageUrl)!} alt="" className="w-full h-full object-cover"
+                style={{ objectPosition: `${(business.coverPosition || '50 50').split(' ')[0]}% ${(business.coverPosition || '50 50').split(' ')[1]}%` }} />
+            </div>
+          ) : (
+            <div className="h-28 sm:h-36"
+              style={{ background: `linear-gradient(135deg, ${primary}, ${business.accentColor})` }} />
+          )}
 
-      {/* Profile section overlapping cover */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative -mt-12 sm:-mt-16 pb-6 border-b border-gray-100">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-5">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              {imgSrc(business.logoUrl) ? (
-                <img src={imgSrc(business.logoUrl)!} alt={name}
-                  className="w-20 h-20 sm:w-28 sm:h-28 rounded-xl object-cover border-4 border-white shadow-sm bg-white" />
-              ) : (
-                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-xl border-4 border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
-                  style={{ backgroundColor: primary }}>
-                  {name.charAt(0)}
+          {/* Profile row */}
+          <div className="px-5 sm:px-6 pb-5">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 -mt-10 sm:-mt-12">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                {imgSrc(business.logoUrl) ? (
+                  <img src={imgSrc(business.logoUrl)!} alt={name}
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-[3px] border-white shadow-sm bg-white" />
+                ) : (
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-[3px] border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
+                    style={{ backgroundColor: primary }}>
+                    {name.charAt(0)}
+                  </div>
+                )}
+              </div>
+
+              {/* Name + meta */}
+              <div className="flex-1 min-w-0 sm:pb-0.5">
+                <h1 className="text-lg sm:text-xl font-bold text-gray-950 leading-tight">{name}</h1>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+                  {business.businessCategory && <span className="text-sm text-gray-400">{business.businessCategory}</span>}
+                  {averageRating && averageRating.count > 0 && (
+                    <span className="text-sm text-yellow-500">{stars(averageRating.average)} <span className="text-gray-400 text-xs">({averageRating.count})</span></span>
+                  )}
+                </div>
+              </div>
+
+              {/* CTA buttons */}
+              {ctas.length > 1 && (
+                <div className="flex gap-2 flex-shrink-0 sm:pb-0.5">
+                  {ctas.slice(1).map((cta) => (
+                    <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                      {cta.label}
+                    </a>
+                  ))}
                 </div>
               )}
             </div>
 
-            {/* Name + meta */}
-            <div className="flex-1 min-w-0 sm:pb-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight">{name}</h1>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                {business.businessCategory && <span className="text-sm text-gray-500">{business.businessCategory}</span>}
-                {averageRating && averageRating.count > 0 && (
-                  <span className="text-sm text-yellow-500">{stars(averageRating.average)} <span className="text-gray-400">({averageRating.count})</span></span>
+            {/* Description + contact inline */}
+            {(business.description || hasContact) && (
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                {business.description && <p className="text-sm text-gray-500 leading-relaxed">{business.description}</p>}
+                {hasContact && (
+                  <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-2">
+                    {business.phone && <a href={`tel:${business.phone}`} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors"><Phone className="h-3.5 w-3.5 text-gray-400" /> {business.phone}</a>}
+                    {business.whatsappNumber && <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors"><MessageCircle className="h-3.5 w-3.5 text-gray-400" /> WhatsApp</a>}
+                    {business.address && <span className="flex items-center gap-1.5 text-sm text-gray-500"><MapPin className="h-3.5 w-3.5 text-gray-400" /> {business.address}</span>}
+                    {business.mapAddress && <a href={`https://maps.google.com/?q=${encodeURIComponent(business.mapAddress)}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">View on map</a>}
+                  </div>
                 )}
-              </div>
-              {business.description && <p className="mt-1.5 text-gray-500 text-sm leading-relaxed max-w-lg line-clamp-2">{business.description}</p>}
-            </div>
-
-            {/* CTA buttons */}
-            {ctas.length > 1 && (
-              <div className="flex gap-2 flex-shrink-0 sm:pb-1">
-                {ctas.slice(1).map((cta) => (
-                  <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
-                    {cta.label}
-                  </a>
-                ))}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Contact bar */}
-      {hasContact && (
-        <section className="border-b border-gray-100 bg-gray-50/50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex flex-wrap gap-x-8 gap-y-2">
-              {business.phone && <a href={`tel:${business.phone}`} className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-950"><Phone className="h-4 w-4 text-gray-400" /> {business.phone}</a>}
-              {business.whatsappNumber && <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-950"><MessageCircle className="h-4 w-4 text-gray-400" /> WhatsApp</a>}
-              {business.address && <span className="flex items-center gap-2 text-sm text-gray-600"><MapPin className="h-4 w-4 text-gray-400" /> {business.address}</span>}
-              {business.mapAddress && <a href={`https://maps.google.com/?q=${encodeURIComponent(business.mapAddress)}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-gray-950">View on map</a>}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* Special Offers */}
-      {mod("offers") && offers.length > 0 && (
-        <section className="py-12 bg-amber-50/50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-6">Special Offers</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
+      {/* Content sections — each in a white card */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
+
+        {/* Special Offers */}
+        {mod("offers") && offers.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-4">Special Offers</h2>
+            <div className="grid sm:grid-cols-2 gap-3">
               {offers.map((offer) => (
-                <div key={offer.id} className="bg-white border border-amber-200 rounded-lg p-5">
+                <div key={offer.id} className="border border-amber-200 bg-amber-50/30 rounded-lg p-4">
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-semibold text-gray-950">{offer.title}</h3>
-                    {offer.discountText && <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-semibold rounded">{offer.discountText}</span>}
+                    <h3 className="font-semibold text-sm text-gray-950">{offer.title}</h3>
+                    {offer.discountText && <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[11px] font-semibold rounded">{offer.discountText}</span>}
                   </div>
-                  {offer.description && <p className="text-sm text-gray-500 mt-2">{offer.description}</p>}
-                  {offer.code && <p className="mt-3 text-sm">Code: <span className="font-mono font-semibold text-gray-950 bg-gray-100 px-2 py-0.5 rounded">{offer.code}</span></p>}
+                  {offer.description && <p className="text-sm text-gray-500 mt-1.5">{offer.description}</p>}
+                  {offer.code && <p className="mt-2 text-sm">Code: <span className="font-mono font-semibold text-gray-950 bg-gray-100 px-1.5 py-0.5 rounded text-xs">{offer.code}</span></p>}
                   {offer.expiresAt && <p className="text-xs text-gray-400 mt-2">Expires {new Date(offer.expiresAt).toLocaleDateString()}</p>}
                 </div>
               ))}
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Business Hours */}
-      {mod("hours") && hours && (
-        <section className="py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-6">Business Hours</h2>
-            <div className="max-w-sm space-y-1">
+        {/* Business Hours */}
+        {mod("hours") && hours && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-4">Business Hours</h2>
+            <div className="max-w-xs space-y-0.5">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((day) => (
                 <div key={day} className="flex items-center justify-between py-1.5 text-sm">
-                  <span className="text-gray-600">{DAY_LABELS[day]}</span>
-                  <span className={hours[day] === 'closed' ? 'text-red-500' : 'text-gray-950 font-medium'}>
+                  <span className="text-gray-500">{DAY_LABELS[day]}</span>
+                  <span className={hours[day] === 'closed' ? 'text-red-500 text-xs' : 'text-gray-950 font-medium'}>
                     {hours[day] || 'Closed'}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Menu */}
-      {mod("menu") && menuItems.length > 0 && (
-        <section className="py-12 bg-gray-50/50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Menu</h2>
+        {/* Menu */}
+        {mod("menu") && menuItems.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-5">Menu</h2>
             {Object.entries(menuByCategory).map(([category, items]) => (
-              <div key={category} className="mb-8">
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">{category}</h3>
-                <div className="space-y-3">
+              <div key={category} className="mb-6 last:mb-0">
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{category}</h3>
+                <div className="space-y-2">
                   {items.map((item) => (
-                    <div key={item.id} className="flex items-start justify-between gap-4 py-2 border-b border-gray-100 last:border-0">
+                    <div key={item.id} className="flex items-start justify-between gap-4 py-1.5 border-b border-gray-50 last:border-0">
                       <div>
-                        <p className={`font-medium text-gray-950 ${!item.isAvailable ? 'line-through text-gray-400' : ''}`}>{item.name}</p>
-                        {item.description && <p className="text-sm text-gray-500 mt-0.5">{item.description}</p>}
+                        <p className={`text-sm font-medium text-gray-950 ${!item.isAvailable ? 'line-through text-gray-400' : ''}`}>{item.name}</p>
+                        {item.description && <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>}
                       </div>
-                      {item.price && <p className="font-semibold text-gray-950 flex-shrink-0">{item.price}</p>}
+                      {item.price && <p className="text-sm font-semibold text-gray-950 flex-shrink-0">{item.price}</p>}
                     </div>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Products */}
-      {mod("products") && products.length > 0 && (
-        <section className="py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Products & Services</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* Products */}
+        {mod("products") && products.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-5">Products & Services</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
                 <div key={product.id}>
                   {imgSrc(product.imageUrl) ? (
-                    <img src={imgSrc(product.imageUrl)!} alt={product.name} className="w-full h-48 lg:h-56 object-cover rounded-lg" />
+                    <img src={imgSrc(product.imageUrl)!} alt={product.name} className="w-full h-44 object-cover rounded-lg" />
                   ) : (
-                    <div className="w-full h-40 bg-gray-50 rounded-lg flex items-center justify-center"><span className="text-3xl font-bold text-gray-200">{product.name.charAt(0)}</span></div>
+                    <div className="w-full h-32 bg-gray-50 rounded-lg flex items-center justify-center"><span className="text-2xl font-bold text-gray-200">{product.name.charAt(0)}</span></div>
                   )}
-                  <div className="mt-3">
-                    <h3 className="font-semibold text-gray-950">{product.name}</h3>
-                    {product.description && <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.description}</p>}
-                    {product.price && <p className="mt-2 font-semibold" style={{ color: primary }}>{product.price}</p>}
+                  <div className="mt-2.5">
+                    <h3 className="text-sm font-semibold text-gray-950">{product.name}</h3>
+                    {product.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{product.description}</p>}
+                    {product.price && <p className="mt-1.5 text-sm font-semibold" style={{ color: primary }}>{product.price}</p>}
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Gallery */}
-      {mod("gallery") && gallery.length > 0 && (
-        <section className="py-12 bg-gray-50/50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-6">Gallery</h2>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+        {/* Gallery */}
+        {mod("gallery") && gallery.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-4">Gallery</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
               {gallery.map((img) => (
                 <div key={img.id} className="relative group">
-                  <img src={imgSrc(img.imageKey)!} alt={img.caption || ''} className="w-full h-48 lg:h-56 object-cover rounded-lg" />
+                  <img src={imgSrc(img.imageKey)!} alt={img.caption || ''} className="w-full h-40 lg:h-48 object-cover rounded-lg" />
                   {img.caption && (
                     <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity">{img.caption}</div>
                   )}
@@ -290,170 +286,154 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
               ))}
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Reviews */}
-      {mod("reviews") && (
-        <section className="py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-baseline gap-4 mb-8">
-              <h2 className="text-2xl font-bold text-gray-950 tracking-tight">Reviews</h2>
+        {/* Announcements */}
+        {mod("announcements") && announcements.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-4">News & Updates</h2>
+            <div className="space-y-3">
+              {announcements.map((item) => (
+                <div key={item.id} className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
+                  {item.isPinned && <Pin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: primary }} />}
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-950">{item.title}</h3>
+                    {item.content && <p className="text-sm text-gray-500 mt-1 leading-relaxed">{item.content}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Team */}
+        {mod("team") && teamMembers.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-5">Our Team</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+              {teamMembers.map((member) => (
+                <div key={member.id} className="text-center">
+                  {imgSrc(member.imageKey) ? (
+                    <img src={imgSrc(member.imageKey)!} alt={member.name} className="w-20 h-20 rounded-full object-cover mx-auto" />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto text-lg font-bold text-gray-300">{member.name.charAt(0)}</div>
+                  )}
+                  <p className="text-sm font-medium text-gray-950 mt-2">{member.name}</p>
+                  {member.role && <p className="text-xs text-gray-400">{member.role}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Reviews */}
+        {mod("reviews") && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <div className="flex items-baseline gap-3 mb-5">
+              <h2 className="text-lg font-bold text-gray-950">Reviews</h2>
               {averageRating && averageRating.count > 0 && (
                 <span className="text-sm text-gray-500">
-                  <span className="text-yellow-500">{stars(averageRating.average)}</span> {averageRating.average.toFixed(1)} ({averageRating.count} {averageRating.count === 1 ? 'review' : 'reviews'})
+                  <span className="text-yellow-500">{stars(averageRating.average)}</span> {averageRating.average.toFixed(1)} ({averageRating.count})
                 </span>
               )}
             </div>
             {reviews.length > 0 && (
-              <div className="space-y-4 mb-8">
+              <div className="space-y-3 mb-6">
                 {reviews.map((review) => (
-                  <div key={review.id} className="border border-gray-100 rounded-lg p-5">
+                  <div key={review.id} className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center justify-between">
-                      <p className="font-medium text-gray-950">{review.reviewerName}</p>
+                      <p className="text-sm font-medium text-gray-950">{review.reviewerName}</p>
                       <span className="text-yellow-500 text-sm">{stars(review.rating)}</span>
                     </div>
-                    {review.content && <p className="text-sm text-gray-500 mt-2 leading-relaxed">{review.content}</p>}
-                    <p className="text-xs text-gray-300 mt-3">{new Date(review.createdAt).toLocaleDateString()}</p>
+                    {review.content && <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">{review.content}</p>}
+                    <p className="text-[11px] text-gray-300 mt-2">{new Date(review.createdAt).toLocaleDateString()}</p>
                   </div>
                 ))}
               </div>
             )}
             <ReviewForm businessId={business.id} />
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Team */}
-      {mod("team") && teamMembers.length > 0 && (
-        <section className="py-12 bg-gray-50/50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Our Team</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-              {teamMembers.map((member) => (
-                <div key={member.id} className="text-center">
-                  {imgSrc(member.imageKey) ? (
-                    <img src={imgSrc(member.imageKey)!} alt={member.name} className="w-24 h-24 rounded-full object-cover mx-auto" />
-                  ) : (
-                    <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mx-auto text-xl font-bold text-gray-300">{member.name.charAt(0)}</div>
-                  )}
-                  <p className="font-medium text-gray-950 mt-3">{member.name}</p>
-                  {member.role && <p className="text-sm text-gray-400">{member.role}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Announcements */}
-      {mod("announcements") && announcements.length > 0 && (
-        <section className="py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">News & Updates</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {announcements.map((item) => (
-                <div key={item.id} className="border border-gray-100 rounded-lg p-5">
-                  <div className="flex items-start gap-2">
-                    {item.isPinned && <Pin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: primary }} />}
-                    <div>
-                      <h3 className="font-semibold text-gray-950">{item.title}</h3>
-                      {item.content && <p className="text-sm text-gray-500 mt-2 leading-relaxed">{item.content}</p>}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FAQ */}
-      {mod("faq") && faqs.length > 0 && (
-        <section className="py-12 bg-gray-50/50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Frequently Asked Questions</h2>
-            <div className="space-y-4 max-w-2xl">
+        {/* FAQ */}
+        {mod("faq") && faqs.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-5">Frequently Asked Questions</h2>
+            <div className="space-y-4">
               {faqs.map((faq) => (
                 <div key={faq.id}>
-                  <p className="font-medium text-gray-950">{faq.question}</p>
+                  <p className="text-sm font-medium text-gray-950">{faq.question}</p>
                   <p className="text-sm text-gray-500 mt-1 leading-relaxed">{faq.answer}</p>
                 </div>
               ))}
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Booking */}
-      {business.bookingEnabled && (
-        <section className="py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-8">
+        {/* Booking */}
+        {business.bookingEnabled && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <div className="grid lg:grid-cols-2 gap-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-950 tracking-tight">Book an appointment</h2>
-                <p className="text-gray-500 mt-2">Fill out the form to request a booking. We&apos;ll confirm your appointment shortly.</p>
+                <h2 className="text-lg font-bold text-gray-950">Book an appointment</h2>
+                <p className="text-sm text-gray-500 mt-1">Fill out the form to request a booking.</p>
                 {(business.phone || business.whatsappNumber) && (
-                  <div className="mt-6 flex flex-wrap gap-3">
+                  <div className="mt-4 flex flex-wrap gap-2">
                     {business.phone && (
-                      <a href={`tel:${business.phone}`} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
-                        <Phone className="h-4 w-4" /> {business.phone}
+                      <a href={`tel:${business.phone}`} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                        <Phone className="h-3.5 w-3.5" /> Call
                       </a>
                     )}
                     {business.whatsappNumber && (
                       <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
-                        <MessageCircle className="h-4 w-4" /> WhatsApp
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                        <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                       </a>
                     )}
                   </div>
                 )}
               </div>
-              <div>
-                <BookingForm businessId={business.id} primaryColor={primary} />
-              </div>
+              <BookingForm businessId={business.id} primaryColor={primary} />
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Social Links */}
-      {mod("links") && links.length > 0 && (
-        <section className="py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-950 tracking-tight mb-8">Connect</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {/* Social Links */}
+        {mod("links") && links.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+            <h2 className="text-lg font-bold text-gray-950 mb-4">Connect</h2>
+            <div className="grid sm:grid-cols-2 gap-2">
               {links.map((link) => {
                 const Icon = PLATFORM_ICONS[link.platform] || Globe;
                 return (
-                  <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 p-4 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors">
-                    <Icon className="h-5 w-5 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-950">{link.label || PLATFORM_LABELS[link.platform] || link.platform}</span>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-gray-300 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <Icon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
+                    <span className="text-sm text-gray-700 group-hover:text-gray-950">{link.label || PLATFORM_LABELS[link.platform] || link.platform}</span>
+                    <ArrowUpRight className="h-3 w-3 text-gray-300 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                   </a>
                 );
               })}
             </div>
           </div>
-        </section>
-      )}
+        )}
+      </div>
 
       {/* Footer */}
-      <footer className="py-10 border-t border-gray-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+      <footer className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
               {imgSrc(business.logoUrl) ? (
-                <img src={imgSrc(business.logoUrl)!} alt={name} className="w-7 h-7 rounded-md object-cover" />
+                <img src={imgSrc(business.logoUrl)!} alt={name} className="w-6 h-6 rounded-md object-cover" />
               ) : (
-                <div className="w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: primary }}>{name.charAt(0)}</div>
+                <div className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: primary }}>{name.charAt(0)}</div>
               )}
-              <span className="text-sm font-semibold text-gray-950">{name}</span>
+              <span className="text-sm font-medium text-gray-500">{name}</span>
             </div>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-400">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-gray-400">
               {business.phone && <a href={`tel:${business.phone}`} className="hover:text-gray-950 transition-colors">{business.phone}</a>}
               {business.address && <span>{business.address}</span>}
-              <a href="https://onnepal.com" className="hover:text-gray-950 transition-colors">Powered by OnNepal</a>
+              <a href="https://onnepal.com" className="hover:text-gray-600 transition-colors">Powered by OnNepal</a>
             </div>
           </div>
         </div>
