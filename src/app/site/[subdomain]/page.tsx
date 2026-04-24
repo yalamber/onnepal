@@ -7,6 +7,12 @@ import { getActiveAnnouncements } from '@/lib/db/queries/announcements';
 import { getAvailableProducts } from '@/lib/db/queries/products';
 import { getCtaButtons } from '@/lib/db/queries/ctas';
 import { recordPageView } from '@/lib/db/queries/analytics';
+import { getGalleryImages } from '@/lib/db/queries/gallery';
+import { getApprovedReviews, getAverageRating } from '@/lib/db/queries/reviews';
+import { getAvailableMenuItems } from '@/lib/db/queries/menu';
+import { getActiveOffers } from '@/lib/db/queries/offers';
+import { getTeamMembers } from '@/lib/db/queries/team';
+import { getFaqs } from '@/lib/db/queries/faq';
 import { BusinessPage } from '@/components/business-page';
 
 export const dynamic = 'force-dynamic';
@@ -46,14 +52,20 @@ export default async function SitePage({
     notFound();
   }
 
-  const [links, announcements, products, ctas] = await Promise.all([
+  const [links, announcements, products, ctas, gallery, reviews, menuItems, offers, teamMembers, faqs, avgRating] = await Promise.all([
     getSocialLinks(db, business.id),
     getActiveAnnouncements(db, business.id),
     getAvailableProducts(db, business.id),
     getCtaButtons(db, business.id),
+    getGalleryImages(db, business.id),
+    getApprovedReviews(db, business.id),
+    getAvailableMenuItems(db, business.id),
+    getActiveOffers(db, business.id),
+    getTeamMembers(db, business.id),
+    getFaqs(db, business.id),
+    getAverageRating(db, business.id),
   ]);
 
-  // Record page view (fire and forget)
   recordPageView(db, business.id).catch(() => {});
 
   return (
@@ -68,13 +80,24 @@ export default async function SitePage({
         phone: business.phone,
         address: business.address,
         businessHours: business.businessHours,
-        primaryColor: business.primaryColor || '#ea580c',
-        accentColor: business.accentColor || '#dc2626',
+        whatsappNumber: business.whatsappNumber,
+        mapAddress: business.mapAddress,
+        bookingEnabled: business.bookingEnabled,
+        primaryColor: business.primaryColor || '#1e293b',
+        accentColor: business.accentColor || '#334155',
+        subdomain: business.subdomain,
       }}
       links={links}
       announcements={announcements}
       products={products}
       ctas={ctas}
+      gallery={gallery}
+      reviews={reviews}
+      menuItems={menuItems}
+      offers={offers}
+      teamMembers={teamMembers}
+      faqs={faqs}
+      averageRating={avgRating}
     />
   );
 }
