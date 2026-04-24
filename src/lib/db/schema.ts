@@ -25,7 +25,10 @@ export const businesses = sqliteTable('businesses', {
   coverPosition: text('cover_position').default('50 50'),
   phone: text('phone'),
   address: text('address'),
-  businessHours: text('business_hours'),
+  businessHours: text('business_hours'), // JSON: {"mon":"9:00-17:00","tue":"9:00-17:00",...}
+  whatsappNumber: text('whatsapp_number'),
+  mapAddress: text('map_address'), // for map embed
+  bookingEnabled: integer('booking_enabled', { mode: 'boolean' }).notNull().default(false),
   primaryColor: text('primary_color').default('#2563eb'),
   accentColor: text('accent_color').default('#1d4ed8'),
   isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
@@ -126,6 +129,108 @@ export const classifieds = sqliteTable('classifieds', {
   index('classifieds_created_idx').on(table.createdAt),
 ]));
 
+// Gallery images
+export const galleryImages = sqliteTable('gallery_images', {
+  id: text('id').primaryKey(),
+  businessId: text('business_id').notNull().references(() => businesses.id, { onDelete: 'cascade' }),
+  imageKey: text('image_key').notNull(),
+  caption: text('caption'),
+  displayOrder: integer('display_order').notNull().default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('gallery_images_business_idx').on(table.businessId),
+]));
+
+// Reviews
+export const reviews = sqliteTable('reviews', {
+  id: text('id').primaryKey(),
+  businessId: text('business_id').notNull().references(() => businesses.id, { onDelete: 'cascade' }),
+  reviewerName: text('reviewer_name').notNull(),
+  reviewerEmail: text('reviewer_email'),
+  rating: integer('rating').notNull(),
+  content: text('content'),
+  isApproved: integer('is_approved', { mode: 'boolean' }).notNull().default(false),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('reviews_business_idx').on(table.businessId),
+]));
+
+// Menu items
+export const menuItems = sqliteTable('menu_items', {
+  id: text('id').primaryKey(),
+  businessId: text('business_id').notNull().references(() => businesses.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description'),
+  price: text('price'),
+  category: text('category'),
+  imageKey: text('image_key'),
+  isAvailable: integer('is_available', { mode: 'boolean' }).notNull().default(true),
+  displayOrder: integer('display_order').notNull().default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('menu_items_business_idx').on(table.businessId),
+]));
+
+// Special offers
+export const specialOffers = sqliteTable('special_offers', {
+  id: text('id').primaryKey(),
+  businessId: text('business_id').notNull().references(() => businesses.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  discountText: text('discount_text'),
+  code: text('code'),
+  startsAt: integer('starts_at', { mode: 'timestamp' }),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }),
+  isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('special_offers_business_idx').on(table.businessId),
+]));
+
+// Team members
+export const teamMembers = sqliteTable('team_members', {
+  id: text('id').primaryKey(),
+  businessId: text('business_id').notNull().references(() => businesses.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  role: text('role'),
+  imageKey: text('image_key'),
+  displayOrder: integer('display_order').notNull().default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('team_members_business_idx').on(table.businessId),
+]));
+
+// FAQs
+export const faqs = sqliteTable('faqs', {
+  id: text('id').primaryKey(),
+  businessId: text('business_id').notNull().references(() => businesses.id, { onDelete: 'cascade' }),
+  question: text('question').notNull(),
+  answer: text('answer').notNull(),
+  displayOrder: integer('display_order').notNull().default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('faqs_business_idx').on(table.businessId),
+]));
+
+// Bookings
+export const bookings = sqliteTable('bookings', {
+  id: text('id').primaryKey(),
+  businessId: text('business_id').notNull().references(() => businesses.id, { onDelete: 'cascade' }),
+  customerName: text('customer_name').notNull(),
+  customerPhone: text('customer_phone'),
+  customerEmail: text('customer_email'),
+  date: text('date').notNull(),
+  time: text('time'),
+  service: text('service'),
+  message: text('message'),
+  status: text('status', { enum: ['pending', 'confirmed', 'cancelled'] }).notNull().default('pending'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('bookings_business_idx').on(table.businessId),
+  index('bookings_status_idx').on(table.status),
+]));
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   businesses: many(businesses),
@@ -139,6 +244,13 @@ export const businessesRelations = relations(businesses, ({ one, many }) => ({
   products: many(products),
   ctaButtons: many(ctaButtons),
   pageViews: many(pageViews),
+  galleryImages: many(galleryImages),
+  reviews: many(reviews),
+  menuItems: many(menuItems),
+  specialOffers: many(specialOffers),
+  teamMembers: many(teamMembers),
+  faqs: many(faqs),
+  bookings: many(bookings),
 }));
 
 export const socialLinksRelations = relations(socialLinks, ({ one }) => ({
@@ -163,4 +275,32 @@ export const pageViewsRelations = relations(pageViews, ({ one }) => ({
 
 export const classifiedsRelations = relations(classifieds, ({ one }) => ({
   user: one(users, { fields: [classifieds.userId], references: [users.id] }),
+}));
+
+export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
+  business: one(businesses, { fields: [galleryImages.businessId], references: [businesses.id] }),
+}));
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  business: one(businesses, { fields: [reviews.businessId], references: [businesses.id] }),
+}));
+
+export const menuItemsRelations = relations(menuItems, ({ one }) => ({
+  business: one(businesses, { fields: [menuItems.businessId], references: [businesses.id] }),
+}));
+
+export const specialOffersRelations = relations(specialOffers, ({ one }) => ({
+  business: one(businesses, { fields: [specialOffers.businessId], references: [businesses.id] }),
+}));
+
+export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
+  business: one(businesses, { fields: [teamMembers.businessId], references: [businesses.id] }),
+}));
+
+export const faqsRelations = relations(faqs, ({ one }) => ({
+  business: one(businesses, { fields: [faqs.businessId], references: [businesses.id] }),
+}));
+
+export const bookingsRelations = relations(bookings, ({ one }) => ({
+  business: one(businesses, { fields: [bookings.businessId], references: [businesses.id] }),
 }));
