@@ -84,35 +84,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Nav bar */}
-      <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-12">
-            <div className="flex items-center gap-2.5">
-              {imgSrc(business.logoUrl) ? (
-                <img src={imgSrc(business.logoUrl)!} alt={name} className="w-7 h-7 rounded-lg object-cover" />
-              ) : (
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: primary }}>{name.charAt(0)}</div>
-              )}
-              <span className="text-sm font-semibold text-gray-950">{name}</span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              {business.phone && (
-                <a href={`tel:${business.phone}`} className="hidden sm:flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-950 transition-colors">
-                  <Phone className="h-3 w-3" /> {business.phone}
-                </a>
-              )}
-              {ctas.length > 0 && (
-                <a href={ctas[0].url} target="_blank" rel="noopener noreferrer"
-                  className="px-3.5 py-1.5 text-xs font-medium rounded-lg text-white transition-colors"
-                  style={{ backgroundColor: primary }}>{ctas[0].label}</a>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Header card: cover + profile */}
+      {/* Header card: cover + profile + tabs */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
           {/* Cover image */}
@@ -127,7 +99,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
           )}
 
           {/* Profile row */}
-          <div className="px-5 sm:px-6 pb-5">
+          <div className="px-5 sm:px-6">
             <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 -mt-10 sm:-mt-12">
               {/* Logo */}
               <div className="flex-shrink-0">
@@ -142,7 +114,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                 )}
               </div>
 
-              {/* Name + meta */}
+              {/* Name + meta on left, contact on right */}
               <div className="flex-1 min-w-0 sm:pb-0.5">
                 <h1 className="text-lg sm:text-xl font-bold text-gray-950 leading-tight">{name}</h1>
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
@@ -151,46 +123,72 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                     <span className="text-sm text-yellow-500">{stars(averageRating.average)} <span className="text-gray-400 text-xs">({averageRating.count})</span></span>
                   )}
                 </div>
+                {business.description && <p className="mt-1 text-sm text-gray-500 leading-relaxed line-clamp-2">{business.description}</p>}
               </div>
 
-              {/* CTA buttons */}
-              {ctas.length > 1 && (
-                <div className="flex gap-2 flex-shrink-0 sm:pb-0.5">
-                  {ctas.slice(1).map((cta) => (
-                    <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                      {cta.label}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Description + contact inline */}
-            {(business.description || hasContact) && (
-              <div className="mt-3 pt-3 border-t border-gray-100">
-                {business.description && <p className="text-sm text-gray-500 leading-relaxed">{business.description}</p>}
+              {/* Contact + CTA on right */}
+              <div className="flex-shrink-0 sm:pb-0.5 flex flex-col items-start sm:items-end gap-2">
                 {hasContact && (
-                  <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-2">
-                    {business.phone && <a href={`tel:${business.phone}`} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors"><Phone className="h-3.5 w-3.5 text-gray-400" /> {business.phone}</a>}
-                    {business.whatsappNumber && <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors"><MessageCircle className="h-3.5 w-3.5 text-gray-400" /> WhatsApp</a>}
-                    {business.address && <span className="flex items-center gap-1.5 text-sm text-gray-500"><MapPin className="h-3.5 w-3.5 text-gray-400" /> {business.address}</span>}
-                    {business.mapAddress && <a href={`https://maps.google.com/?q=${encodeURIComponent(business.mapAddress)}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">View on map</a>}
+                  <div className="flex flex-wrap sm:justify-end gap-x-4 gap-y-1">
+                    {business.phone && <a href={`tel:${business.phone}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-950 transition-colors"><Phone className="h-3 w-3 text-gray-400" /> {business.phone}</a>}
+                    {business.address && <span className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="h-3 w-3 text-gray-400" /> {business.address}</span>}
+                    {business.whatsappNumber && <a href={`https://wa.me/${business.whatsappNumber.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-950 transition-colors"><MessageCircle className="h-3 w-3 text-gray-400" /> WhatsApp</a>}
+                  </div>
+                )}
+                {ctas.length > 0 && (
+                  <div className="flex gap-2">
+                    {ctas.map((cta, i) => (
+                      <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
+                        className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          i === 0 ? 'text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                        }`}
+                        style={i === 0 ? { backgroundColor: primary } : undefined}>
+                        {cta.label}
+                      </a>
+                    ))}
                   </div>
                 )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Sticky tab bar */}
+      <div className="sticky top-0 z-40 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-1 overflow-x-auto scrollbar-none py-2">
+            {[
+              mod("offers") && offers.length > 0 && { id: 'offers', label: 'Offers' },
+              mod("hours") && hours && { id: 'hours', label: 'Hours' },
+              mod("menu") && menuItems.length > 0 && { id: 'menu', label: 'Menu' },
+              mod("products") && products.length > 0 && { id: 'products', label: 'Products' },
+              mod("gallery") && gallery.length > 0 && { id: 'gallery', label: 'Gallery' },
+              mod("announcements") && announcements.length > 0 && { id: 'announcements', label: 'Updates' },
+              mod("team") && teamMembers.length > 0 && { id: 'team', label: 'Team' },
+              mod("reviews") && { id: 'reviews', label: 'Reviews' },
+              mod("faq") && faqs.length > 0 && { id: 'faq', label: 'FAQ' },
+              business.bookingEnabled && { id: 'booking', label: 'Book' },
+              mod("links") && links.length > 0 && { id: 'links', label: 'Links' },
+            ].filter(Boolean).map((tab) => {
+              const t = tab as { id: string; label: string };
+              return (
+                <a key={t.id} href={`#${t.id}`}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-950 hover:bg-white transition-colors">
+                  {t.label}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
       {/* Content sections — each in a white card */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 space-y-4">
 
         {/* Special Offers */}
         {mod("offers") && offers.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="offers" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Special Offers</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {offers.map((offer) => (
@@ -210,7 +208,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Business Hours */}
         {mod("hours") && hours && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="hours" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Business Hours</h2>
             <div className="max-w-xs space-y-0.5">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((day) => (
@@ -227,7 +225,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Menu */}
         {mod("menu") && menuItems.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="menu" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Menu</h2>
             {Object.entries(menuByCategory).map(([category, items]) => (
               <div key={category} className="mb-6 last:mb-0">
@@ -250,7 +248,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Products */}
         {mod("products") && products.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="products" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Products & Services</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
@@ -273,7 +271,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Gallery */}
         {mod("gallery") && gallery.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="gallery" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Gallery</h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
               {gallery.map((img) => (
@@ -290,7 +288,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Announcements */}
         {mod("announcements") && announcements.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="announcements" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-4">News & Updates</h2>
             <div className="space-y-3">
               {announcements.map((item) => (
@@ -308,7 +306,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Team */}
         {mod("team") && teamMembers.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="team" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Our Team</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {teamMembers.map((member) => (
@@ -328,7 +326,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Reviews */}
         {mod("reviews") && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="reviews" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <div className="flex items-baseline gap-3 mb-5">
               <h2 className="text-lg font-bold text-gray-950">Reviews</h2>
               {averageRating && averageRating.count > 0 && (
@@ -357,7 +355,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* FAQ */}
         {mod("faq") && faqs.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="faq" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-5">Frequently Asked Questions</h2>
             <div className="space-y-4">
               {faqs.map((faq) => (
@@ -372,7 +370,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Booking */}
         {business.bookingEnabled && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="booking" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <div className="grid lg:grid-cols-2 gap-6">
               <div>
                 <h2 className="text-lg font-bold text-gray-950">Book an appointment</h2>
@@ -400,7 +398,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Social Links */}
         {mod("links") && links.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6">
+          <div id="links" className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 scroll-mt-12">
             <h2 className="text-lg font-bold text-gray-950 mb-4">Connect</h2>
             <div className="grid sm:grid-cols-2 gap-2">
               {links.map((link) => {
