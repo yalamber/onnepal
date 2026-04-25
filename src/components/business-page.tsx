@@ -117,24 +117,24 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
           {/* Profile row */}
           <div className="px-5 sm:px-6 pb-5">
-            <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4 -mt-10 sm:-mt-12">
-              {/* Logo */}
-              <div className="flex-shrink-0">
-                {imgSrc(business.logoUrl) ? (
-                  <img src={imgSrc(business.logoUrl)!} alt={name}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover border-[2px] border-white shadow-sm bg-white"
-                    loading="eager" fetchPriority="high" decoding="async"
-                    width="96" height="96" />
-                ) : (
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg border-[2px] border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
-                    style={{ backgroundColor: primary }}>
-                    {name.charAt(0)}
-                  </div>
-                )}
-              </div>
+            {/* Logo — only this overlaps cover */}
+            <div className="-mt-8 sm:-mt-10 mb-3">
+              {imgSrc(business.logoUrl) ? (
+                <img src={imgSrc(business.logoUrl)!} alt={name}
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover border-[2px] border-white shadow-sm bg-white"
+                  loading="eager" fetchPriority="high" decoding="async"
+                  width="96" height="96" />
+              ) : (
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg border-[2px] border-white shadow-sm flex items-center justify-center text-white text-2xl sm:text-3xl font-bold"
+                  style={{ backgroundColor: primary }}>
+                  {name.charAt(0)}
+                </div>
+              )}
+            </div>
 
-              {/* Name + meta on left, contact on right */}
-              <div className="flex-1 min-w-0 sm:pb-0.5">
+            {/* Name + meta on left, contact on right — fully below cover */}
+            <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+              <div className="flex-1 min-w-0">
                 <h1 className="text-lg sm:text-xl font-bold text-gray-950 leading-tight">{name}</h1>
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
                   {business.businessCategory && <span className="text-sm text-gray-400">{business.businessCategory}</span>}
@@ -146,7 +146,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
               </div>
 
               {/* Contact + CTA on right */}
-              <div className="flex-shrink-0 sm:pb-0.5 flex flex-col items-start sm:items-end gap-2">
+              <div className="flex-shrink-0 flex flex-col items-start sm:items-end gap-2">
                 {hasContact && (
                   <div className="flex flex-wrap sm:justify-end gap-x-4 gap-y-1">
                     {business.phone && <a href={`tel:${business.phone}`} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-950 transition-colors"><Phone className="h-3 w-3 text-gray-400" /> {business.phone}</a>}
