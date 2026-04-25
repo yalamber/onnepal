@@ -305,3 +305,31 @@ export const faqsRelations = relations(faqs, ({ one }) => ({
 export const bookingsRelations = relations(bookings, ({ one }) => ({
   business: one(businesses, { fields: [bookings.businessId], references: [businesses.id] }),
 }));
+
+export const lostFound = sqliteTable('lost_found', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type', { enum: ['lost', 'found'] }).notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  category: text('category').notNull(),
+  location: text('location'),
+  itemDate: text('item_date'),
+  reward: text('reward'),
+  contactPhone: text('contact_phone'),
+  contactWhatsapp: text('contact_whatsapp'),
+  imageUrls: text('image_urls'),
+  status: text('status', { enum: ['open', 'resolved'] }).notNull().default('open'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('lost_found_user_idx').on(table.userId),
+  index('lost_found_type_idx').on(table.type),
+  index('lost_found_category_idx').on(table.category),
+  index('lost_found_status_idx').on(table.status),
+  index('lost_found_created_idx').on(table.createdAt),
+]));
+
+export const lostFoundRelations = relations(lostFound, ({ one }) => ({
+  user: one(users, { fields: [lostFound.userId], references: [users.id] }),
+}));

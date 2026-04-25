@@ -60,6 +60,7 @@ export function Navbar() {
   const navLinks = [
     { href: '/directory', label: 'Directory' },
     { href: '/classifieds', label: 'Classifieds' },
+    { href: '/lost-found', label: 'Lost & Found' },
   ];
 
   return (
