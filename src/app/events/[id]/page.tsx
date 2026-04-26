@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Calendar, Clock, Phone, MessageCircle, Loader2, ExternalLink, ChevronLeft, ChevronRight, Trash2, Edit2, Check, X } from 'lucide-react';
-import { imageUrl } from '@/components/image-upload';
+import { imageUrl, ImageUpload } from '@/components/image-upload';
 import { CommentSection } from '@/components/comment-section';
 
 interface Event {
@@ -46,6 +46,7 @@ export default function EventDetailPage() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', description: '', category: '', startDate: '', endDate: '', startTime: '', endTime: '', venue: '', location: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '' });
+  const [editImages, setEditImages] = useState<string[]>([]);
 
   const startEdit = () => {
     if (!item) return;
@@ -56,6 +57,8 @@ export default function EventDetailPage() {
       ticketPrice: item.ticketPrice || '', ticketUrl: item.ticketUrl || '',
       contactPhone: item.contactPhone || '', contactWhatsapp: item.contactWhatsapp || '',
     });
+    const imgs: string[] = item.imageUrls ? (() => { try { return JSON.parse(item.imageUrls) as string[]; } catch { return []; } })() : [];
+    setEditImages(imgs);
     setEditing(true);
   };
 
@@ -71,6 +74,7 @@ export default function EventDetailPage() {
           endTime: editForm.endTime || null, venue: editForm.venue || null, location: editForm.location || null,
           ticketPrice: editForm.ticketPrice || null, ticketUrl: editForm.ticketUrl || null,
           contactPhone: editForm.contactPhone || null, contactWhatsapp: editForm.contactWhatsapp || null,
+          imageUrls: editImages.length > 0 ? editImages : null,
         }),
       });
       setEditing(false);
@@ -125,6 +129,7 @@ export default function EventDetailPage() {
                   <input type="text" value={editForm.contactPhone} onChange={(e) => setEditForm({ ...editForm, contactPhone: e.target.value })}
                     placeholder="Phone" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
                 </div>
+                <ImageUpload value={editImages} onChange={setEditImages} max={5} label="Photos" />
                 <div className="flex gap-2">
                   <button onClick={saveEdit} disabled={saving}
                     className="h-9 px-4 bg-gray-950 text-white text-xs font-medium rounded-md hover:bg-gray-800 disabled:opacity-30 cursor-pointer flex items-center gap-1.5">

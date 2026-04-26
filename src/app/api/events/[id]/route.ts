@@ -18,6 +18,7 @@ const updateSchema = z.object({
   ticketUrl: z.string().max(500).nullish(),
   contactPhone: z.string().max(20).nullish(),
   contactWhatsapp: z.string().max(20).nullish(),
+  imageUrls: z.array(z.string().max(500)).max(5).nullish(),
   status: z.enum(['upcoming', 'ongoing', 'completed', 'cancelled']).optional(),
 });
 import { getSession, isAdmin } from '@/lib/auth/session';
