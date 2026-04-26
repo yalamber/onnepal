@@ -25,7 +25,7 @@ import { getClassifiedCategoryBySlug } from '@/lib/classified-categories';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 import { CommentSection } from '@/components/comment-section';
 import { MessageButton } from '@/components/message-button';
-import { ImageUpload } from '@/components/image-upload';
+import { ImageUpload, imageUrl } from '@/components/image-upload';
 
 interface ClassifiedListing {
   id: string;
@@ -85,7 +85,7 @@ function ImageGallery({ images }: { images: string[] }) {
   if (images.length === 1) {
     return (
       <div className="w-full h-64 sm:h-80 rounded-md overflow-hidden bg-gray-100 cursor-pointer" onClick={() => { setActiveIndex(0); setLightbox(true); }}>
-        <img src={images[0]} alt="" className="w-full h-full object-cover" />
+        <img src={imageUrl(images[0])!} alt="" className="w-full h-full object-cover" />
       </div>
     );
   }
@@ -97,24 +97,24 @@ function ImageGallery({ images }: { images: string[] }) {
         {/* Main image */}
         <div className={`${images.length === 2 ? 'col-span-1' : 'row-span-2'} rounded-md overflow-hidden bg-gray-100 cursor-pointer`}
           onClick={() => { setActiveIndex(0); setLightbox(true); }}>
-          <img src={images[0]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
+          <img src={imageUrl(images[0])!} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
         </div>
 
         {/* Side images */}
         {images.length === 2 ? (
           <div className="rounded-md overflow-hidden bg-gray-100 cursor-pointer"
             onClick={() => { setActiveIndex(1); setLightbox(true); }}>
-            <img src={images[1]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
+            <img src={imageUrl(images[1])!} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
           </div>
         ) : (
           <div className="grid grid-rows-2 gap-1.5">
             <div className="rounded-md overflow-hidden bg-gray-100 cursor-pointer"
               onClick={() => { setActiveIndex(1); setLightbox(true); }}>
-              <img src={images[1]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
+              <img src={imageUrl(images[1])!} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
             </div>
             <div className="relative rounded-md overflow-hidden bg-gray-100 cursor-pointer"
               onClick={() => { setActiveIndex(2); setLightbox(true); }}>
-              <img src={images[2]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
+              <img src={imageUrl(images[2])!} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
               {images.length > 3 && (
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-sm font-medium">+{images.length - 3} more</span>
@@ -140,7 +140,7 @@ function ImageGallery({ images }: { images: string[] }) {
             className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
             <ChevronRight className="h-6 w-6" />
           </button>
-          <img src={images[activeIndex]} alt="" className="max-w-[90vw] max-h-[85vh] object-contain rounded-md"
+          <img src={imageUrl(images[activeIndex])!} alt="" className="max-w-[90vw] max-h-[85vh] object-contain rounded-md"
             onClick={(e) => e.stopPropagation()} />
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
             {images.map((_, i) => (
