@@ -21,7 +21,7 @@ export async function PATCH(
       );
     }
 
-    await updateAnnouncement(auth.db, id, validation.data);
+    await updateAnnouncement(auth.db, id, validation.data, auth.businessId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

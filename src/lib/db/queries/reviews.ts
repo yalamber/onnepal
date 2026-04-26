@@ -46,15 +46,15 @@ export async function createReview(
   return { id };
 }
 
-export async function approveReview(db: Database, id: string) {
+export async function approveReview(db: Database, id: string, businessId: string) {
   await db
     .update(reviews)
     .set({ isApproved: true })
-    .where(eq(reviews.id, id));
+    .where(and(eq(reviews.id, id), eq(reviews.businessId, businessId)));
 }
 
-export async function deleteReview(db: Database, id: string) {
-  await db.delete(reviews).where(eq(reviews.id, id));
+export async function deleteReview(db: Database, id: string, businessId: string) {
+  await db.delete(reviews).where(and(eq(reviews.id, id), eq(reviews.businessId, businessId)));
 }
 
 export async function getAverageRating(db: Database, businessId: string) {

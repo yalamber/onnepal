@@ -18,6 +18,18 @@ function stars(rating: number): string {
   return '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
 }
 
+/** Sanitize href: only allow http, https, mailto, and tel protocols. */
+function safeHref(url: string): string {
+  if (!url) return '#';
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^mailto:/i.test(trimmed)) return trimmed;
+  if (/^tel:/i.test(trimmed)) return trimmed;
+  // Relative URLs and bare domains are OK (no dangerous protocol)
+  if (!trimmed.includes(':')) return trimmed;
+  return '#';
+}
+
 interface BusinessPageProps {
   business: {
     businessName: string | null;
@@ -165,7 +177,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                 {ctas.length > 0 && (
                   <div className="flex gap-2">
                     {ctas.map((cta, i) => (
-                      <a key={cta.id} href={cta.url} target="_blank" rel="noopener noreferrer"
+                      <a key={cta.id} href={safeHref(cta.url)} target="_blank" rel="noopener noreferrer"
                         className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                           i === 0 ? 'text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
                         }`}
@@ -428,7 +440,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
               {links.map((link) => {
                 const Icon = PLATFORM_ICONS[link.platform] || Globe;
                 return (
-                  <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 p-3 rounded-md hover:bg-gray-50 transition-colors">
+                  <a key={link.id} href={safeHref(link.url)} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 p-3 rounded-md hover:bg-gray-50 transition-colors">
                     <Icon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
                     <span className="text-sm text-gray-700 group-hover:text-gray-950">{link.label || PLATFORM_LABELS[link.platform] || link.platform}</span>
                     <ArrowUpRight className="h-3 w-3 text-gray-300 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />

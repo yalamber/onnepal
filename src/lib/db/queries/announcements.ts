@@ -60,7 +60,8 @@ export async function updateAnnouncement(
     content: string;
     isPinned: boolean;
     expiresAt: string | null;
-  }>
+  }>,
+  businessId: string
 ) {
   const updateData: Record<string, unknown> = { updatedAt: new Date() };
   if (data.title !== undefined) updateData.title = data.title;
@@ -70,11 +71,9 @@ export async function updateAnnouncement(
     updateData.expiresAt = data.expiresAt ? new Date(data.expiresAt) : null;
   }
 
-  await db.update(announcements).set(updateData).where(eq(announcements.id, id));
+  await db.update(announcements).set(updateData).where(and(eq(announcements.id, id), eq(announcements.businessId, businessId)));
 }
 
-export async function deleteAnnouncement(db: Database, id: string, businessId?: string) {
-  const conditions = [eq(announcements.id, id)];
-  if (businessId) conditions.push(eq(announcements.businessId, businessId));
-  await db.delete(announcements).where(and(...conditions));
+export async function deleteAnnouncement(db: Database, id: string, businessId: string) {
+  await db.delete(announcements).where(and(eq(announcements.id, id), eq(announcements.businessId, businessId)));
 }
