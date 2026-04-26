@@ -286,8 +286,8 @@ export default function ClassifiedDetailPage() {
       </Link>
 
       {/* Top: image left + details right */}
-      <div className={images.length > 0 ? 'grid lg:grid-cols-2 gap-6' : ''}>
-        {images.length > 0 && (
+      <div className={images.length > 0 || editing ? 'grid lg:grid-cols-2 gap-6' : ''}>
+        {(images.length > 0 || editing) && (
           <div>
             {editing ? (
               <ImageUpload value={editImages} onChange={setEditImages} max={5} label="Photos" />
