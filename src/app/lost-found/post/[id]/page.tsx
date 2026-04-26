@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Calendar, Phone, MessageCircle, Loader2, AlertTriangle, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, MessageCircle, Loader2, AlertTriangle, Eye, ChevronLeft, ChevronRight, Trash2, Check } from 'lucide-react';
 import { imageUrl } from '@/components/image-upload';
 import { CommentSection } from '@/components/comment-section';
 import { MessageButton } from '@/components/message-button';
@@ -28,9 +28,24 @@ interface Item {
 
 export default function LostFoundDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [item, setItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
   const [imgIdx, setImgIdx] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => r.ok ? r.json() : null)
+      .then((d: { user?: { id: string; isAdmin?: boolean } } | null) => {
+        if (d?.user) { setCurrentUserId(d.user.id); if (d.user.isAdmin) setUserIsAdmin(true); }
+      });
+  }, []);
+
+  const fetchItem = async () => {
+    const res = await fetch(`/api/lost-found/${id}`);
+    if (res.ok) { const data = await res.json() as { item: Item }; setItem(data.item); }
+  };
 
   useEffect(() => {
     fetch(`/api/lost-found/${id}`)
@@ -38,6 +53,17 @@ export default function LostFoundDetailPage() {
       .then((data: { item: Item } | null) => { if (data) setItem(data.item); })
       .finally(() => setLoading(false));
   }, [id]);
+
+  const isOwner = currentUserId && item && (item.userId === currentUserId || userIsAdmin);
+  const deleteItem2 = async () => {
+    if (!confirm('Delete this item?')) return;
+    await fetch(`/api/lost-found/${id}`, { method: 'DELETE' });
+    router.push('/lost-found');
+  };
+  const resolveItem = async () => {
+    await fetch(`/api/lost-found/${id}`, { method: 'PATCH' });
+    await fetchItem();
+  };
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
   if (!item) return (
@@ -85,7 +111,21 @@ export default function LostFoundDetailPage() {
               <span className="text-xs text-gray-400">{item.category}</span>
               {item.status === 'resolved' && <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500 rounded">Resolved</span>}
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
+            <div className="flex items-start justify-between gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
+              {isOwner && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {item.status === 'open' && (
+                    <button onClick={resolveItem} className="p-1.5 text-gray-400 hover:text-green-600 cursor-pointer transition-colors" title="Mark resolved">
+                      <Check className="h-4 w-4" />
+                    </button>
+                  )}
+                  <button onClick={deleteItem2} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" title="Delete">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-500">
               {item.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3 text-gray-400" /> {item.location}</span>}
               {item.itemDate && <span className="flex items-center gap-1"><Calendar className="h-3 w-3 text-gray-400" /> {item.type === 'lost' ? 'Lost' : 'Found'} on {item.itemDate}</span>}

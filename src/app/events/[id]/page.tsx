@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Calendar, Clock, Phone, MessageCircle, Loader2, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Clock, Phone, MessageCircle, Loader2, ExternalLink, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { imageUrl } from '@/components/image-upload';
 import { CommentSection } from '@/components/comment-section';
 
@@ -17,14 +17,31 @@ interface Event {
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [item, setItem] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [imgIdx, setImgIdx] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => r.ok ? r.json() : null)
+      .then((d: { user?: { id: string; isAdmin?: boolean } } | null) => {
+        if (d?.user) { setCurrentUserId(d.user.id); if (d.user.isAdmin) setUserIsAdmin(true); }
+      });
+  }, []);
 
   useEffect(() => {
     fetch(`/api/events/${id}`).then(r => r.ok ? r.json() : null)
       .then((d: { item: Event } | null) => { if (d) setItem(d.item); }).finally(() => setLoading(false));
   }, [id]);
+
+  const isOwner = currentUserId && item && (item.userId === currentUserId || userIsAdmin);
+  const deleteItem = async () => {
+    if (!confirm('Delete this event?')) return;
+    await fetch(`/api/events/${id}`, { method: 'DELETE' });
+    router.push('/events');
+  };
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
   if (!item) return <div className="max-w-2xl mx-auto px-4 py-20 text-center"><p className="text-sm text-gray-500 mb-4">Event not found</p><Link href="/events" className="text-sm text-gray-400 hover:text-gray-950">Back to Events</Link></div>;
@@ -52,7 +69,14 @@ export default function EventDetailPage() {
           )}
           <div className="space-y-4">
             <span className="text-xs text-gray-400">{item.category}</span>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
+            <div className="flex items-start justify-between gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
+              {isOwner && (
+                <button onClick={deleteItem} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors flex-shrink-0" title="Delete">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
+            </div>
 
             <div className="space-y-2 text-sm text-gray-600">
               <p className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gray-400" /> {fmtDate(item.startDate)}{item.endDate && item.endDate !== item.startDate ? ` – ${fmtDate(item.endDate)}` : ''}</p>

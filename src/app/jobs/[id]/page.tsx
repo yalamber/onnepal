@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Briefcase, Clock, Phone, Mail, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Briefcase, Clock, Phone, Mail, ExternalLink, Loader2, Trash2 } from 'lucide-react';
 import { JOB_TYPES } from '@/lib/job-categories';
 import { CommentSection } from '@/components/comment-section';
 
 interface Job {
-  id: string; title: string; company: string; description: string | null; category: string;
+  id: string; userId: string; title: string; company: string; description: string | null; category: string;
   type: string; location: string | null; isRemote: boolean; salary: string | null;
   experience: string | null; applyUrl: string | null; contactEmail: string | null;
   contactPhone: string | null; status: string; createdAt: string; userName: string | null;
@@ -16,13 +16,30 @@ interface Job {
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [item, setItem] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => r.ok ? r.json() : null)
+      .then((d: { user?: { id: string; isAdmin?: boolean } } | null) => {
+        if (d?.user) { setCurrentUserId(d.user.id); if (d.user.isAdmin) setUserIsAdmin(true); }
+      });
+  }, []);
 
   useEffect(() => {
     fetch(`/api/jobs/${id}`).then(r => r.ok ? r.json() : null)
       .then((d: { item: Job } | null) => { if (d) setItem(d.item); }).finally(() => setLoading(false));
   }, [id]);
+
+  const isOwner = currentUserId && item && (item.userId === currentUserId || userIsAdmin);
+  const deleteItem = async () => {
+    if (!confirm('Delete this job posting?')) return;
+    await fetch(`/api/jobs/${id}`, { method: 'DELETE' });
+    router.push('/jobs');
+  };
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
   if (!item) return <div className="max-w-2xl mx-auto px-4 py-20 text-center"><p className="text-sm text-gray-500 mb-4">Job not found</p><Link href="/jobs" className="text-sm text-gray-400 hover:text-gray-950">Back to Jobs</Link></div>;
@@ -41,9 +58,18 @@ export default function JobDetailPage() {
               <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 text-gray-400 text-base font-bold">
                 {item.company.charAt(0)}
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-950">{item.title}</h1>
-                <p className="text-sm text-gray-600 mt-0.5">{item.company}</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h1 className="text-xl font-bold text-gray-950">{item.title}</h1>
+                    <p className="text-sm text-gray-600 mt-0.5">{item.company}</p>
+                  </div>
+                  {isOwner && (
+                    <button onClick={deleteItem} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors flex-shrink-0" title="Delete">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
