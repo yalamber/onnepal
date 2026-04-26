@@ -32,6 +32,7 @@ interface BusinessPageProps {
     whatsappNumber: string | null;
     mapAddress: string | null;
     bookingEnabled: boolean;
+    isVerified: boolean;
     primaryColor: string;
     accentColor: string;
     subdomain: string;
@@ -135,7 +136,14 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
             {/* Name + meta on left, contact on right — fully below cover */}
             <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
               <div className="flex-1 min-w-0">
-                <h1 className="text-lg sm:text-xl font-bold text-gray-950 leading-tight">{name}</h1>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-950 leading-tight flex items-center gap-1.5">
+                  {name}
+                  {business.isVerified && (
+                    <svg className="h-5 w-5 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified">
+                      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  )}
+                </h1>
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
                   {business.businessCategory && <span className="text-sm text-gray-400">{business.businessCategory}</span>}
                   {averageRating && averageRating.count > 0 && (

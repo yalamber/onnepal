@@ -60,6 +60,8 @@ export function Navbar() {
   const navLinks = [
     { href: '/directory', label: 'Directory' },
     { href: '/classifieds', label: 'Classifieds' },
+    { href: '/jobs', label: 'Jobs' },
+    { href: '/events', label: 'Events' },
     { href: '/lost-found', label: 'Lost & Found' },
   ];
 

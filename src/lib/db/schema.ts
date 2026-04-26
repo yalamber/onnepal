@@ -32,6 +32,7 @@ export const businesses = sqliteTable('businesses', {
   enabledModules: text('enabled_modules').default('["products","links","announcements"]'),
   primaryColor: text('primary_color').default('#2563eb'),
   accentColor: text('accent_color').default('#1d4ed8'),
+  isVerified: integer('is_verified', { mode: 'boolean' }).notNull().default(false),
   isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
@@ -332,4 +333,67 @@ export const lostFound = sqliteTable('lost_found', {
 
 export const lostFoundRelations = relations(lostFound, ({ one }) => ({
   user: one(users, { fields: [lostFound.userId], references: [users.id] }),
+}));
+
+export const events = sqliteTable('events', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  category: text('category').notNull(),
+  startDate: text('start_date').notNull(),
+  endDate: text('end_date'),
+  startTime: text('start_time'),
+  endTime: text('end_time'),
+  venue: text('venue'),
+  location: text('location'),
+  ticketPrice: text('ticket_price'),
+  ticketUrl: text('ticket_url'),
+  contactPhone: text('contact_phone'),
+  contactWhatsapp: text('contact_whatsapp'),
+  imageUrls: text('image_urls'),
+  status: text('status', { enum: ['upcoming', 'ongoing', 'completed', 'cancelled'] }).notNull().default('upcoming'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('events_user_idx').on(table.userId),
+  index('events_category_idx').on(table.category),
+  index('events_status_idx').on(table.status),
+  index('events_start_date_idx').on(table.startDate),
+]));
+
+export const eventsRelations = relations(events, ({ one }) => ({
+  user: one(users, { fields: [events.userId], references: [users.id] }),
+}));
+
+export const jobs = sqliteTable('jobs', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  company: text('company').notNull(),
+  description: text('description'),
+  category: text('category').notNull(),
+  type: text('type', { enum: ['full-time', 'part-time', 'contract', 'freelance', 'internship'] }).notNull().default('full-time'),
+  location: text('location'),
+  isRemote: integer('is_remote', { mode: 'boolean' }).notNull().default(false),
+  salary: text('salary'),
+  experience: text('experience'),
+  applyUrl: text('apply_url'),
+  contactEmail: text('contact_email'),
+  contactPhone: text('contact_phone'),
+  imageUrls: text('image_urls'),
+  status: text('status', { enum: ['open', 'closed'] }).notNull().default('open'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }),
+}, (table) => ([
+  index('jobs_user_idx').on(table.userId),
+  index('jobs_category_idx').on(table.category),
+  index('jobs_type_idx').on(table.type),
+  index('jobs_status_idx').on(table.status),
+  index('jobs_created_idx').on(table.createdAt),
+]));
+
+export const jobsRelations = relations(jobs, ({ one }) => ({
+  user: one(users, { fields: [jobs.userId], references: [users.id] }),
 }));

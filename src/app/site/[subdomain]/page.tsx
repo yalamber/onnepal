@@ -83,6 +83,7 @@ export default async function SitePage({
         whatsappNumber: business.whatsappNumber,
         mapAddress: business.mapAddress,
         bookingEnabled: business.bookingEnabled,
+        isVerified: business.isVerified,
         primaryColor: business.primaryColor || '#1e293b',
         accentColor: business.accentColor || '#334155',
         subdomain: business.subdomain,
