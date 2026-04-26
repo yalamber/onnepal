@@ -7,7 +7,7 @@ import {
   LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, Loader2,
   Plus, ChevronDown, Check, Tag, Building2, User, QrCode,
   UtensilsCrossed, Gift, Image, Star, Users, HelpCircle, Calendar,
-  ChevronsUpDown, LogOut,
+  ChevronsUpDown, LogOut, Briefcase, AlertTriangle, CalendarPlus,
 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -169,29 +169,58 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
               )}
 
-              {/* Navigation */}
+              {/* Overview */}
               <nav className="space-y-0.5">
-                {NAV_ITEMS.map((item) => {
-                  const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-                  const needsBusiness = item.href !== '/dashboard';
-                  if (needsBusiness && !activeBusiness) return null;
-                  return (
-                    <Link key={item.href} href={item.href}
-                      className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                        isActive ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                      }`}>
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
+                <Link href="/dashboard"
+                  className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                    pathname === '/dashboard' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                  }`}>
+                  <LayoutDashboard className="h-4 w-4" /> Overview
+                </Link>
               </nav>
 
-              {/* Bottom section */}
-              <div className="mt-6 pt-6 border-t border-gray-100 space-y-0.5">
-                <Link href="/classifieds/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
-                  <Tag className="h-4 w-4" /> Post ad
-                </Link>
+              {/* Business management */}
+              {activeBusiness && (
+                <div className="mt-5">
+                  <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1.5 px-2">Business</p>
+                  <nav className="space-y-0.5">
+                    {NAV_ITEMS.filter(i => !i.exact).map((item) => {
+                      const isActive = pathname.startsWith(item.href);
+                      return (
+                        <Link key={item.href} href={item.href}
+                          className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                            isActive ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                          }`}>
+                          <item.icon className="h-4 w-4" />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </div>
+              )}
+
+              {/* Create */}
+              <div className="mt-5 pt-5 border-t border-gray-100">
+                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1.5 px-2">Create</p>
+                <nav className="space-y-0.5">
+                  <Link href="/classifieds/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <Tag className="h-4 w-4" /> Post ad
+                  </Link>
+                  <Link href="/jobs/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <Briefcase className="h-4 w-4" /> Post job
+                  </Link>
+                  <Link href="/events/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <CalendarPlus className="h-4 w-4" /> Post event
+                  </Link>
+                  <Link href="/lost-found/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <AlertTriangle className="h-4 w-4" /> Report item
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Account */}
+              <div className="mt-5 pt-5 border-t border-gray-100 space-y-0.5">
                 <Link href="/dashboard/account" className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
                   pathname === '/dashboard/account' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                 }`}>
