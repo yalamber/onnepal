@@ -45,7 +45,7 @@ export default function PostLostFoundPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
         <Link href="/lost-found" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Lost & Found</Link>
         <h1 className="text-xl font-bold text-gray-950 mb-1">Report an item</h1>
         <p className="text-sm text-gray-400 mb-6">Help reunite lost items with their owners</p>
