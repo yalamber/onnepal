@@ -254,11 +254,13 @@ export default function ClassifiedDetailPage() {
         <ArrowLeft className="h-4 w-4" /> Back to classifieds
       </Link>
 
-      {/* Top: image left + details right */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div>
-          <ImageGallery images={images} />
-        </div>
+      {/* Top: image left + details right (or single column if no images) */}
+      <div className={images.length > 0 ? 'grid lg:grid-cols-2 gap-6' : ''}>
+        {images.length > 0 && (
+          <div>
+            <ImageGallery images={images} />
+          </div>
+        )}
         <div className="space-y-4">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-950 leading-tight">{listing.title}</h1>
           {listing.price ? (

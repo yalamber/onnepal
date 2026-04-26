@@ -37,10 +37,10 @@ export default function EventDetailPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/events" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Back to Events</Link>
 
-        {/* Top: image left + event info right */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          <div>
-            {images.length > 0 && (
+        {/* Top: image left + event info right (or single column if no images) */}
+        <div className={images.length > 0 ? 'grid lg:grid-cols-2 gap-6' : ''}>
+          {images.length > 0 && (
+            <div>
               <div className="relative rounded-md overflow-hidden bg-gray-50">
                 <img src={imageUrl(images[imgIdx])!} alt={item.title} className="w-full h-64 sm:h-80 object-cover" loading="eager" decoding="async" />
                 {images.length > 1 && (<>
@@ -48,8 +48,8 @@ export default function EventDetailPage() {
                   <button onClick={() => setImgIdx(i => (i + 1) % images.length)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 text-white rounded-md cursor-pointer"><ChevronRight className="h-4 w-4" /></button>
                 </>)}
               </div>
-            )}
-          </div>
+            </div>
+          )}
           <div className="space-y-4">
             <span className="text-xs text-gray-400">{item.category}</span>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>

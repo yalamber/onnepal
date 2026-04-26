@@ -55,10 +55,10 @@ export default function LostFoundDetailPage() {
           <ArrowLeft className="h-4 w-4" /> Back to Lost & Found
         </Link>
 
-        {/* Top: image left + details right */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          <div>
-            {images.length > 0 ? (
+        {/* Top: image left + details right (or single column if no images) */}
+        <div className={images.length > 0 ? 'grid lg:grid-cols-2 gap-6' : ''}>
+          {images.length > 0 && (
+            <div>
               <div className="relative rounded-md overflow-hidden bg-gray-50">
                 <img src={imageUrl(images[imgIdx])!} alt={item.title}
                   className="w-full h-64 sm:h-80 object-cover" loading="eager" decoding="async" />
@@ -76,8 +76,8 @@ export default function LostFoundDetailPage() {
                   </>
                 )}
               </div>
-            ) : null}
-          </div>
+            </div>
+          )}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <span className={`px-2 py-0.5 text-xs font-semibold uppercase rounded ${item.type === 'lost' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>{item.type}</span>
