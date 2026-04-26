@@ -39,6 +39,8 @@ export const businesses = sqliteTable('businesses', {
 }, (table) => ([
   index('businesses_user_idx').on(table.userId),
   index('businesses_subdomain_idx').on(table.subdomain),
+  index('businesses_published_idx').on(table.isPublished),
+  index('businesses_category_idx').on(table.businessCategory),
 ]));
 
 export const socialLinks = sqliteTable('social_links', {
@@ -155,6 +157,7 @@ export const reviews = sqliteTable('reviews', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 }, (table) => ([
   index('reviews_business_idx').on(table.businessId),
+  index('reviews_approved_idx').on(table.isApproved),
 ]));
 
 // Menu items
