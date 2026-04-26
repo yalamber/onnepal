@@ -72,17 +72,16 @@ function ImageGallery({ images }: { images: string[] }) {
 
   if (images.length === 0) {
     return (
-      <div className="w-full aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center gap-2">
-        <ImageOff className="h-12 w-12 text-gray-200" />
-        <p className="text-sm text-gray-300">No images</p>
+      <div className="w-full h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-md flex flex-col items-center justify-center gap-2">
+        <ImageOff className="h-10 w-10 text-gray-200" />
+        <p className="text-xs text-gray-300">No images</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {/* Main image */}
-      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
+    <div className="space-y-2">
+      <div className="relative w-full h-64 sm:h-80 rounded-md overflow-hidden bg-gray-100">
         <img
           src={images[activeIndex]}
           alt={`Image ${activeIndex + 1}`}
@@ -92,36 +91,30 @@ function ImageGallery({ images }: { images: string[] }) {
           <>
             <button
               onClick={() => setActiveIndex((prev) => (prev - 1 + images.length) % images.length)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/60 transition-colors"
-              aria-label="Previous image"
+              className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition-colors cursor-pointer"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={() => setActiveIndex((prev) => (prev + 1) % images.length)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/60 transition-colors"
-              aria-label="Next image"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition-colors cursor-pointer"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4" />
             </button>
-            <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
+            <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/50 text-white text-xs">
               {activeIndex + 1} / {images.length}
             </div>
           </>
         )}
       </div>
-
-      {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-1.5 overflow-x-auto pb-1">
           {images.map((url, i) => (
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                i === activeIndex
-                  ? 'border-indigo-500 shadow-sm'
-                  : 'border-transparent opacity-60 hover:opacity-100'
+              className={`flex-shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-all cursor-pointer ${
+                i === activeIndex ? 'border-gray-950' : 'border-transparent opacity-60 hover:opacity-100'
               }`}
             >
               <img src={url} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
@@ -137,7 +130,7 @@ function DetailSkeleton() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 animate-pulse">
       <div className="h-4 w-24 bg-gray-200 rounded mb-6" />
-      <div className="w-full aspect-[4/3] bg-gray-200 rounded-xl mb-6" />
+      <div className="w-full h-64 bg-gray-200 rounded-md mb-6" />
       <div className="h-8 w-3/4 bg-gray-200 rounded mb-3" />
       <div className="h-7 w-32 bg-gray-200 rounded mb-4" />
       <div className="flex gap-2 mb-4">
@@ -244,27 +237,25 @@ export default function ClassifiedDetailPage() {
         Back to classifieds
       </Link>
 
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div>
         {/* Image gallery */}
-        <div className="p-4 sm:p-5">
-          <ImageGallery images={images} />
-        </div>
+        <ImageGallery images={images} />
 
         {/* Content */}
-        <div className="px-4 sm:px-5 pb-5 space-y-5">
+        <div className="mt-5 space-y-4">
           {/* Title */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-950 leading-tight">
             {listing.title}
           </h1>
 
           {/* Price */}
           <div>
             {listing.price ? (
-              <span className="text-2xl font-bold text-emerald-600">
+              <span className="text-xl font-bold text-gray-950">
                 Rs. {listing.price}
               </span>
             ) : (
-              <span className="text-lg font-medium text-gray-400 italic">
+              <span className="text-sm text-gray-400">
                 Contact for price
               </span>
             )}
@@ -273,7 +264,7 @@ export default function ClassifiedDetailPage() {
           {/* Badges */}
           <div className="flex flex-wrap gap-2">
             {categoryLabel && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-full">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full">
                 <Tag className="h-3 w-3" />
                 {categoryLabel}
               </span>
@@ -302,7 +293,7 @@ export default function ClassifiedDetailPage() {
                       href={`https://${listing.userSubdomain}.onnepal.com`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-indigo-500 hover:text-indigo-700 font-medium inline-flex items-center gap-1 transition-colors"
+                      className="text-gray-600 hover:text-gray-950 font-medium inline-flex items-center gap-1 transition-colors"
                     >
                       {listing.userName}
                       <ExternalLink className="h-3 w-3" />
