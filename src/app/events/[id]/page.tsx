@@ -21,6 +21,7 @@ export default function EventDetailPage() {
   const [item, setItem] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [imgIdx, setImgIdx] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
 
@@ -95,16 +96,64 @@ export default function EventDetailPage() {
         <Link href="/events" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Back to Events</Link>
 
         {/* Top: image left + event info right (or single column if no images) */}
-        <div className={images.length > 0 ? 'grid lg:grid-cols-2 gap-6' : ''}>
-          {images.length > 0 && (
+        <div className={(images.length > 0 || editing) ? 'grid lg:grid-cols-2 gap-6' : ''}>
+          {(images.length > 0 || editing) && (
             <div>
-              <div className="relative rounded-md overflow-hidden bg-gray-50">
-                <img src={imageUrl(images[imgIdx])!} alt={item.title} className="w-full h-64 sm:h-80 object-cover" loading="eager" decoding="async" />
-                {images.length > 1 && (<>
-                  <button onClick={() => setImgIdx(i => (i - 1 + images.length) % images.length)} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 text-white rounded-md cursor-pointer"><ChevronLeft className="h-4 w-4" /></button>
-                  <button onClick={() => setImgIdx(i => (i + 1) % images.length)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 text-white rounded-md cursor-pointer"><ChevronRight className="h-4 w-4" /></button>
-                </>)}
-              </div>
+              {editing ? (
+                <ImageUpload value={editImages} onChange={setEditImages} max={5} label="Photos" />
+              ) : (
+                <>
+                  {/* Main image — proportional */}
+                  <div className="w-full max-h-96 rounded-md overflow-hidden bg-gray-50 cursor-pointer flex items-center justify-center"
+                    onClick={() => setLightbox(true)}>
+                    <img src={imageUrl(images[imgIdx])!} alt={item.title} className="w-full max-h-96 object-contain" loading="eager" decoding="async" />
+                  </div>
+                  {/* Thumbnails */}
+                  {images.length > 1 && (
+                    <div className="flex gap-1.5 mt-2 overflow-x-auto scrollbar-none">
+                      {images.map((img, i) => (
+                        <button key={i} onClick={() => setImgIdx(i)}
+                          className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden cursor-pointer transition-all ${
+                            i === imgIdx ? 'ring-2 ring-gray-950 opacity-100' : 'opacity-60 hover:opacity-100'
+                          }`}>
+                          <img src={imageUrl(img)!} alt="" className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {/* Lightbox */}
+                  {lightbox && (
+                    <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightbox(false)}>
+                      <button onClick={(e) => { e.stopPropagation(); setLightbox(false); }}
+                        className="absolute top-4 right-4 p-2 text-white/70 hover:text-white cursor-pointer z-10">
+                        <span className="text-2xl">&times;</span>
+                      </button>
+                      {images.length > 1 && (<>
+                        <button onClick={(e) => { e.stopPropagation(); setImgIdx(i => (i - 1 + images.length) % images.length); }}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
+                          <ChevronLeft className="h-6 w-6" />
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); setImgIdx(i => (i + 1) % images.length); }}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
+                          <ChevronRight className="h-6 w-6" />
+                        </button>
+                      </>)}
+                      <img src={imageUrl(images[imgIdx])!} alt="" className="max-w-[90vw] max-h-[80vh] object-contain rounded-md"
+                        onClick={(e) => e.stopPropagation()} />
+                      {images.length > 1 && (
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 px-3 py-2 rounded-full">
+                          {images.map((img, i) => (
+                            <button key={i} onClick={(e) => { e.stopPropagation(); setImgIdx(i); }}
+                              className={`w-10 h-10 rounded-md overflow-hidden cursor-pointer transition-all ${i === imgIdx ? 'ring-2 ring-white' : 'opacity-50 hover:opacity-100'}`}>
+                              <img src={imageUrl(img)!} alt="" className="w-full h-full object-cover" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
           <div className="space-y-4">
