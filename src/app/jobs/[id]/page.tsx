@@ -34,9 +34,9 @@ export default function JobDetailPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/jobs" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Back to Jobs</Link>
 
-        <div className="grid lg:grid-cols-5 gap-6">
-          {/* Left column: job details + description + comments */}
-          <div className="lg:col-span-3 space-y-5">
+        {/* Top: job header + apply sidebar */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-5">
             <div className="flex items-start gap-3">
               <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 text-gray-400 text-base font-bold">
                 {item.company.charAt(0)}
@@ -67,9 +67,9 @@ export default function JobDetailPage() {
             <CommentSection targetType="job" targetId={item.id} />
           </div>
 
-          {/* Right column: apply + contact (sticky) */}
-          <div className="lg:col-span-2">
-            <div className="lg:sticky lg:top-6 space-y-3 lg:border lg:border-gray-200 lg:rounded-lg lg:p-5">
+          {/* Right sidebar: apply (sticky) */}
+          <div>
+            <div className="lg:sticky lg:top-6 space-y-3 border border-gray-200 rounded-lg p-5">
               <p className="text-sm font-semibold text-gray-950">Apply for this job</p>
               {item.applyUrl && (
                 <a href={item.applyUrl} target="_blank" rel="noopener noreferrer"

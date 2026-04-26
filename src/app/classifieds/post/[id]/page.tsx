@@ -254,83 +254,71 @@ export default function ClassifiedDetailPage() {
         <ArrowLeft className="h-4 w-4" /> Back to classifieds
       </Link>
 
-      <div className="grid lg:grid-cols-5 gap-6">
-        {/* Left column: images + description */}
-        <div className="lg:col-span-3 space-y-5">
+      {/* Top: image left + details right */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div>
           <ImageGallery images={images} />
-
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-950 leading-tight lg:hidden">{listing.title}</h1>
-
-          {listing.description && (
-            <div>
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Description</h3>
-              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
-            </div>
-          )}
-
-          <CommentSection targetType="classified" targetId={listing.id} />
         </div>
-
-        {/* Right column: details + contact (sticky) */}
-        <div className="lg:col-span-2">
-          <div className="lg:sticky lg:top-6 space-y-4">
-            <h1 className="text-xl font-bold text-gray-950 leading-tight hidden lg:block">{listing.title}</h1>
-
-            {listing.price ? (
-              <p className="text-xl font-bold text-gray-950">Rs. {listing.price}</p>
-            ) : (
-              <p className="text-sm text-gray-400">Contact for price</p>
+        <div className="space-y-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-950 leading-tight">{listing.title}</h1>
+          {listing.price ? (
+            <p className="text-2xl font-bold text-gray-950">Rs. {listing.price}</p>
+          ) : (
+            <p className="text-sm text-gray-400">Contact for price</p>
+          )}
+          <div className="flex flex-wrap gap-1.5">
+            {categoryLabel && (
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-700 bg-gray-100 px-2.5 py-1 rounded-md">
+                <Tag className="h-3 w-3" /> {categoryLabel}
+              </span>
             )}
-
-            <div className="flex flex-wrap gap-1.5">
-              {categoryLabel && (
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-700 bg-gray-100 px-2.5 py-1 rounded-md">
-                  <Tag className="h-3 w-3" /> {categoryLabel}
+            {listing.location && (
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-gray-100 px-2.5 py-1 rounded-md">
+                <MapPin className="h-3 w-3" /> {listing.location}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 text-xs text-gray-400">
+            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {timeAgo(listing.createdAt)}</span>
+            {listing.userName && (
+              <>
+                <span className="text-gray-200">·</span>
+                <span className="flex items-center gap-1">
+                  <User className="h-3 w-3" />
+                  {listing.userSubdomain ? (
+                    <a href={`https://${listing.userSubdomain}.onnepal.com`} target="_blank" rel="noopener noreferrer"
+                      className="text-gray-600 hover:text-gray-950 font-medium transition-colors">{listing.userName}</a>
+                  ) : listing.userName}
                 </span>
-              )}
-              {listing.location && (
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-gray-100 px-2.5 py-1 rounded-md">
-                  <MapPin className="h-3 w-3" /> {listing.location}
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3 text-xs text-gray-400">
-              <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {timeAgo(listing.createdAt)}</span>
-              {listing.userName && (
-                <>
-                  <span className="text-gray-200">·</span>
-                  <span className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
-                    {listing.userSubdomain ? (
-                      <a href={`https://${listing.userSubdomain}.onnepal.com`} target="_blank" rel="noopener noreferrer"
-                        className="text-gray-600 hover:text-gray-950 font-medium transition-colors">{listing.userName}</a>
-                    ) : listing.userName}
-                  </span>
-                </>
-              )}
-            </div>
-
-            <div className="border-t border-gray-100 pt-4 space-y-2.5">
-              {phoneUrl && (
-                <a href={phoneUrl}
-                  className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors">
-                  <Phone className="h-4 w-4" /> Call {listing.contactPhone}
-                </a>
-              )}
-              {whatsappUrl && (
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md border border-gray-200 text-gray-950 font-medium text-sm hover:bg-gray-50 transition-colors">
-                  <MessageCircle className="h-4 w-4" /> WhatsApp
-                </a>
-              )}
-              {!phoneUrl && !whatsappUrl && (
-                <p className="text-sm text-gray-400">No contact information provided.</p>
-              )}
-            </div>
+              </>
+            )}
+          </div>
+          <div className="border-t border-gray-100 pt-4 flex flex-col sm:flex-row gap-2.5">
+            {phoneUrl && (
+              <a href={phoneUrl}
+                className="flex-1 inline-flex items-center justify-center gap-2 h-10 rounded-md bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors">
+                <Phone className="h-4 w-4" /> Call {listing.contactPhone}
+              </a>
+            )}
+            {whatsappUrl && (
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 h-10 rounded-md border border-gray-200 text-gray-950 font-medium text-sm hover:bg-gray-50 transition-colors">
+                <MessageCircle className="h-4 w-4" /> WhatsApp
+              </a>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Below: full-width description + comments */}
+      {listing.description && (
+        <div className="mt-6 pt-6 border-t border-gray-100">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Description</h3>
+          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+        </div>
+      )}
+
+      <CommentSection targetType="classified" targetId={listing.id} />
     </div>
   );
 }
