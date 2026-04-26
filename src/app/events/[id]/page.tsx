@@ -8,7 +8,7 @@ import { imageUrl } from '@/components/image-upload';
 import { CommentSection } from '@/components/comment-section';
 
 interface Event {
-  id: string; title: string; description: string | null; category: string;
+  id: string; userId: string; title: string; description: string | null; category: string;
   startDate: string; endDate: string | null; startTime: string | null; endTime: string | null;
   venue: string | null; location: string | null; ticketPrice: string | null; ticketUrl: string | null;
   contactPhone: string | null; contactWhatsapp: string | null; imageUrls: string | null;
