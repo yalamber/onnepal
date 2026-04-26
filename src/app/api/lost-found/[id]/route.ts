@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getLostFoundById, deleteLostFoundItem, resolveLostFoundItem } from '@/lib/db/queries/lost-found';
-import { getSession } from '@/lib/auth/session';
+import { getSession, isAdmin } from '@/lib/auth/session';
 
 export async function GET(
   request: Request,
@@ -39,7 +39,9 @@ export async function PATCH(
     const d1 = await getD1Database();
     const db = getDb(d1);
 
-    await resolveLostFoundItem(db, id, session.userId);
+    const admin = await isAdmin(session.userId);
+    const item = admin ? await getLostFoundById(db, id) : null;
+    await resolveLostFoundItem(db, id, admin && item ? item.userId : session.userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -62,7 +64,9 @@ export async function DELETE(
     const d1 = await getD1Database();
     const db = getDb(d1);
 
-    await deleteLostFoundItem(db, id, session.userId);
+    const admin2 = await isAdmin(session.userId);
+    const item2 = admin2 ? await getLostFoundById(db, id) : null;
+    await deleteLostFoundItem(db, id, admin2 && item2 ? item2.userId : session.userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

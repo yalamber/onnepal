@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getClassifiedById, deleteClassified, updateClassified } from '@/lib/db/queries/classifieds';
-import { getSession } from '@/lib/auth/session';
+import { getSession, isAdmin } from '@/lib/auth/session';
 import { z } from 'zod';
 
 const updateSchema = z.object({
@@ -58,7 +58,10 @@ export async function PATCH(
 
     const d1 = await getD1Database();
     const db = getDb(d1);
-    await updateClassified(db, id, session.userId, validation.data);
+    const admin = await isAdmin(session.userId);
+    const listing = admin ? await getClassifiedById(db, id) : null;
+    const ownerId = admin && listing ? listing.userId : session.userId;
+    await updateClassified(db, id, ownerId, validation.data);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -81,7 +84,9 @@ export async function DELETE(
     const d1 = await getD1Database();
     const db = getDb(d1);
 
-    await deleteClassified(db, id, session.userId);
+    const admin = await isAdmin(session.userId);
+    const listing = admin ? await getClassifiedById(db, id) : null;
+    await deleteClassified(db, id, admin && listing ? listing.userId : session.userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getEventById, deleteEvent } from '@/lib/db/queries/events';
-import { getSession } from '@/lib/auth/session';
+import { getSession, isAdmin } from '@/lib/auth/session';
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -25,7 +25,9 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
     const { id } = await params;
     const d1 = await getD1Database();
     const db = getDb(d1);
-    await deleteEvent(db, id, session.userId);
+    const admin = await isAdmin(session.userId);
+    const item = admin ? await getEventById(db, id) : null;
+    await deleteEvent(db, id, admin && item ? item.userId : session.userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete event error:', error);

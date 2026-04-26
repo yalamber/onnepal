@@ -173,6 +173,7 @@ export default function ClassifiedDetailPage() {
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'comments'>('details');
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', description: '', price: '', category: '', location: '', contactPhone: '', contactWhatsapp: '' });
@@ -180,7 +181,9 @@ export default function ClassifiedDetailPage() {
 
   useEffect(() => {
     fetch('/api/auth/me').then(r => r.ok ? r.json() : null)
-      .then((d: { user?: { id: string } } | null) => { if (d?.user) setCurrentUserId(d.user.id); });
+      .then((d: { user?: { id: string; isAdmin?: boolean } } | null) => {
+        if (d?.user) { setCurrentUserId(d.user.id); if (d.user.isAdmin) setUserIsAdmin(true); }
+      });
   }, []);
 
   const fetchListing = async () => {
@@ -230,7 +233,7 @@ export default function ClassifiedDetailPage() {
     router.push('/classifieds');
   };
 
-  const isOwner = currentUserId && listing?.userId === currentUserId;
+  const isOwner = currentUserId && (listing?.userId === currentUserId || userIsAdmin);
 
   if (loading) {
     return <DetailSkeleton />;
