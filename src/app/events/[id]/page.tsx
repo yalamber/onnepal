@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Calendar, Clock, Phone, MessageCircle, Loader2, ExternalLink, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Clock, Phone, MessageCircle, Loader2, ExternalLink, ChevronLeft, ChevronRight, Trash2, Edit2, Check, X } from 'lucide-react';
 import { imageUrl } from '@/components/image-upload';
 import { CommentSection } from '@/components/comment-section';
 
@@ -43,6 +43,42 @@ export default function EventDetailPage() {
     router.push('/events');
   };
 
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editForm, setEditForm] = useState({ title: '', description: '', category: '', startDate: '', endDate: '', startTime: '', endTime: '', venue: '', location: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '' });
+
+  const startEdit = () => {
+    if (!item) return;
+    setEditForm({
+      title: item.title, description: item.description || '', category: item.category,
+      startDate: item.startDate, endDate: item.endDate || '', startTime: item.startTime || '',
+      endTime: item.endTime || '', venue: item.venue || '', location: item.location || '',
+      ticketPrice: item.ticketPrice || '', ticketUrl: item.ticketUrl || '',
+      contactPhone: item.contactPhone || '', contactWhatsapp: item.contactWhatsapp || '',
+    });
+    setEditing(true);
+  };
+
+  const saveEdit = async () => {
+    if (!editForm.title.trim()) return;
+    setSaving(true);
+    try {
+      await fetch(`/api/events/${id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editForm.title, description: editForm.description || null, category: editForm.category,
+          startDate: editForm.startDate, endDate: editForm.endDate || null, startTime: editForm.startTime || null,
+          endTime: editForm.endTime || null, venue: editForm.venue || null, location: editForm.location || null,
+          ticketPrice: editForm.ticketPrice || null, ticketUrl: editForm.ticketUrl || null,
+          contactPhone: editForm.contactPhone || null, contactWhatsapp: editForm.contactWhatsapp || null,
+        }),
+      });
+      setEditing(false);
+      const res = await fetch(`/api/events/${id}`);
+      if (res.ok) { const d = await res.json() as { item: Event }; setItem(d.item); }
+    } finally { setSaving(false); }
+  };
+
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
   if (!item) return <div className="max-w-2xl mx-auto px-4 py-20 text-center"><p className="text-sm text-gray-500 mb-4">Event not found</p><Link href="/events" className="text-sm text-gray-400 hover:text-gray-950">Back to Events</Link></div>;
 
@@ -68,15 +104,54 @@ export default function EventDetailPage() {
             </div>
           )}
           <div className="space-y-4">
-            <span className="text-xs text-gray-400">{item.category}</span>
-            <div className="flex items-start justify-between gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
-              {isOwner && (
-                <button onClick={deleteItem} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors flex-shrink-0" title="Delete">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              )}
-            </div>
+            {editing ? (
+              <div className="space-y-3">
+                <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                  className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="date" value={editForm.startDate} onChange={(e) => setEditForm({ ...editForm, startDate: e.target.value })}
+                    className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
+                  <input type="text" value={editForm.venue} onChange={(e) => setEditForm({ ...editForm, venue: e.target.value })}
+                    placeholder="Venue" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
+                </div>
+                <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                  placeholder="Location" className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
+                <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                  placeholder="Description" rows={3}
+                  className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400 resize-none" />
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="text" value={editForm.ticketPrice} onChange={(e) => setEditForm({ ...editForm, ticketPrice: e.target.value })}
+                    placeholder="Ticket price" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
+                  <input type="text" value={editForm.contactPhone} onChange={(e) => setEditForm({ ...editForm, contactPhone: e.target.value })}
+                    placeholder="Phone" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={saveEdit} disabled={saving}
+                    className="h-9 px-4 bg-gray-950 text-white text-xs font-medium rounded-md hover:bg-gray-800 disabled:opacity-30 cursor-pointer flex items-center gap-1.5">
+                    {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Check className="h-3.5 w-3.5" /> Save</>}
+                  </button>
+                  <button onClick={() => setEditing(false)}
+                    className="h-9 px-4 border border-gray-200 text-gray-600 text-xs font-medium rounded-md hover:bg-gray-50 cursor-pointer">Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <span className="text-xs text-gray-400">{item.category}</span>
+                <div className="flex items-start justify-between gap-2">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
+                  {isOwner && (
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button onClick={startEdit} className="p-1.5 text-gray-400 hover:text-gray-950 cursor-pointer transition-colors" title="Edit">
+                        <Edit2 className="h-4 w-4" />
+                      </button>
+                      <button onClick={deleteItem} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" title="Delete">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
 
             <div className="space-y-2 text-sm text-gray-600">
               <p className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gray-400" /> {fmtDate(item.startDate)}{item.endDate && item.endDate !== item.startDate ? ` – ${fmtDate(item.endDate)}` : ''}</p>

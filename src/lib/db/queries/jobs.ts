@@ -151,3 +151,14 @@ export async function createJob(
 export async function deleteJob(db: Database, id: string, userId: string) {
   await db.delete(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
 }
+
+export async function updateJob(
+  db: Database, id: string, userId: string,
+  data: Record<string, unknown>
+) {
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  for (const [k, v] of Object.entries(data)) {
+    if (v !== undefined && k !== 'id' && k !== 'userId') updates[k] = v;
+  }
+  await db.update(jobs).set(updates).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
+}

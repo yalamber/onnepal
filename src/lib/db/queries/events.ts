@@ -156,3 +156,17 @@ export async function createEvent(
 export async function deleteEvent(db: Database, id: string, userId: string) {
   await db.delete(events).where(and(eq(events.id, id), eq(events.userId, userId)));
 }
+
+export async function updateEvent(
+  db: Database, id: string, userId: string,
+  data: Record<string, unknown>
+) {
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  for (const [k, v] of Object.entries(data)) {
+    if (v !== undefined && k !== 'id' && k !== 'userId') {
+      if (k === 'imageUrls') updates[k] = v ? JSON.stringify(v) : null;
+      else updates[k] = v;
+    }
+  }
+  await db.update(events).set(updates).where(and(eq(events.id, id), eq(events.userId, userId)));
+}
