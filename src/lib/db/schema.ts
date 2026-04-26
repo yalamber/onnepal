@@ -414,3 +414,24 @@ export const comments = sqliteTable('comments', {
 export const commentsRelations = relations(comments, ({ one }) => ({
   user: one(users, { fields: [comments.userId], references: [users.id] }),
 }));
+
+export const messages = sqliteTable('messages', {
+  id: text('id').primaryKey(),
+  senderId: text('sender_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  recipientId: text('recipient_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  listingType: text('listing_type').notNull(),
+  listingId: text('listing_id').notNull(),
+  listingTitle: text('listing_title').notNull(),
+  content: text('content').notNull(),
+  isRead: integer('is_read', { mode: 'boolean' }).notNull().default(false),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('messages_sender_idx').on(table.senderId),
+  index('messages_recipient_idx').on(table.recipientId),
+  index('messages_listing_idx').on(table.listingType, table.listingId),
+  index('messages_created_idx').on(table.createdAt),
+]));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  sender: one(users, { fields: [messages.senderId], references: [users.id] }),
+}));

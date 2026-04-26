@@ -7,7 +7,7 @@ import {
   LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, Loader2,
   Plus, ChevronDown, Check, Tag, Building2, User, QrCode,
   UtensilsCrossed, Gift, Image, Star, Users, HelpCircle, Calendar,
-  ChevronsUpDown, LogOut, Briefcase, AlertTriangle, CalendarPlus,
+  ChevronsUpDown, LogOut, Briefcase, AlertTriangle, CalendarPlus, Mail,
 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -221,6 +221,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
               {/* Account */}
               <div className="mt-5 pt-5 border-t border-gray-100 space-y-0.5">
+                <Link href="/dashboard/messages" className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                  pathname === '/dashboard/messages' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                }`}>
+                  <Mail className="h-4 w-4" /> Messages
+                </Link>
                 <Link href="/dashboard/account" className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
                   pathname === '/dashboard/account' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                 }`}>

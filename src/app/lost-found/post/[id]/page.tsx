@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, MapPin, Calendar, Phone, MessageCircle, Loader2, AlertTriangle, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { imageUrl } from '@/components/image-upload';
 import { CommentSection } from '@/components/comment-section';
+import { MessageButton } from '@/components/message-button';
 
 interface Item {
   id: string;
@@ -96,22 +97,15 @@ export default function LostFoundDetailPage() {
                 Reward: {item.reward}
               </div>
             )}
-            {(item.contactPhone || item.contactWhatsapp) && (
-              <div className="border-t border-gray-100 pt-4 flex flex-col sm:flex-row gap-2.5">
-                {item.contactPhone && (
-                  <a href={`tel:${item.contactPhone}`}
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 rounded-md bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors">
-                    <Phone className="h-4 w-4" /> Call {item.contactPhone}
-                  </a>
-                )}
-                {item.contactWhatsapp && (
-                  <a href={`https://wa.me/${item.contactWhatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 rounded-md bg-green-500 hover:bg-green-600 text-white font-medium text-sm transition-colors">
-                    <MessageCircle className="h-4 w-4" /> WhatsApp
-                  </a>
-                )}
-              </div>
-            )}
+            <div className="border-t border-gray-100 pt-4 space-y-2.5">
+              <MessageButton recipientId={item.userId} listingType="lost-found" listingId={item.id} listingTitle={item.title} />
+              {(item.contactPhone || item.contactWhatsapp) && (
+                <div className="flex items-center gap-3 justify-center">
+                  {item.contactPhone && <a href={`tel:${item.contactPhone}`} className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><Phone className="h-3 w-3" /> Call</a>}
+                  {item.contactWhatsapp && <a href={`https://wa.me/${item.contactWhatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><MessageCircle className="h-3 w-3" /> WhatsApp</a>}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

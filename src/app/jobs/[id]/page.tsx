@@ -73,19 +73,19 @@ export default function JobDetailPage() {
               <p className="text-sm font-semibold text-gray-950">Apply for this job</p>
               {item.applyUrl && (
                 <a href={item.applyUrl} target="_blank" rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors">
+                  className="w-full inline-flex items-center justify-center gap-1.5 h-9 rounded-md text-xs bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors">
                   <ExternalLink className="h-4 w-4" /> Apply now
                 </a>
               )}
               {item.contactEmail && (
                 <a href={`mailto:${item.contactEmail}`}
-                  className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md border border-gray-200 text-gray-700 text-sm hover:bg-gray-50 transition-colors">
+                  className="w-full inline-flex items-center justify-center gap-1.5 h-9 rounded-md text-xs border border-gray-200 text-gray-700 text-sm hover:bg-gray-50 transition-colors">
                   <Mail className="h-4 w-4" /> {item.contactEmail}
                 </a>
               )}
               {item.contactPhone && (
                 <a href={`tel:${item.contactPhone}`}
-                  className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md border border-gray-200 text-gray-700 text-sm hover:bg-gray-50 transition-colors">
+                  className="w-full inline-flex items-center justify-center gap-1.5 h-9 rounded-md text-xs border border-gray-200 text-gray-700 text-sm hover:bg-gray-50 transition-colors">
                   <Phone className="h-4 w-4" /> {item.contactPhone}
                 </a>
               )}

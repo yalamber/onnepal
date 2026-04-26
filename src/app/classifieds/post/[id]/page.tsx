@@ -20,9 +20,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { getClassifiedCategoryBySlug } from '@/lib/classified-categories';
 import { CommentSection } from '@/components/comment-section';
+import { MessageButton } from '@/components/message-button';
 
 interface ClassifiedListing {
   id: string;
+  userId: string;
   title: string;
   description: string | null;
   price: string | null;
@@ -295,18 +297,13 @@ export default function ClassifiedDetailPage() {
               </>
             )}
           </div>
-          <div className="border-t border-gray-100 pt-4 flex flex-col sm:flex-row gap-2.5">
-            {phoneUrl && (
-              <a href={phoneUrl}
-                className="flex-1 inline-flex items-center justify-center gap-2 h-10 rounded-md bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors">
-                <Phone className="h-4 w-4" /> Call {listing.contactPhone}
-              </a>
-            )}
-            {whatsappUrl && (
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-2 h-10 rounded-md border border-gray-200 text-gray-950 font-medium text-sm hover:bg-gray-50 transition-colors">
-                <MessageCircle className="h-4 w-4" /> WhatsApp
-              </a>
+          <div className="border-t border-gray-100 pt-4 space-y-2.5">
+            <MessageButton recipientId={listing.userId} listingType="classified" listingId={listing.id} listingTitle={listing.title} />
+            {(phoneUrl || whatsappUrl) && (
+              <div className="flex items-center gap-3 justify-center">
+                {phoneUrl && <a href={phoneUrl} className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><Phone className="h-3 w-3" /> Call</a>}
+                {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><MessageCircle className="h-3 w-3" /> WhatsApp</a>}
+              </div>
             )}
           </div>
         </div>
