@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Calendar, Phone, MessageCircle, Loader2, AlertTriangle, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { imageUrl } from '@/components/image-upload';
+import { CommentSection } from '@/components/comment-section';
 
 interface Item {
   id: string;
@@ -49,7 +50,7 @@ export default function LostFoundDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/lost-found" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6">
           <ArrowLeft className="h-4 w-4" /> Back to Lost & Found
         </Link>
@@ -131,6 +132,8 @@ export default function LostFoundDetailPage() {
             </div>
           </div>
         )}
+
+        <CommentSection targetType="lost-found" targetId={item.id} />
       </div>
     </div>
   );

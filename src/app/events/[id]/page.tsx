@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Calendar, Clock, Phone, MessageCircle, Loader2, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { imageUrl } from '@/components/image-upload';
+import { CommentSection } from '@/components/comment-section';
 
 interface Event {
   id: string; title: string; description: string | null; category: string;
@@ -33,7 +34,7 @@ export default function EventDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/events" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Back to Events</Link>
 
         {images.length > 0 && (
@@ -76,6 +77,8 @@ export default function EventDetailPage() {
         )}
 
         <p className="mt-6 text-xs text-gray-400">Posted by {item.userName || 'Anonymous'} · {new Date(item.createdAt).toLocaleDateString()}</p>
+
+        <CommentSection targetType="event" targetId={item.id} />
       </div>
     </div>
   );

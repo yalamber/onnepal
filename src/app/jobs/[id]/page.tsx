@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Briefcase, Clock, Phone, Mail, ExternalLink, Loader2 } from 'lucide-react';
 import { JOB_TYPES } from '@/lib/job-categories';
+import { CommentSection } from '@/components/comment-section';
 
 interface Job {
   id: string; title: string; company: string; description: string | null; category: string;
@@ -30,7 +31,7 @@ export default function JobDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/jobs" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Back to Jobs</Link>
 
         <div className="flex items-start gap-4 mb-6">
@@ -72,6 +73,8 @@ export default function JobDetailPage() {
         </div>
 
         <p className="mt-6 text-xs text-gray-400">Posted {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {item.category}</p>
+
+        <CommentSection targetType="job" targetId={item.id} />
       </div>
     </div>
   );

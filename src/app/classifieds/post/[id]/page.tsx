@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getClassifiedCategoryBySlug } from '@/lib/classified-categories';
+import { CommentSection } from '@/components/comment-section';
 
 interface ClassifiedListing {
   id: string;
@@ -134,7 +135,7 @@ function ImageGallery({ images }: { images: string[] }) {
 
 function DetailSkeleton() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 animate-pulse">
+    <div className="max-w-4xl mx-auto px-4 py-8 animate-pulse">
       <div className="h-4 w-24 bg-gray-200 rounded mb-6" />
       <div className="w-full aspect-[4/3] bg-gray-200 rounded-xl mb-6" />
       <div className="h-8 w-3/4 bg-gray-200 rounded mb-3" />
@@ -196,7 +197,7 @@ export default function ClassifiedDetailPage() {
 
   if (notFound || !listing) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <Link
           href="/classifieds"
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-8"
@@ -233,7 +234,7 @@ export default function ClassifiedDetailPage() {
     : null;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Back link */}
       <Link
         href="/classifieds"
@@ -361,6 +362,8 @@ export default function ClassifiedDetailPage() {
               )}
             </div>
           </div>
+
+          <CommentSection targetType="classified" targetId={listing.id} />
         </div>
       </div>
     </div>

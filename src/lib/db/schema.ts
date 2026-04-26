@@ -397,3 +397,20 @@ export const jobs = sqliteTable('jobs', {
 export const jobsRelations = relations(jobs, ({ one }) => ({
   user: one(users, { fields: [jobs.userId], references: [users.id] }),
 }));
+
+export const comments = sqliteTable('comments', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  targetType: text('target_type').notNull(),
+  targetId: text('target_id').notNull(),
+  content: text('content').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('comments_target_idx').on(table.targetType, table.targetId),
+  index('comments_user_idx').on(table.userId),
+  index('comments_created_idx').on(table.createdAt),
+]));
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  user: one(users, { fields: [comments.userId], references: [users.id] }),
+}));
