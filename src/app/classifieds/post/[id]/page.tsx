@@ -69,6 +69,7 @@ function parseImageUrls(imageUrls: string | null): string[] {
 
 function ImageGallery({ images }: { images: string[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
 
   if (images.length === 0) {
     return (
@@ -79,50 +80,75 @@ function ImageGallery({ images }: { images: string[] }) {
     );
   }
 
+  if (images.length === 1) {
+    return (
+      <div className="w-full h-64 sm:h-80 rounded-md overflow-hidden bg-gray-100 cursor-pointer" onClick={() => { setActiveIndex(0); setLightbox(true); }}>
+        <img src={images[0]} alt="" className="w-full h-full object-cover" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-2">
-      <div className="relative w-full h-64 sm:h-80 rounded-md overflow-hidden bg-gray-100">
-        <img
-          src={images[activeIndex]}
-          alt={`Image ${activeIndex + 1}`}
-          className="w-full h-full object-cover"
-        />
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={() => setActiveIndex((prev) => (prev - 1 + images.length) % images.length)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition-colors cursor-pointer"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setActiveIndex((prev) => (prev + 1) % images.length)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md bg-black/40 text-white hover:bg-black/60 transition-colors cursor-pointer"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-            <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/50 text-white text-xs">
-              {activeIndex + 1} / {images.length}
+    <>
+      {/* Grid layout: hero + side images */}
+      <div className="grid grid-cols-2 gap-1.5 h-64 sm:h-80">
+        {/* Main image */}
+        <div className={`${images.length === 2 ? 'col-span-1' : 'row-span-2'} rounded-md overflow-hidden bg-gray-100 cursor-pointer`}
+          onClick={() => { setActiveIndex(0); setLightbox(true); }}>
+          <img src={images[0]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
+        </div>
+
+        {/* Side images */}
+        {images.length === 2 ? (
+          <div className="rounded-md overflow-hidden bg-gray-100 cursor-pointer"
+            onClick={() => { setActiveIndex(1); setLightbox(true); }}>
+            <img src={images[1]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
+          </div>
+        ) : (
+          <div className="grid grid-rows-2 gap-1.5">
+            <div className="rounded-md overflow-hidden bg-gray-100 cursor-pointer"
+              onClick={() => { setActiveIndex(1); setLightbox(true); }}>
+              <img src={images[1]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
             </div>
-          </>
+            <div className="relative rounded-md overflow-hidden bg-gray-100 cursor-pointer"
+              onClick={() => { setActiveIndex(2); setLightbox(true); }}>
+              <img src={images[2]} alt="" className="w-full h-full object-cover hover:opacity-95 transition-opacity" />
+              {images.length > 3 && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">+{images.length - 3} more</span>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
-      {images.length > 1 && (
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          {images.map((url, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIndex(i)}
-              className={`flex-shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-all cursor-pointer ${
-                i === activeIndex ? 'border-gray-950' : 'border-transparent opacity-60 hover:opacity-100'
-              }`}
-            >
-              <img src={url} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
-            </button>
-          ))}
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightbox(false)}>
+          <button onClick={(e) => { e.stopPropagation(); setLightbox(false); }}
+            className="absolute top-4 right-4 p-2 text-white/70 hover:text-white cursor-pointer z-10">
+            <span className="text-2xl">&times;</span>
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev - 1 + images.length) % images.length); }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev + 1) % images.length); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
+            <ChevronRight className="h-6 w-6" />
+          </button>
+          <img src={images[activeIndex]} alt="" className="max-w-[90vw] max-h-[85vh] object-contain rounded-md"
+            onClick={(e) => e.stopPropagation()} />
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {images.map((_, i) => (
+              <button key={i} onClick={(e) => { e.stopPropagation(); setActiveIndex(i); }}
+                className={`w-2 h-2 rounded-full cursor-pointer transition-colors ${i === activeIndex ? 'bg-white' : 'bg-white/40'}`} />
+            ))}
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
