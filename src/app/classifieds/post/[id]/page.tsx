@@ -72,12 +72,7 @@ function ImageGallery({ images }: { images: string[] }) {
   const [lightbox, setLightbox] = useState(false);
 
   if (images.length === 0) {
-    return (
-      <div className="w-full h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-md flex flex-col items-center justify-center gap-2">
-        <ImageOff className="h-10 w-10 text-gray-200" />
-        <p className="text-xs text-gray-300">No images</p>
-      </div>
-    );
+    return null;
   }
 
   if (images.length === 1) {
