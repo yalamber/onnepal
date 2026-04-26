@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getClassifiedCategoryBySlug, getClassifiedSubcategoryBySlug } from '@/lib/classified-categories';
+import { imageUrl } from '@/components/image-upload';
 
 interface Listing {
   id: string;
@@ -29,7 +30,7 @@ function timeAgo(date: string | Date): string {
 
 function firstImage(urls: string | null): string | null {
   if (!urls) return null;
-  try { return (JSON.parse(urls) as string[])[0] || null; } catch { return null; }
+  try { const key = (JSON.parse(urls) as string[])[0]; return key ? imageUrl(key) : null; } catch { return null; }
 }
 
 const PER_PAGE = 12;

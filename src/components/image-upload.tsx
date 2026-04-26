@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Loader2 } from 'lucide-react';
+import { Upload, X, Loader2, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 export function imageUrl(key: string | null | undefined): string | null {
   if (!key) return null;
@@ -64,7 +64,24 @@ export function ImageUpload({ value, onChange, max = 5, label = 'Upload images' 
         <div className="flex gap-2 mb-3 flex-wrap">
           {value.map((url, i) => (
             <div key={url} className="relative group">
-              <img src={imageUrl(url) || url} alt="" className="w-20 h-20 rounded-lg object-cover border border-gray-200" />
+              <img src={imageUrl(url) || url} alt="" className="w-20 h-20 rounded-md object-cover border border-gray-200" />
+              {i === 0 && value.length > 1 && (
+                <span className="absolute top-0.5 left-0.5 px-1 py-0.5 bg-gray-950 text-white text-[9px] font-medium rounded">Main</span>
+              )}
+              <div className="absolute inset-0 flex items-end justify-center gap-0.5 pb-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                {i > 0 && (
+                  <button onClick={() => { const next = [...value]; [next[i - 1], next[i]] = [next[i], next[i - 1]]; onChange(next); }}
+                    className="w-5 h-5 rounded bg-black/60 text-white flex items-center justify-center cursor-pointer">
+                    <ChevronLeft className="h-3 w-3" />
+                  </button>
+                )}
+                {i < value.length - 1 && (
+                  <button onClick={() => { const next = [...value]; [next[i], next[i + 1]] = [next[i + 1], next[i]]; onChange(next); }}
+                    className="w-5 h-5 rounded bg-black/60 text-white flex items-center justify-center cursor-pointer">
+                    <ChevronRight className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
               <button onClick={() => remove(i)}
                 className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gray-950 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                 <X className="h-3 w-3" />

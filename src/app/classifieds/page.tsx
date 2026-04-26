@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, MapPin, ChevronLeft, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
+import { imageUrl } from '@/components/image-upload';
 
 interface Listing {
   id: string;
@@ -38,7 +39,7 @@ function timeAgo(date: string | Date): string {
 
 function firstImage(urls: string | null): string | null {
   if (!urls) return null;
-  try { return (JSON.parse(urls) as string[])[0] || null; } catch { return null; }
+  try { const key = (JSON.parse(urls) as string[])[0]; return key ? imageUrl(key) : null; } catch { return null; }
 }
 
 const PER_PAGE = 12;
