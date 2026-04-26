@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2, ChevronDown } from 'lucide-react';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { ImageUpload } from '@/components/image-upload';
+import { DatePicker } from '@/components/date-picker';
+import { TimePicker } from '@/components/time-picker';
 
 export default function PostEventPage() {
   const router = useRouter();
@@ -79,11 +81,11 @@ export default function PostEventPage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-gray-500 mb-1.5 block">Date *</label>
-              <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} className={inputClass} />
+              <DatePicker value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} />
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 mb-1.5 block">Time</label>
-              <input type="time" value={form.startTime} onChange={(e) => setForm({ ...form, startTime: e.target.value })} className={inputClass} />
+              <TimePicker value={form.startTime} onChange={(v) => setForm({ ...form, startTime: v })} />
             </div>
           </div>
 
@@ -115,11 +117,11 @@ export default function PostEventPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-gray-500 mb-1.5 block">End date</label>
-                  <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} className={inputClass} />
+                  <DatePicker value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-gray-500 mb-1.5 block">End time</label>
-                  <input type="time" value={form.endTime} onChange={(e) => setForm({ ...form, endTime: e.target.value })} className={inputClass} />
+                  <TimePicker value={form.endTime} onChange={(v) => setForm({ ...form, endTime: v })} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">

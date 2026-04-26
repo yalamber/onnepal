@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { DatePicker } from '@/components/date-picker';
+import { TimePicker } from '@/components/time-picker';
 
 interface BookingFormProps {
   businessId: string;
@@ -89,15 +91,11 @@ export function BookingForm({ businessId, primaryColor }: BookingFormProps) {
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1.5 block">Preferred date *</label>
-          <input type="date" required value={form.date}
-            onChange={(e) => setForm({ ...form, date: e.target.value })}
-            className={inputClass} />
+          <DatePicker value={form.date} onChange={(v) => setForm({ ...form, date: v })} placeholder="Pick a date" />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1.5 block">Preferred time</label>
-          <input type="time" value={form.time}
-            onChange={(e) => setForm({ ...form, time: e.target.value })}
-            className={inputClass} />
+          <TimePicker value={form.time} onChange={(v) => setForm({ ...form, time: v })} />
         </div>
       </div>
 

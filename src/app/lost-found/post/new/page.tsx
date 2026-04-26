@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
 import { ImageUpload } from '@/components/image-upload';
+import { DatePicker } from '@/components/date-picker';
 
 export default function PostLostFoundPage() {
   const router = useRouter();
@@ -136,9 +137,8 @@ export default function PostLostFoundPage() {
             </div>
             <div>
               <label className="text-xs font-medium text-gray-600 mb-1.5 block">Date {form.type === 'lost' ? 'lost' : 'found'}</label>
-              <input type="date" value={form.itemDate}
-                onChange={(e) => setForm({ ...form, itemDate: e.target.value })}
-                className={inputClass} />
+              <DatePicker value={form.itemDate} onChange={(v) => setForm({ ...form, itemDate: v })}
+                placeholder={form.type === 'lost' ? 'When was it lost?' : 'When was it found?'} />
             </div>
           </div>
 
