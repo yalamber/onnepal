@@ -4,6 +4,7 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getLostFoundItems, getLostFoundCount, createLostFoundItem } from '@/lib/db/queries/lost-found';
 import { getSession } from '@/lib/auth/session';
 import { z } from 'zod';
+import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
 
 const createSchema = z.object({
   type: z.enum(['lost', 'found']),
@@ -55,6 +56,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const d1 = getD1Database();
+    const rl = await checkRateLimit(d1, 'lost-found:create', session.userId, 5, 86400);
+    if (!rl.allowed) return tooManyRequests(86400);
+
     const body = await request.json();
     const validation = createSchema.safeParse(body);
     if (!validation.success) {
@@ -71,7 +76,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const d1 = getD1Database();
     const db = getDb(d1);
 
     const result = await createLostFoundItem(db, session.userId, {

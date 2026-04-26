@@ -4,6 +4,7 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getJobs, getJobsCount, createJob } from '@/lib/db/queries/jobs';
 import { getSession } from '@/lib/auth/session';
 import { z } from 'zod';
+import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
 
 const createSchema = z.object({
   title: z.string().min(3).max(200),
@@ -51,6 +52,10 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const d1 = getD1Database();
+    const rl = await checkRateLimit(d1, 'job:create', session.userId, 5, 86400);
+    if (!rl.allowed) return tooManyRequests(86400);
+
     const body = await request.json();
     const validation = createSchema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: 'Invalid input', details: validation.error.flatten() }, { status: 400 });
@@ -60,7 +65,6 @@ export async function POST(request: NextRequest) {
       if (invalid) return NextResponse.json({ error: 'Invalid image' }, { status: 400 });
     }
 
-    const d1 = getD1Database();
     const db = getDb(d1);
     const result = await createJob(db, session.userId, {
       ...validation.data,

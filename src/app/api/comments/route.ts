@@ -4,6 +4,7 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getComments, createComment } from '@/lib/db/queries/comments';
 import { getSession } from '@/lib/auth/session';
 import { z } from 'zod';
+import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
 
 const VALID_TYPES = ['classified', 'job', 'event', 'lost-found'];
 
@@ -36,11 +37,13 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const d1 = getD1Database();
+    const rl = await checkRateLimit(d1, 'comment:create', session.userId, 30, 3600);
+    if (!rl.allowed) return tooManyRequests(3600);
+
     const body = await request.json();
     const validation = createSchema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
-
-    const d1 = getD1Database();
     const db = getDb(d1);
     const result = await createComment(db, session.userId, validation.data);
 

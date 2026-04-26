@@ -4,6 +4,7 @@ import { getD1Database } from '@/lib/cloudflare';
 import { sendMessage, getConversations, getThread, markAsRead } from '@/lib/db/queries/messages';
 import { getSession } from '@/lib/auth/session';
 import { z } from 'zod';
+import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
 
 const sendSchema = z.object({
   recipientId: z.string().min(1),
@@ -45,6 +46,10 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const d1 = getD1Database();
+    const rl = await checkRateLimit(d1, 'message:send', session.userId, 50, 3600);
+    if (!rl.allowed) return tooManyRequests(3600);
+
     const body = await request.json();
     const validation = sendSchema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
@@ -53,7 +58,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Cannot message yourself' }, { status: 400 });
     }
 
-    const d1 = getD1Database();
     const db = getDb(d1);
 
     const result = await sendMessage(db, { senderId: session.userId, ...validation.data });
