@@ -83,9 +83,9 @@ function ImageGallery({ images }: { images: string[] }) {
   return (
     <>
       {/* Main image */}
-      <div className="w-full h-64 sm:h-80 rounded-md overflow-hidden bg-gray-100 cursor-pointer"
+      <div className="w-full max-h-96 rounded-md overflow-hidden bg-gray-50 cursor-pointer flex items-center justify-center"
         onClick={() => setLightbox(true)}>
-        <img src={imageUrl(images[activeIndex])!} alt="" className="w-full h-full object-cover" />
+        <img src={imageUrl(images[activeIndex])!} alt="" className="w-full max-h-96 object-contain" />
       </div>
 
       {/* Thumbnails */}
