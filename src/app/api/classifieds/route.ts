@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       totalPages: Math.ceil(total / limit),
       categories,
     });
-    // Cache handled at Worker level via Cache API
+    res.headers.set('Cache-Control', 'public, s-maxage=300');
     return res;
   } catch (error) {
     console.error('Classifieds API error:', error);

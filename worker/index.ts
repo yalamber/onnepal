@@ -31,9 +31,6 @@ interface ExecutionContext {
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
-const CACHEABLE_PATHS = ['/api/classifieds', '/api/jobs', '/api/events', '/api/lost-found', '/api/directory'];
-const CACHE_TTL = 300;
-
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -48,30 +45,6 @@ export default {
           return result.response();
         },
       }, allowedWidths);
-    }
-
-    // CDN cache for public GET API responses using Cloudflare Cache API
-    // Docs: https://developers.cloudflare.com/workers/runtime-apis/cache/
-    if (request.method === 'GET' && CACHEABLE_PATHS.some(p => url.pathname.startsWith(p))) {
-      const cache = caches.default;
-      // Use URL-only cache key (exclude request headers like cookies/auth)
-      const cacheKey = new Request(url.toString());
-      const cached = await cache.match(cacheKey);
-      if (cached) return cached;
-
-      const response = await handler.fetch(request, env, ctx);
-      if (response.ok) {
-        // Must use Response constructor for mutable headers
-        const cacheable = new Response(response.body, response);
-        // s-maxage controls CDN cache TTL
-        // Note: stale-while-revalidate is NOT supported by Cache API
-        cacheable.headers.set('Cache-Control', `public, s-maxage=${CACHE_TTL}`);
-        // Remove Set-Cookie — responses with Set-Cookie are never cached
-        cacheable.headers.delete('Set-Cookie');
-        ctx.waitUntil(cache.put(cacheKey, cacheable.clone()));
-        return cacheable;
-      }
-      return response;
     }
 
     return handler.fetch(request, env, ctx);

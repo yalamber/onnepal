@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     const res = NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) });
-    // Cache handled at Worker level via Cache API
+    res.headers.set('Cache-Control', 'public, s-maxage=300');
     return res;
   } catch (error) {
     console.error('Jobs API error:', error);
