@@ -1,13 +1,14 @@
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getClassifieds, getClassifiedsCount, getClassifiedCategories } from '@/lib/db/queries/classifieds';
-import { unstable_cache } from 'next/cache';
 import ClassifiedsClient from './classifieds-client';
 
 export const revalidate = 300;
 
-const getInitialData = unstable_cache(
-  async () => {
+export default async function ClassifiedsPage() {
+  let initialData = { listings: [] as any[], total: 0, categories: [] as any[] };
+
+  try {
     const d1 = getD1Database();
     const db = getDb(d1);
     const [listings, total, categories] = await Promise.all([
@@ -15,18 +16,14 @@ const getInitialData = unstable_cache(
       getClassifiedsCount(db, {}),
       getClassifiedCategories(db),
     ]);
-    return { listings, total, categories };
-  },
-  ['classifieds-initial'],
-  { revalidate: 300 },
-);
+    initialData = {
+      listings: listings.map(l => ({ ...l, createdAt: l.createdAt instanceof Date ? l.createdAt.toISOString() : String(l.createdAt) })),
+      total,
+      categories,
+    };
+  } catch (e) {
+    console.error('Classifieds SSR error:', e);
+  }
 
-export default async function ClassifiedsPage() {
-  const data = await getInitialData();
-  const initialData = {
-    listings: data.listings.map(l => ({ ...l, createdAt: l.createdAt instanceof Date ? l.createdAt.toISOString() : String(l.createdAt) })),
-    total: data.total,
-    categories: data.categories,
-  };
   return <ClassifiedsClient initialData={initialData} />;
 }

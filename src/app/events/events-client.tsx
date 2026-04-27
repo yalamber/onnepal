@@ -58,7 +58,7 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
     } catch {} finally { setLoading(false); }
   }, [category, search, page]);
 
-  useEffect(() => { if (category || search || page > 1) fetchItems(); }, [fetchItems]);
+  useEffect(() => { if (category || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 
   const firstImage = (item: Event) => {

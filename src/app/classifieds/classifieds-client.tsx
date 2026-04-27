@@ -78,7 +78,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
     } catch {} finally { setLoading(false); setInitialLoad(false); }
   }, []);
 
-  useEffect(() => { if (activeCategory || activeSearch || page > 1) fetchListings(page, activeCategory, activeSearch); }, [fetchListings]);
+  useEffect(() => { if (activeCategory || activeSearch || page > 1 || initialData.listings.length === 0) fetchListings(page, activeSearch, activeCategory); }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
