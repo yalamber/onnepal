@@ -31,6 +31,14 @@ interface ExecutionContext {
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+// Paths whose GET responses are cached at the edge via Cache API.
+// Workers run BEFORE the CDN cache, so Cache-Control headers alone
+// do NOT make the CDN cache Worker-generated responses. The Cache API
+// is required to explicitly store and serve cached responses.
+// Ref: https://developers.cloudflare.com/cache/interaction-cloudflare-products/workers/
+const CACHEABLE_API = ['/api/classifieds', '/api/jobs', '/api/events', '/api/lost-found', '/api/directory'];
+const CACHE_TTL = 300; // 5 minutes
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -47,6 +55,36 @@ export default {
       }, allowedWidths);
     }
 
+    // Cache public GET API responses at the edge.
+    // Only GET requests on public listing endpoints are cached.
+    // POST/PATCH/DELETE always bypass cache.
+    if (request.method === 'GET' && CACHEABLE_API.some(p => url.pathname.startsWith(p))) {
+      const cache = caches.default;
+      // Cache key uses URL only — exclude request headers (cookies, auth)
+      // so all users share the same cached response for the same query.
+      const cacheKey = new Request(url.toString());
+
+      const cached = await cache.match(cacheKey);
+      if (cached) return cached;
+
+      const response = await handler.fetch(request, env, ctx);
+
+      if (response.ok) {
+        // Response constructor creates a mutable copy.
+        const toCache = new Response(response.body, response);
+        // s-maxage tells Cache API how long to keep it.
+        toCache.headers.set('Cache-Control', `public, s-maxage=${CACHE_TTL}`);
+        // Responses with Set-Cookie are never cached by the Cache API.
+        toCache.headers.delete('Set-Cookie');
+        // Store in cache without blocking the response.
+        ctx.waitUntil(cache.put(cacheKey, toCache.clone()));
+        return toCache;
+      }
+
+      return response;
+    }
+
+    // Everything else: SSR pages, auth API, POST endpoints, etc.
     return handler.fetch(request, env, ctx);
   },
 };
