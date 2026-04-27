@@ -60,7 +60,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
   const [activeSearch, setActiveSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
   const [loading, setLoading] = useState(false);
-  const [initialLoad, setInitialLoad] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(initialData.listings.length === 0);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const fetchListings = useCallback(async (p: number, s: string, c: string) => {
