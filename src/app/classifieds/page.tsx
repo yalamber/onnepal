@@ -22,6 +22,11 @@ const getInitialData = unstable_cache(
 );
 
 export default async function ClassifiedsPage() {
-  const initialData = await getInitialData();
+  const data = await getInitialData();
+  const initialData = {
+    listings: data.listings.map(l => ({ ...l, createdAt: l.createdAt instanceof Date ? l.createdAt.toISOString() : String(l.createdAt) })),
+    total: data.total,
+    categories: data.categories,
+  };
   return <ClassifiedsClient initialData={initialData} />;
 }

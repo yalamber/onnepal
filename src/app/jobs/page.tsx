@@ -21,6 +21,10 @@ const getInitialData = unstable_cache(
 );
 
 export default async function JobsPage() {
-  const initialData = await getInitialData();
+  const data = await getInitialData();
+  const initialData = {
+    items: data.items.map(i => ({ ...i, createdAt: i.createdAt instanceof Date ? i.createdAt.toISOString() : String(i.createdAt) })),
+    total: data.total,
+  };
   return <JobsClient initialData={initialData} />;
 }
