@@ -3,7 +3,6 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getLostFoundItems, getLostFoundCount } from '@/lib/db/queries/lost-found';
 import LostFoundClient from './lost-found-client';
 
-export const revalidate = 300;
 
 export default async function LostFoundPage() {
   let initialData = { items: [] as any[], total: 0 };

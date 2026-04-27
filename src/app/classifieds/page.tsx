@@ -3,7 +3,6 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getClassifieds, getClassifiedsCount, getClassifiedCategories } from '@/lib/db/queries/classifieds';
 import ClassifiedsClient from './classifieds-client';
 
-export const revalidate = 300;
 
 export default async function ClassifiedsPage() {
   let initialData = { listings: [] as any[], total: 0, categories: [] as any[] };

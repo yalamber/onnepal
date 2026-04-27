@@ -14,27 +14,14 @@ import { getActiveOffers } from '@/lib/db/queries/offers';
 import { getTeamMembers } from '@/lib/db/queries/team';
 import { getFaqs } from '@/lib/db/queries/faq';
 import { BusinessPage } from '@/components/business-page';
-import { unstable_cache } from 'next/cache';
-
-export const revalidate = 300;
-
-const getMetaData = unstable_cache(
-  async (sub: string) => {
-    const d1 = getD1Database();
-    const db = getDb(d1);
-    const business = await getBusinessBySubdomain(db, sub);
-    if (!business || !business.isPublished) return null;
-    return { name: business.businessName, desc: business.description };
-  },
-  ['site-meta'],
-  { revalidate: 300 },
-);
 
 export async function generateMetadata({ params }: { params: Promise<{ subdomain: string }> }) {
   const { subdomain } = await params;
-  const data = await getMetaData(subdomain);
-  if (!data) return { title: 'Not Found' };
-  return { title: `${data.name} | OnNepal`, description: data.desc || `${data.name} on OnNepal` };
+  const d1 = getD1Database();
+  const db = getDb(d1);
+  const business = await getBusinessBySubdomain(db, subdomain);
+  if (!business || !business.isPublished) return { title: 'Not Found' };
+  return { title: `${business.businessName} | OnNepal`, description: business.description || `${business.businessName} on OnNepal` };
 }
 
 export default async function SitePage({
@@ -44,42 +31,27 @@ export default async function SitePage({
 }) {
   const { subdomain } = await params;
 
-  const getPageData = unstable_cache(
-    async (sub: string) => {
-      const d1 = getD1Database();
-      const db = getDb(d1);
-      const biz = await getBusinessBySubdomain(db, sub);
-      if (!biz || !biz.isPublished) return null;
+  const d1 = getD1Database();
+  const db = getDb(d1);
 
-      const [links, announcements, products, ctas, gallery, reviews, menuItems, offers, teamMembers, faqs, avgRating] = await Promise.all([
-        getSocialLinks(db, biz.id),
-        getActiveAnnouncements(db, biz.id),
-        getAvailableProducts(db, biz.id),
-        getCtaButtons(db, biz.id),
-        getGalleryImages(db, biz.id),
-        getApprovedReviews(db, biz.id),
-        getAvailableMenuItems(db, biz.id),
-        getActiveOffers(db, biz.id),
-        getTeamMembers(db, biz.id),
-        getFaqs(db, biz.id),
-        getAverageRating(db, biz.id),
-      ]);
-      return { business: biz, links, announcements, products, ctas, gallery, reviews, menuItems, offers, teamMembers, faqs, avgRating };
-    },
-    [`site-${subdomain}`],
-    { revalidate: 300, tags: [`site:${subdomain}`] },
-  );
+  const business = await getBusinessBySubdomain(db, subdomain);
+  if (!business || !business.isPublished) notFound();
 
-  const data = await getPageData(subdomain);
-  if (!data) notFound();
-  const { business, links, announcements, products, ctas, gallery, reviews, menuItems, offers, teamMembers, faqs, avgRating } = data;
+  const [links, announcements, products, ctas, gallery, reviews, menuItems, offers, teamMembers, faqs, avgRating] = await Promise.all([
+    getSocialLinks(db, business.id),
+    getActiveAnnouncements(db, business.id),
+    getAvailableProducts(db, business.id),
+    getCtaButtons(db, business.id),
+    getGalleryImages(db, business.id),
+    getApprovedReviews(db, business.id),
+    getAvailableMenuItems(db, business.id),
+    getActiveOffers(db, business.id),
+    getTeamMembers(db, business.id),
+    getFaqs(db, business.id),
+    getAverageRating(db, business.id),
+  ]);
 
-  // Fire-and-forget page view (outside cache)
-  try {
-    const d1 = getD1Database();
-    const db = getDb(d1);
-    recordPageView(db, business.id).catch(() => {});
-  } catch {}
+  recordPageView(db, business.id).catch(() => {});
 
   return (
     <BusinessPage
@@ -98,14 +70,14 @@ export default async function SitePage({
         bookingEnabled: business.bookingEnabled,
         isVerified: business.isVerified,
         primaryColor: business.primaryColor || '#1e293b',
-        accentColor: business.accentColor || '#334155',
+        accentColor: business.accentColor || '#1e293b',
         subdomain: business.subdomain,
         id: business.id,
         enabledModules: business.enabledModules,
       }}
       links={links}
       announcements={announcements}
-      products={products}
+      products={products.map(p => ({ id: p.id, name: p.name, description: p.description, price: p.price, imageUrl: p.imageUrl }))}
       ctas={ctas}
       gallery={gallery}
       reviews={reviews}

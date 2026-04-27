@@ -24,13 +24,15 @@ export async function GET(request: NextRequest) {
       getCategories(db),
     ]);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       businesses,
       total,
       page,
       totalPages: Math.ceil(total / limit),
       categories,
     });
+    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    return response;
   } catch (error) {
     console.error('Directory API error:', error);
     return NextResponse.json(

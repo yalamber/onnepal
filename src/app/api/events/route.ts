@@ -40,7 +40,9 @@ export async function GET(request: NextRequest) {
       getEventsCount(db, { category, search, location }),
     ]);
 
-    return NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) });
+    const res = NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) });
+    res.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    return res;
   } catch (error) {
     console.error('Events API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

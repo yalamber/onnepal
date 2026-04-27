@@ -3,7 +3,6 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getJobs, getJobsCount } from '@/lib/db/queries/jobs';
 import JobsClient from './jobs-client';
 
-export const revalidate = 300;
 
 export default async function JobsPage() {
   let initialData = { items: [] as any[], total: 0 };

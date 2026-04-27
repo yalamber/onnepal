@@ -3,7 +3,6 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getEvents, getEventsCount } from '@/lib/db/queries/events';
 import EventsClient from './events-client';
 
-export const revalidate = 300;
 
 export default async function EventsPage() {
   let initialData = { items: [] as any[], total: 0 };

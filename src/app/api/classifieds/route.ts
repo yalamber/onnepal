@@ -35,13 +35,15 @@ export async function GET(request: NextRequest) {
       getClassifiedCategories(db),
     ]);
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       listings,
       total,
       page,
       totalPages: Math.ceil(total / limit),
       categories,
     });
+    res.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    return res;
   } catch (error) {
     console.error('Classifieds API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
