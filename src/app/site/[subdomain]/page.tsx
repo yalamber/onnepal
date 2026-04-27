@@ -21,7 +21,25 @@ export async function generateMetadata({ params }: { params: Promise<{ subdomain
   const db = getDb(d1);
   const business = await getBusinessBySubdomain(db, subdomain);
   if (!business || !business.isPublished) return { title: 'Not Found' };
-  return { title: `${business.businessName} | OnNepal`, description: business.description || `${business.businessName} on OnNepal` };
+  const logoImg = business.logoUrl ? `https://images.onnepal.com/${business.logoUrl}` : undefined;
+  return {
+    title: business.businessName,
+    description: business.description || `${business.businessName} on OnNepal`,
+    openGraph: {
+      title: business.businessName,
+      description: business.description || `${business.businessName} — Business page on OnNepal`,
+      url: `https://${subdomain}.onnepal.com`,
+      type: 'profile',
+      ...(logoImg && { images: [{ url: logoImg, width: 200, height: 200 }] }),
+    },
+    twitter: {
+      card: 'summary',
+      title: business.businessName,
+      description: business.description || `${business.businessName} on OnNepal`,
+      ...(logoImg && { images: [logoImg] }),
+    },
+    alternates: { canonical: `https://${subdomain}.onnepal.com` },
+  };
 }
 
 export default async function SitePage({
@@ -53,7 +71,24 @@ export default async function SitePage({
 
   recordPageView(db, business.id).catch(() => {});
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: business.businessName,
+    description: business.description || undefined,
+    url: `https://${business.subdomain}.onnepal.com`,
+    ...(business.phone && { telephone: business.phone }),
+    ...(business.address && { address: { '@type': 'PostalAddress', streetAddress: business.address } }),
+    ...(business.logoUrl && { image: `https://images.onnepal.com/${business.logoUrl}` }),
+    ...(business.businessCategory && { category: business.businessCategory }),
+    ...(avgRating && avgRating.count > 0 && {
+      aggregateRating: { '@type': 'AggregateRating', ratingValue: avgRating.average.toFixed(1), reviewCount: avgRating.count },
+    }),
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <BusinessPage
       business={{
         businessName: business.businessName,
@@ -87,5 +122,6 @@ export default async function SitePage({
       faqs={faqs}
       averageRating={avgRating}
     />
+    </>
   );
 }

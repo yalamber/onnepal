@@ -2,6 +2,13 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getJobs, getJobsCount } from '@/lib/db/queries/jobs';
 import JobsClient from './jobs-client';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Jobs in Nepal — Find Your Next Opportunity',
+  description: 'Browse job listings in Nepal. Full-time, part-time, remote, and freelance opportunities.',
+  openGraph: { title: 'Jobs in Nepal', description: 'Find your next opportunity in Nepal.' },
+};
 
 
 export default async function JobsPage() {

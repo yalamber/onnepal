@@ -2,6 +2,13 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getLostFoundItems, getLostFoundCount } from '@/lib/db/queries/lost-found';
 import LostFoundClient from './lost-found-client';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Lost & Found Nepal — Help Reunite Lost Items',
+  description: 'Report lost or found items in Nepal. Help reunite pets, documents, electronics, and valuables with their owners.',
+  openGraph: { title: 'Lost & Found Nepal', description: 'Report lost or found items in Nepal.' },
+};
 
 
 export default async function LostFoundPage() {
