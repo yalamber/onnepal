@@ -31,13 +31,14 @@ interface ExecutionContext {
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+const CACHEABLE_PATHS = ['/api/classifieds', '/api/jobs', '/api/events', '/api/lost-found', '/api/directory'];
+const CACHE_TTL = 300;
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     // Image optimization via Cloudflare Images binding.
-    // The parseImageParams validation inside handleImageOptimization
-    // normalizes backslashes and validates the origin hasn't changed.
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
       return handleImageOptimization(request, {
@@ -49,9 +50,23 @@ export default {
       }, allowedWidths);
     }
 
-    // Delegate everything else to vinext, forwarding ctx so that
-    // ctx.waitUntil() is available to background cache writes and
-    // other deferred work via getRequestExecutionContext().
+    // CDN cache for public GET API responses
+    if (request.method === 'GET' && CACHEABLE_PATHS.some(p => url.pathname.startsWith(p))) {
+      const cache = caches.default;
+      const cacheKey = new Request(url.toString(), request);
+      const cached = await cache.match(cacheKey);
+      if (cached) return cached;
+
+      const response = await handler.fetch(request, env, ctx);
+      if (response.ok) {
+        const cloned = new Response(response.body, response);
+        cloned.headers.set('Cache-Control', `public, s-maxage=${CACHE_TTL}, stale-while-revalidate=${CACHE_TTL * 2}`);
+        ctx.waitUntil(cache.put(cacheKey, cloned.clone()));
+        return cloned;
+      }
+      return response;
+    }
+
     return handler.fetch(request, env, ctx);
   },
 };
