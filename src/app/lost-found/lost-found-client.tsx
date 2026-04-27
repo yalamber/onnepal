@@ -114,13 +114,13 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
           </div>
         </div>
 
-        {/* Category pills */}
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-6 pb-1">
+        {/* Category pills — mobile only */}
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-6 pb-1 lg:hidden">
           <button onClick={() => { setCategory(''); setPage(1); }}
             className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium transition-colors cursor-pointer ${
               !category ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}>
-            All categories
+            All
           </button>
           {LOST_FOUND_CATEGORIES.map((cat) => (
             <button key={cat.slug} onClick={() => { setCategory(cat.name); setPage(1); }}
@@ -131,6 +131,30 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
             </button>
           ))}
         </div>
+
+        <div className="flex gap-10">
+          {/* Sidebar — desktop only */}
+          <aside className="hidden lg:block w-48 flex-shrink-0">
+            <nav className="space-y-0.5">
+              <button onClick={() => { setCategory(''); setPage(1); }}
+                className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                  !category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                }`}>
+                All items
+              </button>
+              {LOST_FOUND_CATEGORIES.map((cat) => (
+                <button key={cat.slug} onClick={() => { setCategory(cat.name); setPage(1); }}
+                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                    category === cat.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                  }`}>
+                  {cat.name}
+                </button>
+              ))}
+            </nav>
+          </aside>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
 
         {/* Results */}
         {loading ? (
@@ -194,6 +218,8 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
             )}
           </>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );

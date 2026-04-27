@@ -85,7 +85,8 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
           </select>
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-6 pb-1">
+        {/* Category pills — mobile only */}
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-6 pb-1 lg:hidden">
           <button onClick={() => { setCategory(''); setPage(1); }}
             className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium cursor-pointer transition-colors ${!category ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
             All
@@ -98,6 +99,29 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
           ))}
         </div>
 
+        <div className="flex gap-10">
+          {/* Sidebar — desktop only */}
+          <aside className="hidden lg:block w-48 flex-shrink-0">
+            <nav className="space-y-0.5">
+              <button onClick={() => { setCategory(''); setPage(1); }}
+                className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                  !category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                }`}>
+                All jobs
+              </button>
+              {JOB_CATEGORIES.map((c) => (
+                <button key={c.slug} onClick={() => { setCategory(c.name); setPage(1); }}
+                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                    category === c.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                  }`}>
+                  {c.name}
+                </button>
+              ))}
+            </nav>
+          </aside>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
         ) : items.length === 0 ? (
@@ -141,6 +165,8 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
             )}
           </>
         )}
+        </div>
+        </div>
       </div>
     </div>
   );
