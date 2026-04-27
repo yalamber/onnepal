@@ -386,17 +386,17 @@ export default function ClassifiedDetailPage() {
                   </>
                 )}
               </div>
-              {!isOwner && (
-                <div className="border-t border-gray-100 pt-4 space-y-2.5">
+              <div className="border-t border-gray-100 pt-4 space-y-2.5">
+                {currentUserId !== listing.userId && (
                   <MessageButton recipientId={listing.userId} listingType="classified" listingId={listing.id} listingTitle={listing.title} />
-                  {(phoneUrl || whatsappUrl) && (
-                    <div className="flex items-center gap-3 justify-center">
-                      {phoneUrl && <a href={phoneUrl} className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><Phone className="h-3 w-3" /> Call</a>}
-                      {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><MessageCircle className="h-3 w-3" /> WhatsApp</a>}
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+                {(phoneUrl || whatsappUrl) && (
+                  <div className="flex items-center gap-3 justify-center">
+                    {phoneUrl && <a href={phoneUrl} className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><Phone className="h-3 w-3" /> Call</a>}
+                    {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><MessageCircle className="h-3 w-3" /> WhatsApp</a>}
+                  </div>
+                )}
+              </div>
               {isOwner && listing.status === 'active' && (
                 <button onClick={async () => {
                   await fetch(`/api/classifieds/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'sold' }) });

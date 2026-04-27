@@ -138,7 +138,9 @@ export default function LostFoundDetailPage() {
               </div>
             )}
             <div className="border-t border-gray-100 pt-4 space-y-2.5">
-              <MessageButton recipientId={item.userId} listingType="lost-found" listingId={item.id} listingTitle={item.title} />
+              {currentUserId !== item.userId && (
+                <MessageButton recipientId={item.userId} listingType="lost-found" listingId={item.id} listingTitle={item.title} />
+              )}
               {(item.contactPhone || item.contactWhatsapp) && (
                 <div className="flex items-center gap-3 justify-center">
                   {item.contactPhone && <a href={`tel:${item.contactPhone}`} className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><Phone className="h-3 w-3" /> Call</a>}
