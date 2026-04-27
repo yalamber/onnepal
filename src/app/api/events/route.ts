@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     const res = NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) });
-    res.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    // Cache handled at Worker level via Cache API
     return res;
   } catch (error) {
     console.error('Events API error:', error);

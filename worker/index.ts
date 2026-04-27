@@ -50,19 +50,26 @@ export default {
       }, allowedWidths);
     }
 
-    // CDN cache for public GET API responses
+    // CDN cache for public GET API responses using Cloudflare Cache API
+    // Docs: https://developers.cloudflare.com/workers/runtime-apis/cache/
     if (request.method === 'GET' && CACHEABLE_PATHS.some(p => url.pathname.startsWith(p))) {
       const cache = caches.default;
-      const cacheKey = new Request(url.toString(), request);
+      // Use URL-only cache key (exclude request headers like cookies/auth)
+      const cacheKey = new Request(url.toString());
       const cached = await cache.match(cacheKey);
       if (cached) return cached;
 
       const response = await handler.fetch(request, env, ctx);
       if (response.ok) {
-        const cloned = new Response(response.body, response);
-        cloned.headers.set('Cache-Control', `public, s-maxage=${CACHE_TTL}, stale-while-revalidate=${CACHE_TTL * 2}`);
-        ctx.waitUntil(cache.put(cacheKey, cloned.clone()));
-        return cloned;
+        // Must use Response constructor for mutable headers
+        const cacheable = new Response(response.body, response);
+        // s-maxage controls CDN cache TTL
+        // Note: stale-while-revalidate is NOT supported by Cache API
+        cacheable.headers.set('Cache-Control', `public, s-maxage=${CACHE_TTL}`);
+        // Remove Set-Cookie — responses with Set-Cookie are never cached
+        cacheable.headers.delete('Set-Cookie');
+        ctx.waitUntil(cache.put(cacheKey, cacheable.clone()));
+        return cacheable;
       }
       return response;
     }
