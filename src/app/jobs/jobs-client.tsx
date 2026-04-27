@@ -54,8 +54,8 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
     } catch {} finally { setLoading(false); }
   }, [category, type, search, page]);
 
-  useEffect(() => { fetchItems(); }, [fetchItems]);
-  useEffect(() => { const t = setTimeout(() => { setPage(1); fetchItems(); }, 350); return () => clearTimeout(t); }, [search]);
+  useEffect(() => { if (category || type || search || page > 1) fetchItems(); }, [fetchItems]);
+  useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 
   return (
     <div className="min-h-screen bg-white">

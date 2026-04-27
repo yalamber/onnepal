@@ -65,10 +65,10 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
     } catch {} finally { setLoading(false); }
   }, [type, category, search, page]);
 
-  useEffect(() => { fetchItems(); }, [fetchItems]);
+  useEffect(() => { if (type || category || search || page > 1) fetchItems(); }, [fetchItems]);
 
   useEffect(() => {
-    const t = setTimeout(() => { setPage(1); fetchItems(); }, 350);
+    const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350);
     return () => clearTimeout(t);
   }, [search]);
 

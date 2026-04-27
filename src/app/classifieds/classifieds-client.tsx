@@ -59,7 +59,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
@@ -78,7 +78,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
     } catch {} finally { setLoading(false); setInitialLoad(false); }
   }, []);
 
-  useEffect(() => { fetchListings(1, '', ''); }, [fetchListings]);
+  useEffect(() => { if (activeCategory || activeSearch || page > 1) fetchListings(page, activeCategory, activeSearch); }, [fetchListings]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
