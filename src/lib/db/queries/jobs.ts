@@ -152,13 +152,42 @@ export async function deleteJob(db: Database, id: string, userId: string) {
   await db.delete(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
 }
 
+interface UpdateJobData {
+  title?: string;
+  description?: string | null;
+  company?: string;
+  category?: string;
+  type?: string;
+  location?: string | null;
+  isRemote?: boolean;
+  salary?: string | null;
+  experience?: string | null;
+  applyUrl?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  imageUrls?: string[] | null;
+  status?: string;
+}
+
 export async function updateJob(
   db: Database, id: string, userId: string,
-  data: Record<string, unknown>
+  data: UpdateJobData
 ) {
   const updates: Record<string, unknown> = { updatedAt: new Date() };
-  for (const [k, v] of Object.entries(data)) {
-    if (v !== undefined && k !== 'id' && k !== 'userId') updates[k] = v;
-  }
+  if (data.title !== undefined) updates.title = data.title;
+  if (data.description !== undefined) updates.description = data.description;
+  if (data.company !== undefined) updates.company = data.company;
+  if (data.category !== undefined) updates.category = data.category;
+  if (data.type !== undefined) updates.type = data.type;
+  if (data.location !== undefined) updates.location = data.location;
+  if (data.isRemote !== undefined) updates.isRemote = data.isRemote;
+  if (data.salary !== undefined) updates.salary = data.salary;
+  if (data.experience !== undefined) updates.experience = data.experience;
+  if (data.applyUrl !== undefined) updates.applyUrl = data.applyUrl;
+  if (data.contactEmail !== undefined) updates.contactEmail = data.contactEmail;
+  if (data.contactPhone !== undefined) updates.contactPhone = data.contactPhone;
+  if (data.imageUrls !== undefined) updates.imageUrls = data.imageUrls ? JSON.stringify(data.imageUrls) : null;
+  if (data.status !== undefined) updates.status = data.status;
+
   await db.update(jobs).set(updates).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
 }

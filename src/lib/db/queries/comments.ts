@@ -3,7 +3,7 @@ import { comments, users } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
 
-export async function getComments(db: Database, targetType: string, targetId: string) {
+export async function getComments(db: Database, targetType: string, targetId: string, limit: number = 100) {
   return db
     .select({
       id: comments.id,
@@ -15,7 +15,8 @@ export async function getComments(db: Database, targetType: string, targetId: st
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
     .where(and(eq(comments.targetType, targetType), eq(comments.targetId, targetId)))
-    .orderBy(desc(comments.createdAt));
+    .orderBy(desc(comments.createdAt))
+    .limit(limit);
 }
 
 export async function createComment(

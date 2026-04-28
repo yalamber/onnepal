@@ -3,9 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Briefcase, Clock, Phone, Mail, ExternalLink, Loader2, Trash2, Edit2, Check } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Phone, Mail, ExternalLink, Loader2 } from 'lucide-react';
 import { JOB_TYPES } from '@/lib/job-categories';
 import { CommentSection } from '@/components/comment-section';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { OwnerActions } from '@/components/owner-actions';
+import { SaveCancelButtons } from '@/components/form-buttons';
+import { ContactLinks } from '@/components/contact-links';
 
 interface Job {
   id: string; userId: string; title: string; company: string; description: string | null; category: string;
@@ -19,22 +23,13 @@ export default function JobDetailPage() {
   const router = useRouter();
   const [item, setItem] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [userIsAdmin, setUserIsAdmin] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/auth/me').then(r => r.ok ? r.json() : null)
-      .then((d: { user?: { id: string; isAdmin?: boolean } } | null) => {
-        if (d?.user) { setCurrentUserId(d.user.id); if (d.user.isAdmin) setUserIsAdmin(true); }
-      });
-  }, []);
+  const { isOwner } = useCurrentUser();
 
   useEffect(() => {
     fetch(`/api/jobs/${id}`).then(r => r.ok ? r.json() : null)
       .then((d: { item: Job } | null) => { if (d) setItem(d.item); }).finally(() => setLoading(false));
   }, [id]);
 
-  const isOwner = currentUserId && item && (item.userId === currentUserId || userIsAdmin);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', company: '', description: '', location: '', salary: '', experience: '', applyUrl: '', contactEmail: '', contactPhone: '' });
@@ -75,6 +70,7 @@ export default function JobDetailPage() {
   if (!item) return <div className="max-w-2xl mx-auto px-4 py-20 text-center"><p className="text-sm text-gray-500 mb-4">Job not found</p><Link href="/jobs" className="text-sm text-gray-400 hover:text-gray-950">Back to Jobs</Link></div>;
 
   const typeLabel = JOB_TYPES.find(t => t.value === item.type)?.label || item.type;
+  const ownerOfItem = isOwner(item.userId);
 
   return (
     <div className="min-h-screen bg-white">
@@ -105,14 +101,7 @@ export default function JobDetailPage() {
                   <input type="email" value={editForm.contactEmail} onChange={(e) => setEditForm({ ...editForm, contactEmail: e.target.value })}
                     placeholder="Email" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={saveEdit} disabled={saving}
-                    className="h-9 px-4 bg-gray-950 text-white text-xs font-medium rounded-md hover:bg-gray-800 disabled:opacity-30 cursor-pointer flex items-center gap-1.5">
-                    {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Check className="h-3.5 w-3.5" /> Save</>}
-                  </button>
-                  <button onClick={() => setEditing(false)}
-                    className="h-9 px-4 border border-gray-200 text-gray-600 text-xs font-medium rounded-md hover:bg-gray-50 cursor-pointer">Cancel</button>
-                </div>
+                <SaveCancelButtons saving={saving} onSave={saveEdit} onCancel={() => setEditing(false)} />
               </div>
             ) : (
               <div className="flex items-start gap-3">
@@ -125,15 +114,8 @@ export default function JobDetailPage() {
                       <h1 className="text-xl font-bold text-gray-950">{item.title}</h1>
                       <p className="text-sm text-gray-600 mt-0.5">{item.company}</p>
                     </div>
-                    {isOwner && (
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        <button onClick={startEdit} className="p-1.5 text-gray-400 hover:text-gray-950 cursor-pointer transition-colors" title="Edit">
-                          <Edit2 className="h-4 w-4" />
-                        </button>
-                        <button onClick={deleteItem} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" title="Delete">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
+                    {ownerOfItem && (
+                      <OwnerActions onEdit={startEdit} onDelete={deleteItem} />
                     )}
                   </div>
                 </div>
@@ -177,10 +159,7 @@ export default function JobDetailPage() {
                 </a>
               )}
               {item.contactPhone && (
-                <a href={`tel:${item.contactPhone}`}
-                  className="w-full inline-flex items-center justify-center gap-1.5 h-9 rounded-md text-xs border border-gray-200 text-gray-700 text-sm hover:bg-gray-50 transition-colors">
-                  <Phone className="h-4 w-4" /> {item.contactPhone}
-                </a>
+                <ContactLinks phone={item.contactPhone} />
               )}
               {!item.applyUrl && !item.contactEmail && !item.contactPhone && (
                 <p className="text-sm text-gray-400">No application method provided.</p>

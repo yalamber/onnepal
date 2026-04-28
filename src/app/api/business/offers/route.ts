@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getAllOffers, createOffer } from '@/lib/db/queries/offers';
 import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
+import { z } from 'zod';
+
+const offerSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200),
+  description: z.string().max(2000).nullish(),
+  discountText: z.string().max(100).nullish(),
+  code: z.string().max(50).nullish(),
+  startsAt: z.string().nullish(),
+  expiresAt: z.string().nullish(),
+});
 
 export async function GET(request: Request) {
   try {
@@ -21,18 +31,16 @@ export async function POST(request: Request) {
     const auth = await getAuthenticatedBusiness(request);
     if ('error' in auth) return auth.error;
 
-    const body = (await request.json()) as {
-      title?: string;
-      description?: string;
-      discountText?: string;
-      code?: string;
-      startsAt?: string;
-      expiresAt?: string;
-    };
-
-    if (!body.title || typeof body.title !== 'string') {
-      return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+    const raw = await request.json();
+    const validation = offerSchema.safeParse(raw);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: validation.error.flatten() },
+        { status: 400 }
+      );
     }
+
+    const body = validation.data;
 
     const result = await createOffer(auth.db, auth.businessId, {
       title: body.title,

@@ -3,7 +3,7 @@ import { subdomainSchema } from './subdomain';
 
 export const signupSchema = z.object({
   email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(128),
   displayName: z.string().min(2, 'Display name must be at least 2 characters').max(100),
 });
 
@@ -51,7 +51,7 @@ export const productSchema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
   description: z.string().max(500).optional(),
   price: z.string().max(50).optional(),
-  imageUrl: z.string().url().optional().or(z.literal('')),
+  imageUrl: z.string().max(500).nullish(),
   category: z.string().max(50).optional(),
   isAvailable: z.boolean().optional(),
 });
@@ -63,5 +63,5 @@ export const ctaButtonSchema = z.object({
 });
 
 export const reorderSchema = z.object({
-  ids: z.array(z.string()).min(1),
+  ids: z.array(z.string()).min(1).max(200),
 });

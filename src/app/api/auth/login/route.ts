@@ -26,6 +26,10 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = validation.data;
 
+    // TODO: Add login rate limiting (e.g. 10 attempts per hour per email).
+    // This requires a dedicated rate_limits table to track failed login attempts,
+    // since the current rate limiter counts rows in existing domain tables.
+
     const d1 = getD1Database();
     const db = getDb(d1);
 

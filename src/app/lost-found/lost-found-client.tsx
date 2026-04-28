@@ -2,9 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, Plus, MapPin, Clock, ChevronLeft, ChevronRight, Loader2, AlertTriangle, Eye } from 'lucide-react';
+import { Plus, MapPin, Clock, Loader2, AlertTriangle, Eye } from 'lucide-react';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
-import { imageUrl } from '@/components/image-upload';
+import { timeAgo } from '@/lib/time-ago';
+import { firstImageUrl } from '@/lib/image-utils';
+import { SearchInput } from '@/components/search-input';
+import { Pagination } from '@/components/pagination';
+import { EmptyState } from '@/components/empty-state';
+import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
 
 interface Item {
   id: string;
@@ -20,20 +25,14 @@ interface Item {
   userName: string | null;
 }
 
-function timeAgo(date: string | Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(diff / 3600000);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(diff / 86400000);
-  return `${days}d ago`;
-}
-
 export interface LostFoundInitialData {
   items: Item[];
   total: number;
 }
+
+// CategorySidebar/MobilePills expect slug-based identity; the API filters by name,
+// so we use name as the slug value for seamless interop.
+const categoryNavItems = LOST_FOUND_CATEGORIES.map((c) => ({ name: c.name, slug: c.name }));
 
 export default function LostFoundClient({ initialData }: { initialData: LostFoundInitialData }) {
   const [items, setItems] = useState<Item[]>(initialData.items);
@@ -72,9 +71,9 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
     return () => clearTimeout(t);
   }, [search]);
 
-  const firstImage = (item: Item) => {
-    if (!item.imageUrls) return null;
-    try { const arr = JSON.parse(item.imageUrls) as string[]; return arr[0] ? imageUrl(arr[0]) : null; } catch { return null; }
+  const handleCategorySelect = (cat: string) => {
+    setCategory(cat);
+    setPage(1);
   };
 
   return (
@@ -94,13 +93,8 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search lost & found items..."
-              className="w-full h-10 pl-9 pr-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
-            />
+          <div className="flex-1">
+            <SearchInput value={search} onChange={setSearch} placeholder="Search lost & found items..." />
           </div>
           <div className="flex gap-2">
             {['', 'lost', 'found'].map((t) => (
@@ -115,42 +109,24 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
         </div>
 
         {/* Category pills — mobile only */}
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-6 pb-1 lg:hidden">
-          <button onClick={() => { setCategory(''); setPage(1); }}
-            className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium transition-colors cursor-pointer ${
-              !category ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}>
-            All
-          </button>
-          {LOST_FOUND_CATEGORIES.map((cat) => (
-            <button key={cat.slug} onClick={() => { setCategory(cat.name); setPage(1); }}
-              className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium transition-colors cursor-pointer ${
-                category === cat.name ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}>
-              {cat.name}
-            </button>
-          ))}
+        <div className="mb-6">
+          <CategoryMobilePills
+            categories={categoryNavItems}
+            activeCategory={category}
+            onSelect={handleCategorySelect}
+            allLabel="All"
+          />
         </div>
 
         <div className="flex gap-10">
           {/* Sidebar — desktop only */}
           <aside className="hidden lg:block w-48 flex-shrink-0">
-            <nav className="space-y-0.5">
-              <button onClick={() => { setCategory(''); setPage(1); }}
-                className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                  !category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                }`}>
-                All items
-              </button>
-              {LOST_FOUND_CATEGORIES.map((cat) => (
-                <button key={cat.slug} onClick={() => { setCategory(cat.name); setPage(1); }}
-                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                    category === cat.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                  }`}>
-                  {cat.name}
-                </button>
-              ))}
-            </nav>
+            <CategorySidebar
+              categories={categoryNavItems}
+              activeCategory={category}
+              onSelect={handleCategorySelect}
+              allLabel="All items"
+            />
           </aside>
 
           {/* Content */}
@@ -160,17 +136,17 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
         ) : items.length === 0 ? (
-          <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-lg">
-            <AlertTriangle className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm font-medium text-gray-900">No items found</p>
-            <p className="text-xs text-gray-400 mt-1">Try adjusting your filters or post a new item</p>
-          </div>
+          <EmptyState
+            icon={AlertTriangle}
+            title="No items found"
+            subtitle="Try adjusting your filters or post a new item"
+          />
         ) : (
           <>
             <p className="text-xs text-gray-400 mb-3">{total} {total === 1 ? 'item' : 'items'}</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {items.map((item) => {
-                const thumb = firstImage(item);
+                const thumb = firstImageUrl(item.imageUrls);
                 return (
                   <Link key={item.id} href={`/lost-found/post/${item.id}`}
                     className="border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 transition-colors group">
@@ -203,19 +179,13 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-8">
-                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                  className="p-2 rounded-md border border-gray-200 text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer transition-colors">
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="text-sm text-gray-500">{page} / {totalPages}</span>
-                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                  className="p-2 rounded-md border border-gray-200 text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer transition-colors">
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            )}
+            <div className="mt-8">
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={(p) => setPage(p)}
+              />
+            </div>
           </>
         )}
           </div>

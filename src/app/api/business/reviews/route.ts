@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getApprovedReviews, createReview, getAverageRating } from '@/lib/db/queries/reviews';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
+import { reviews } from '@/lib/db/schema';
+import { eq, and, gte, count } from 'drizzle-orm';
 
 // Public route — returns approved reviews only
 export async function GET(request: Request) {
@@ -52,6 +54,20 @@ export async function POST(request: Request) {
 
     const d1 = getD1Database();
     const db = getDb(d1);
+
+    // Rate limit: max 5 reviews per business per day
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const [recentCount] = await db
+      .select({ count: count() })
+      .from(reviews)
+      .where(and(eq(reviews.businessId, businessId), gte(reviews.createdAt, oneDayAgo)));
+
+    if (recentCount && recentCount.count >= 5) {
+      return NextResponse.json(
+        { error: 'Too many reviews for this business today. Please try again later.' },
+        { status: 429 }
+      );
+    }
 
     const result = await createReview(db, businessId, {
       reviewerName: body.reviewerName,

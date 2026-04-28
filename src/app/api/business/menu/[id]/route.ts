@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import { updateMenuItem, deleteMenuItem } from '@/lib/db/queries/menu';
 import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
+import { z } from 'zod';
+
+const menuItemPatchSchema = z.object({
+  name: z.string().max(200).optional(),
+  description: z.string().max(1000).nullish(),
+  price: z.string().max(50).nullish(),
+  category: z.string().max(100).nullish(),
+  imageKey: z.string().max(500).nullish(),
+  isAvailable: z.boolean().optional(),
+});
 
 export async function PATCH(
   request: Request,
@@ -11,14 +21,24 @@ export async function PATCH(
     if ('error' in auth) return auth.error;
 
     const { id } = await params;
-    const body = (await request.json()) as Partial<{
-      name: string;
-      description: string;
-      price: string;
-      category: string;
-      imageKey: string;
-      isAvailable: boolean;
-    }>;
+    const raw = await request.json();
+    const validation = menuItemPatchSchema.safeParse(raw);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: validation.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const body = validation.data;
+
+    // Validate imageKey ownership: must start with the user's ID prefix
+    if (body.imageKey && !body.imageKey.startsWith(`${auth.session.userId}/`)) {
+      return NextResponse.json(
+        { error: 'Invalid image key' },
+        { status: 403 }
+      );
+    }
 
     await updateMenuItem(auth.db, id, auth.businessId, body);
 

@@ -2,9 +2,13 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, Plus, MapPin, Calendar, Clock, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, MapPin, Calendar, Clock, Loader2 } from 'lucide-react';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
-import { imageUrl } from '@/components/image-upload';
+import { firstImageUrl } from '@/lib/image-utils';
+import { SearchInput } from '@/components/search-input';
+import { Pagination } from '@/components/pagination';
+import { EmptyState } from '@/components/empty-state';
+import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
 
 interface Event {
   id: string;
@@ -40,11 +44,15 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
 
+  // CategorySidebar/MobilePills use slug, but API expects category name
+  const categoryNameFromSlug = (slug: string) => EVENT_CATEGORIES.find(c => c.slug === slug)?.name || '';
+
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (category) params.set('category', category);
+      const catName = categoryNameFromSlug(category);
+      if (catName) params.set('category', catName);
       if (search) params.set('search', search);
       params.set('page', String(page));
       params.set('limit', '12');
@@ -61,9 +69,9 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
   useEffect(() => { if (category || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 
-  const firstImage = (item: Event) => {
-    if (!item.imageUrls) return null;
-    try { const arr = JSON.parse(item.imageUrls) as string[]; return arr[0] ? imageUrl(arr[0]) : null; } catch { return null; }
+  const handleCategorySelect = (slug: string) => {
+    setCategory(slug);
+    setPage(1);
   };
 
   return (
@@ -81,47 +89,18 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search events..."
-              className="w-full h-10 pl-9 pr-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors" />
+          <div className="flex-1">
+            <SearchInput value={search} onChange={setSearch} placeholder="Search events..." />
           </div>
         </div>
 
-        {/* Category pills — mobile only */}
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-6 pb-1 lg:hidden">
-          <button onClick={() => { setCategory(''); setPage(1); }}
-            className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium cursor-pointer transition-colors ${!category ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-            All
-          </button>
-          {EVENT_CATEGORIES.map((c) => (
-            <button key={c.slug} onClick={() => { setCategory(c.name); setPage(1); }}
-              className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium cursor-pointer transition-colors ${category === c.name ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-              {c.name}
-            </button>
-          ))}
+        <div className="mb-6">
+          <CategoryMobilePills categories={EVENT_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All" />
         </div>
 
         <div className="flex gap-10">
-          {/* Sidebar — desktop only */}
-          <aside className="hidden lg:block w-48 flex-shrink-0">
-            <nav className="space-y-0.5">
-              <button onClick={() => { setCategory(''); setPage(1); }}
-                className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                  !category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                }`}>
-                All events
-              </button>
-              {EVENT_CATEGORIES.map((c) => (
-                <button key={c.slug} onClick={() => { setCategory(c.name); setPage(1); }}
-                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                    category === c.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                  }`}>
-                  {c.name}
-                </button>
-              ))}
-            </nav>
+          <aside className="w-48 flex-shrink-0">
+            <CategorySidebar categories={EVENT_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All events" />
           </aside>
 
           {/* Content */}
@@ -130,17 +109,13 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
         ) : items.length === 0 ? (
-          <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-lg">
-            <Calendar className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm font-medium text-gray-900">No events found</p>
-            <p className="text-xs text-gray-400 mt-1">Be the first to post an event</p>
-          </div>
+          <EmptyState icon={Calendar} title="No events found" subtitle="Be the first to post an event" />
         ) : (
           <>
             <p className="text-xs text-gray-400 mb-3">{total} {total === 1 ? 'event' : 'events'}</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {items.map((item) => {
-                const thumb = firstImage(item);
+                const thumb = firstImageUrl(item.imageUrls);
                 return (
                   <Link key={item.id} href={`/events/${item.id}`}
                     className="border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 transition-colors group">
@@ -167,15 +142,9 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
                 );
               })}
             </div>
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-8">
-                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                  className="p-2 rounded-md border border-gray-200 text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronLeft className="h-4 w-4" /></button>
-                <span className="text-sm text-gray-500">{page} / {totalPages}</span>
-                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                  className="p-2 rounded-md border border-gray-200 text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronRight className="h-4 w-4" /></button>
-              </div>
-            )}
+            <div className="mt-8">
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            </div>
           </>
         )}
           </div>

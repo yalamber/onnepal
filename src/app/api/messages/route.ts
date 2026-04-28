@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { sendMessage, getConversations, getThread, markAsRead } from '@/lib/db/queries/messages';
+import { getUserById } from '@/lib/db/queries/users';
 import { getSession } from '@/lib/auth/session';
 import { z } from 'zod';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
@@ -59,6 +60,11 @@ export async function POST(request: NextRequest) {
     }
 
     const db = getDb(d1);
+
+    const recipient = await getUserById(db, validation.data.recipientId);
+    if (!recipient) {
+      return NextResponse.json({ error: 'Recipient not found' }, { status: 400 });
+    }
 
     const result = await sendMessage(db, { senderId: session.userId, ...validation.data });
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });

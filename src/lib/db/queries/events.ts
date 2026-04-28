@@ -157,16 +157,44 @@ export async function deleteEvent(db: Database, id: string, userId: string) {
   await db.delete(events).where(and(eq(events.id, id), eq(events.userId, userId)));
 }
 
+interface UpdateEventData {
+  title?: string;
+  description?: string | null;
+  category?: string;
+  startDate?: string;
+  endDate?: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
+  venue?: string | null;
+  location?: string | null;
+  ticketPrice?: string | null;
+  ticketUrl?: string | null;
+  contactPhone?: string | null;
+  contactWhatsapp?: string | null;
+  imageUrls?: string[] | null;
+  status?: string;
+}
+
 export async function updateEvent(
   db: Database, id: string, userId: string,
-  data: Record<string, unknown>
+  data: UpdateEventData
 ) {
   const updates: Record<string, unknown> = { updatedAt: new Date() };
-  for (const [k, v] of Object.entries(data)) {
-    if (v !== undefined && k !== 'id' && k !== 'userId') {
-      if (k === 'imageUrls') updates[k] = v ? JSON.stringify(v) : null;
-      else updates[k] = v;
-    }
-  }
+  if (data.title !== undefined) updates.title = data.title;
+  if (data.description !== undefined) updates.description = data.description;
+  if (data.category !== undefined) updates.category = data.category;
+  if (data.startDate !== undefined) updates.startDate = data.startDate;
+  if (data.endDate !== undefined) updates.endDate = data.endDate;
+  if (data.startTime !== undefined) updates.startTime = data.startTime;
+  if (data.endTime !== undefined) updates.endTime = data.endTime;
+  if (data.venue !== undefined) updates.venue = data.venue;
+  if (data.location !== undefined) updates.location = data.location;
+  if (data.ticketPrice !== undefined) updates.ticketPrice = data.ticketPrice;
+  if (data.ticketUrl !== undefined) updates.ticketUrl = data.ticketUrl;
+  if (data.contactPhone !== undefined) updates.contactPhone = data.contactPhone;
+  if (data.contactWhatsapp !== undefined) updates.contactWhatsapp = data.contactWhatsapp;
+  if (data.imageUrls !== undefined) updates.imageUrls = data.imageUrls ? JSON.stringify(data.imageUrls) : null;
+  if (data.status !== undefined) updates.status = data.status;
+
   await db.update(events).set(updates).where(and(eq(events.id, id), eq(events.userId, userId)));
 }

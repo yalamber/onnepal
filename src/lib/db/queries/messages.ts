@@ -29,7 +29,8 @@ export async function getConversations(db: Database, userId: string) {
     .from(messages)
     .leftJoin(users, eq(messages.senderId, users.id))
     .where(or(eq(messages.senderId, userId), eq(messages.recipientId, userId)))
-    .orderBy(desc(messages.createdAt));
+    .orderBy(desc(messages.createdAt))
+    .limit(1000);
 
   const convMap = new Map<string, {
     otherUserId: string;
@@ -88,7 +89,8 @@ export async function getThread(db: Database, userId: string, otherUserId: strin
         and(eq(messages.senderId, otherUserId), eq(messages.recipientId, userId)),
       ),
     ))
-    .orderBy(messages.createdAt);
+    .orderBy(messages.createdAt)
+    .limit(200);
 }
 
 export async function markAsRead(db: Database, userId: string, senderId: string, listingType: string, listingId: string) {

@@ -2,22 +2,18 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, Plus, MapPin, Clock, Briefcase, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, MapPin, Clock, Briefcase, Loader2 } from 'lucide-react';
 import { JOB_CATEGORIES, JOB_TYPES } from '@/lib/job-categories';
+import { timeAgo } from '@/lib/time-ago';
+import { SearchInput } from '@/components/search-input';
+import { Pagination } from '@/components/pagination';
+import { EmptyState } from '@/components/empty-state';
+import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
 
 interface Job {
   id: string; title: string; company: string; description: string | null; category: string;
   type: string; location: string | null; isRemote: boolean; salary: string | null;
   experience: string | null; createdAt: string;
-}
-
-function timeAgo(date: string | Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const days = Math.floor(diff / 86400000);
-  if (days > 0) return `${days}d ago`;
-  const hrs = Math.floor(diff / 3600000);
-  if (hrs > 0) return `${hrs}h ago`;
-  return 'just now';
 }
 
 export interface JobsInitialData {
@@ -35,11 +31,15 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
 
+  // CategorySidebar/MobilePills use slug, but API expects category name
+  const categoryNameFromSlug = (slug: string) => JOB_CATEGORIES.find(c => c.slug === slug)?.name || '';
+
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (category) params.set('category', category);
+      const catName = categoryNameFromSlug(category);
+      if (catName) params.set('category', catName);
       if (type) params.set('type', type);
       if (search) params.set('search', search);
       params.set('page', String(page));
@@ -57,6 +57,11 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
   useEffect(() => { if (category || type || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 
+  const handleCategorySelect = (slug: string) => {
+    setCategory(slug);
+    setPage(1);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -72,11 +77,8 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search jobs, companies..."
-              className="w-full h-10 pl-9 pr-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors" />
+          <div className="flex-1">
+            <SearchInput value={search} onChange={setSearch} placeholder="Search jobs, companies..." />
           </div>
           <select value={type} onChange={(e) => { setType(e.target.value); setPage(1); }}
             className="h-10 px-3 rounded-md border border-gray-200 text-sm bg-white focus:outline-none focus:border-gray-400 transition-colors">
@@ -85,39 +87,13 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
           </select>
         </div>
 
-        {/* Category pills — mobile only */}
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-6 pb-1 lg:hidden">
-          <button onClick={() => { setCategory(''); setPage(1); }}
-            className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium cursor-pointer transition-colors ${!category ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-            All
-          </button>
-          {JOB_CATEGORIES.map((c) => (
-            <button key={c.slug} onClick={() => { setCategory(c.name); setPage(1); }}
-              className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-md font-medium cursor-pointer transition-colors ${category === c.name ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-              {c.name}
-            </button>
-          ))}
+        <div className="mb-6">
+          <CategoryMobilePills categories={JOB_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All" />
         </div>
 
         <div className="flex gap-10">
-          {/* Sidebar — desktop only */}
-          <aside className="hidden lg:block w-48 flex-shrink-0">
-            <nav className="space-y-0.5">
-              <button onClick={() => { setCategory(''); setPage(1); }}
-                className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                  !category ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                }`}>
-                All jobs
-              </button>
-              {JOB_CATEGORIES.map((c) => (
-                <button key={c.slug} onClick={() => { setCategory(c.name); setPage(1); }}
-                  className={`block w-full text-left px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                    category === c.name ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                  }`}>
-                  {c.name}
-                </button>
-              ))}
-            </nav>
+          <aside className="w-48 flex-shrink-0">
+            <CategorySidebar categories={JOB_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All jobs" />
           </aside>
 
           {/* Content */}
@@ -125,11 +101,7 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
         ) : items.length === 0 ? (
-          <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-lg">
-            <Briefcase className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm font-medium text-gray-900">No jobs found</p>
-            <p className="text-xs text-gray-400 mt-1">Post a job to start hiring</p>
-          </div>
+          <EmptyState icon={Briefcase} title="No jobs found" subtitle="Post a job to start hiring" />
         ) : (
           <>
             <p className="text-xs text-gray-400 mb-3">{total} {total === 1 ? 'job' : 'jobs'}</p>
@@ -154,15 +126,9 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
                 </Link>
               ))}
             </div>
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-8">
-                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                  className="p-2 rounded-md border border-gray-200 text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronLeft className="h-4 w-4" /></button>
-                <span className="text-sm text-gray-500">{page} / {totalPages}</span>
-                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                  className="p-2 rounded-md border border-gray-200 text-gray-400 hover:text-gray-950 disabled:opacity-30 cursor-pointer"><ChevronRight className="h-4 w-4" /></button>
-              </div>
-            )}
+            <div className="mt-8">
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            </div>
           </>
         )}
         </div>

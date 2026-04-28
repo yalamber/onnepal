@@ -2,9 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, ChevronLeft, ChevronRight, ChevronDown, Loader2 } from 'lucide-react';
+import { MapPin, ChevronDown, Loader2 } from 'lucide-react';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
-import { imageUrl } from '@/components/image-upload';
+import { timeAgo } from '@/lib/time-ago';
+import { firstImageUrl } from '@/lib/image-utils';
+import { SearchInput } from '@/components/search-input';
+import { Pagination } from '@/components/pagination';
+import { EmptyState } from '@/components/empty-state';
+import { Search } from 'lucide-react';
 
 interface Listing {
   id: string;
@@ -24,22 +29,6 @@ interface APIResponse {
   page: number;
   totalPages: number;
   categories: { category: string; count: number }[];
-}
-
-function timeAgo(date: string | Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  const hrs = Math.floor(mins / 60);
-  const days = Math.floor(hrs / 24);
-  if (days > 0) return `${days}d`;
-  if (hrs > 0) return `${hrs}h`;
-  if (mins > 0) return `${mins}m`;
-  return 'now';
-}
-
-function firstImage(urls: string | null): string | null {
-  if (!urls) return null;
-  try { const key = (JSON.parse(urls) as string[])[0]; return key ? imageUrl(key) : null; } catch { return null; }
 }
 
 const PER_PAGE = 12;
@@ -80,7 +69,11 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
 
   useEffect(() => { if (activeCategory || activeSearch || page > 1 || initialData.listings.length === 0) fetchListings(page, activeSearch, activeCategory); }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (value: string) => {
+    setSearchInput(value);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setActiveSearch(searchInput); setPage(1);
     fetchListings(1, searchInput, activeCategory);
@@ -118,11 +111,8 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
               Post ad
             </Link>
           </div>
-          <form onSubmit={handleSearch} className="mt-6 max-w-md relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300" />
-            <input type="text" value={searchInput} onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search classifieds..."
-              className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors" />
+          <form onSubmit={handleSearchSubmit} className="mt-6 max-w-md">
+            <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search classifieds..." />
           </form>
         </div>
       </section>
@@ -133,7 +123,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
       <section className="py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-10">
-            {/* Sidebar */}
+            {/* Sidebar — classifieds has subcategories so we keep custom UI */}
             <aside className="hidden lg:block w-52 flex-shrink-0">
               <nav>
                 <Link href="/classifieds"
@@ -184,7 +174,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
               </div>
             </aside>
 
-            {/* Mobile category bar */}
+            {/* Mobile category bar — classifieds has subcategories so we keep custom UI */}
             <div className="lg:hidden w-full mb-4 -mt-2 flex flex-col gap-3">
               <div className="flex gap-1 overflow-x-auto scrollbar-none pb-1">
                 <Link href="/classifieds"
@@ -223,14 +213,18 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
                 </div>
               ) : listings.length === 0 ? (
                 <div className="text-center py-20">
-                  <p className="text-sm text-gray-400 mb-4">{activeSearch || activeCategory ? 'No listings match your filters.' : 'No listings yet.'}</p>
-                  <Link href="/classifieds/post/new" className="text-sm text-gray-950 font-medium hover:underline">Post a free ad &rarr;</Link>
+                  <EmptyState
+                    icon={Search}
+                    title={activeSearch || activeCategory ? 'No listings match your filters.' : 'No listings yet.'}
+                    subtitle="Post a free ad to get started"
+                  />
+                  <Link href="/classifieds/post/new" className="text-sm text-gray-950 font-medium hover:underline mt-4 inline-block">Post a free ad &rarr;</Link>
                 </div>
               ) : (
                 <>
                   <div className={`divide-y divide-gray-100 ${loading && !initialLoad ? 'opacity-40' : ''} transition-opacity`}>
                     {listings.map((listing) => {
-                      const img = firstImage(listing.imageUrls);
+                      const img = firstImageUrl(listing.imageUrls);
                       return (
                         <Link key={listing.id} href={`/classifieds/post/${listing.id}`} className="group flex gap-4 py-4 first:pt-0">
                           {img ? (
@@ -251,13 +245,9 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
                       );
                     })}
                   </div>
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-1 mt-10">
-                      <button onClick={() => goToPage(page - 1)} disabled={page <= 1} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronLeft className="h-4 w-4" /></button>
-                      <span className="px-3 py-1.5 text-sm text-gray-400">Page <span className="text-gray-950 font-medium">{page}</span> of {totalPages}</span>
-                      <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-950 disabled:opacity-30"><ChevronRight className="h-4 w-4" /></button>
-                    </div>
-                  )}
+                  <div className="mt-10">
+                    <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+                  </div>
                 </>
               )}
             </div>

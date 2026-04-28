@@ -3,6 +3,8 @@ import { getBookings, createBooking } from '@/lib/db/queries/bookings';
 import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
+import { bookings } from '@/lib/db/schema';
+import { eq, and, gte, count } from 'drizzle-orm';
 
 export async function GET(request: Request) {
   try {
@@ -46,6 +48,20 @@ export async function POST(request: Request) {
 
     const d1 = getD1Database();
     const db = getDb(d1);
+
+    // Rate limit: max 10 bookings per business per day
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const [recentCount] = await db
+      .select({ count: count() })
+      .from(bookings)
+      .where(and(eq(bookings.businessId, businessId), gte(bookings.createdAt, oneDayAgo)));
+
+    if (recentCount && recentCount.count >= 10) {
+      return NextResponse.json(
+        { error: 'Too many booking requests for this business today. Please try again later.' },
+        { status: 429 }
+      );
+    }
 
     const result = await createBooking(db, businessId, {
       customerName: body.customerName,

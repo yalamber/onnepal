@@ -14,6 +14,14 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json() as { status?: string };
 
+    const validStatuses = ['active', 'sold', 'expired', 'removed'] as const;
+    if (body.status && !validStatuses.includes(body.status as typeof validStatuses[number])) {
+      return NextResponse.json(
+        { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
     const updates: Record<string, unknown> = { updatedAt: new Date() };
     if (body.status) updates.status = body.status;
 
