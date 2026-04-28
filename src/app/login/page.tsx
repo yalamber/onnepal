@@ -46,13 +46,13 @@ export default function LoginPage() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-xl font-bold text-slate-950 tracking-tight leading-[1.2]">Welcome back</h1>
-          <p className="text-slate-500 text-sm mt-2 leading-[1.6]">Log in to manage your businesses and ads</p>
+          <h1 className="text-xl font-bold text-gray-950 tracking-tight leading-[1.2]">Welcome back</h1>
+          <p className="text-gray-500 text-sm mt-2 leading-[1.6]">Log in to manage your businesses and ads</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="email" className="text-slate-700">Email</Label>
+            <Label htmlFor="email" className="text-gray-700">Email</Label>
             <Input
               id="email"
               type="email"
@@ -65,7 +65,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <Label htmlFor="password" className="text-slate-700">Password</Label>
+            <Label htmlFor="password" className="text-gray-700">Password</Label>
             <Input
               id="password"
               type="password"
@@ -81,16 +81,16 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+            className="w-full"
             disabled={loading}
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Log in'}
           </Button>
         </form>
 
-        <p className="text-center text-sm text-slate-400 mt-8">
+        <p className="text-center text-sm text-gray-400 mt-8">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-indigo-600 font-medium hover:text-indigo-700">
+          <Link href="/signup" className="text-gray-950 font-medium hover:underline">
             Get started
           </Link>
         </p>

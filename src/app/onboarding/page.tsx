@@ -10,7 +10,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+      <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
     </div>
   );
 }

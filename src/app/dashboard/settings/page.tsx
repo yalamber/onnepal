@@ -347,7 +347,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Save */}
-      <div className="flex items-center gap-3 sticky bottom-4 bg-white/95 backdrop-blur-sm p-4 rounded-lg border border-gray-200 shadow-lg">
+      <div className="flex items-center gap-3 sticky bottom-4 bg-white/95 backdrop-blur-sm p-4 rounded-lg border border-gray-200">
         <button onClick={handleSave} disabled={saving}
           className="h-9 px-4 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-30 transition-colors flex items-center gap-2 cursor-pointer">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Save changes</>}

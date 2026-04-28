@@ -45,13 +45,13 @@ export default function SignupPage() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-xl font-bold text-slate-950 tracking-tight leading-[1.2]">Create your account</h1>
-          <p className="text-slate-500 text-sm mt-2 leading-[1.6]">Sign up to list your business or post classifieds</p>
+          <h1 className="text-xl font-bold text-gray-950 tracking-tight leading-[1.2]">Create your account</h1>
+          <p className="text-gray-500 text-sm mt-2 leading-[1.6]">Sign up to list your business or post classifieds</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="displayName" className="text-slate-700">Your name</Label>
+            <Label htmlFor="displayName" className="text-gray-700">Your name</Label>
             <Input
               id="displayName"
               value={form.displayName}
@@ -64,7 +64,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <Label htmlFor="email" className="text-slate-700">Email</Label>
+            <Label htmlFor="email" className="text-gray-700">Email</Label>
             <Input
               id="email"
               type="email"
@@ -77,7 +77,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <Label htmlFor="password" className="text-slate-700">Password</Label>
+            <Label htmlFor="password" className="text-gray-700">Password</Label>
             <Input
               id="password"
               type="password"
@@ -94,16 +94,16 @@ export default function SignupPage() {
 
           <Button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+            className="w-full"
             disabled={loading}
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create account'}
           </Button>
         </form>
 
-        <p className="text-center text-sm text-slate-400 mt-8">
+        <p className="text-center text-sm text-gray-400 mt-8">
           Already have an account?{' '}
-          <Link href="/login" className="text-indigo-600 font-medium hover:text-indigo-700">
+          <Link href="/login" className="text-gray-950 font-medium hover:underline">
             Log in
           </Link>
         </p>

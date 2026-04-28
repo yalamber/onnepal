@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { SubdomainChecker } from '@/components/subdomain-checker';
 import { CATEGORIES } from '@/lib/categories';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
+import { JOB_CATEGORIES } from '@/lib/job-categories';
+import { EVENT_CATEGORIES } from '@/lib/event-categories';
+import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
 
 export default function HomePage() {
   return (
@@ -78,6 +81,70 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Jobs, Events, Lost & Found */}
+      <section className="py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-3 gap-12">
+            <div>
+              <div className="flex items-baseline justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-950">Jobs</h2>
+                <Link href="/jobs" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
+                  View all &rarr;
+                </Link>
+              </div>
+              <div className="flex flex-col gap-2">
+                {JOB_CATEGORIES.slice(0, 8).map((cat) => (
+                  <Link key={cat.slug} href={`/jobs?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+              <Link href="/jobs/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
+                Post a job &rarr;
+              </Link>
+            </div>
+            <div>
+              <div className="flex items-baseline justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-950">Events</h2>
+                <Link href="/events" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
+                  View all &rarr;
+                </Link>
+              </div>
+              <div className="flex flex-col gap-2">
+                {EVENT_CATEGORIES.slice(0, 8).map((cat) => (
+                  <Link key={cat.slug} href={`/events?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+              <Link href="/events/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
+                Post an event &rarr;
+              </Link>
+            </div>
+            <div>
+              <div className="flex items-baseline justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-950">Lost &amp; Found</h2>
+                <Link href="/lost-found" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
+                  View all &rarr;
+                </Link>
+              </div>
+              <div className="flex flex-col gap-2">
+                {LOST_FOUND_CATEGORIES.slice(0, 8).map((cat) => (
+                  <Link key={cat.slug} href={`/lost-found?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+              <Link href="/lost-found/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
+                Post a listing &rarr;
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
+
       {/* Business pages pitch */}
       <section className="py-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -124,8 +191,10 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400">
               <Link href="/directory" className="hover:text-gray-950 transition-colors">Directory</Link>
               <Link href="/classifieds" className="hover:text-gray-950 transition-colors">Classifieds</Link>
+              <Link href="/jobs" className="hover:text-gray-950 transition-colors">Jobs</Link>
+              <Link href="/events" className="hover:text-gray-950 transition-colors">Events</Link>
+              <Link href="/lost-found" className="hover:text-gray-950 transition-colors">Lost &amp; Found</Link>
               <Link href="/signup" className="hover:text-gray-950 transition-colors">Sign up</Link>
-              <Link href="/login" className="hover:text-gray-950 transition-colors">Log in</Link>
             </div>
           </div>
           <p className="mt-8 text-xs text-gray-300">&copy; {new Date().getFullYear()} OnNepal</p>

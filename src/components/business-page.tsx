@@ -274,7 +274,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                   <div className="aspect-[4/3] bg-gray-50 rounded-md overflow-hidden">
                     {imgSrc(product.imageUrl) ? (
                       <img src={imgSrc(product.imageUrl)!} alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover"
                         loading="lazy" decoding="async" width="400" height="300" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center"><span className="text-2xl font-bold text-gray-200">{product.name.charAt(0)}</span></div>
@@ -299,7 +299,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
               {gallery.map((img) => (
                 <div key={img.id} className="relative group aspect-square overflow-hidden rounded-md bg-gray-50">
                   <img src={imgSrc(img.imageKey)!} alt={img.caption || ''}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover"
                     loading="lazy" decoding="async" width="400" height="400" />
                   {img.caption && (
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white text-xs p-3 opacity-0 group-hover:opacity-100 transition-opacity">{img.caption}</div>
