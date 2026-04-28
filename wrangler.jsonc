@@ -49,6 +49,15 @@
 			"binding": "IMAGES",
 			"bucket_name": "onnepal-images"
 		}
+	],
+	/**
+	 * KV Namespace for ISR cache (used by vinext)
+	 */
+	"kv_namespaces": [
+		{
+			"binding": "VINEXT_CACHE",
+			"id": "2e0c78ac97fa45bea13a4a475a370bd3"
+		}
 	]
 	/**
 	 * Note: Use secrets for sensitive data like JWT_SECRET

@@ -33,6 +33,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
 
+    if (body.imageKey && !body.imageKey.startsWith('http') && !body.imageKey.startsWith(auth.session.userId + '/')) {
+      return NextResponse.json({ error: 'Invalid image key' }, { status: 403 });
+    }
+
     const result = await createMenuItem(auth.db, auth.businessId, {
       name: body.name,
       description: body.description || undefined,

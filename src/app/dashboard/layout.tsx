@@ -7,6 +7,7 @@ import {
   LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, Loader2,
   Plus, ChevronDown, Check, Tag, Building2, User, QrCode,
   UtensilsCrossed, Gift, Image, Star, Users, HelpCircle, Calendar,
+  ChevronsUpDown, LogOut, Briefcase, AlertTriangle, CalendarPlus, Mail,
 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -92,6 +93,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (typeof window !== 'undefined') localStorage.setItem('activeBusinessId', b.id);
   };
 
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
   }
@@ -105,97 +111,173 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex gap-10">
             {/* Sidebar */}
             <aside className="hidden lg:block w-52 flex-shrink-0">
-              {/* User */}
-              <div className="mb-6">
-                <p className="text-sm font-semibold text-gray-950 truncate">{user.displayName || user.email}</p>
-                <p className="text-xs text-gray-400 truncate mt-0.5">{user.email}</p>
-              </div>
-
-              {/* Business switcher */}
-              {activeBusiness && (
-                <div className="mb-6 pb-6 border-b border-gray-100">
-                  <p className="text-xs font-semibold text-gray-950 uppercase tracking-wider mb-2">Business</p>
+              {/* Business switcher — top, prominent */}
+              {activeBusiness ? (
+                <div className="mb-6">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 w-full text-left hover:bg-gray-50 rounded-lg px-2 py-1.5 -ml-2 cursor-pointer transition-colors">
-                        <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
+                      <button className="flex items-center gap-2.5 w-full text-left border border-gray-200 hover:border-gray-300 rounded-lg px-3 py-2.5 cursor-pointer transition-colors">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                           style={{ backgroundColor: activeBusiness.primaryColor || '#1e293b' }}>
                           {activeBusiness.businessName.charAt(0)}
                         </div>
-                        <span className="text-sm text-gray-950 truncate flex-1">{activeBusiness.businessName}</span>
-                        {businesses.length > 1 && <ChevronDown className="h-3 w-3 text-gray-400 flex-shrink-0" />}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-gray-950 truncate">{activeBusiness.businessName}</p>
+                          <p className="text-[11px] text-gray-400 truncate">{activeBusiness.subdomain}.onnepal.com</p>
+                        </div>
+                        <ChevronsUpDown className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-52 bg-white border border-gray-200 shadow-lg rounded-lg p-1">
+                    <DropdownMenuContent align="start" className="w-56 bg-white border border-gray-200 shadow-lg rounded-lg p-1">
+                      <div className="px-2 py-1.5 mb-1">
+                        <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">Switch business</p>
+                      </div>
                       {businesses.map((b) => (
-                        <DropdownMenuItem key={b.id} onClick={() => switchBusiness(b)} className="flex items-center gap-2 cursor-pointer rounded-md">
-                          <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold"
+                        <DropdownMenuItem key={b.id} onClick={() => switchBusiness(b)} className="flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-2">
+                          <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
                             style={{ backgroundColor: b.primaryColor || '#1e293b' }}>
                             {b.businessName.charAt(0)}
                           </div>
-                          <span className="text-sm truncate flex-1">{b.businessName}</span>
-                          {b.id === activeBusiness.id && <Check className="h-3.5 w-3.5 text-gray-950" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm truncate">{b.businessName}</p>
+                            <p className="text-[11px] text-gray-400 truncate">{b.subdomain}.onnepal.com</p>
+                          </div>
+                          {b.id === activeBusiness.id && <Check className="h-3.5 w-3.5 text-gray-950 flex-shrink-0" />}
                         </DropdownMenuItem>
                       ))}
                       {businesses.length < 5 && (
                         <>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => router.push('/create-business')}>
+                          <DropdownMenuItem onClick={() => router.push('/create-business')} className="cursor-pointer rounded-md px-2 py-2">
                             <Plus className="h-4 w-4 mr-2 text-gray-400" /> Add business
                           </DropdownMenuItem>
                         </>
                       )}
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  {activeBusiness && (
-                    <a href={`https://${activeBusiness.subdomain}.onnepal.com`} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-950 mt-1 ml-0.5 transition-colors">
-                      <Eye className="h-3 w-3" /> {activeBusiness.subdomain}.onnepal.com
-                    </a>
-                  )}
+                  <a href={`https://${activeBusiness.subdomain}.onnepal.com`} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-950 mt-2 ml-1 transition-colors">
+                    <Eye className="h-3 w-3" /> View live page
+                  </a>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <Link href="/create-business"
+                    className="flex items-center gap-2 w-full border border-dashed border-gray-200 hover:border-gray-300 rounded-lg px-3 py-3 text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <Plus className="h-4 w-4" /> Create a business
+                  </Link>
                 </div>
               )}
 
-              {/* Navigation */}
+              {/* Overview */}
               <nav className="space-y-0.5">
-                <p className="text-xs font-semibold text-gray-950 uppercase tracking-wider mb-2">
-                  {activeBusiness ? 'Manage' : 'Menu'}
-                </p>
-                {NAV_ITEMS.map((item) => {
-                  const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-                  const needsBusiness = item.href !== '/dashboard';
-                  if (needsBusiness && !activeBusiness) return null;
-                  return (
-                    <Link key={item.href} href={item.href}
-                      className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
-                        isActive ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
-                      }`}>
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
+                <Link href="/dashboard"
+                  className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                    pathname === '/dashboard' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                  }`}>
+                  <LayoutDashboard className="h-4 w-4" /> Overview
+                </Link>
               </nav>
 
-              {/* Quick links */}
-              <div className="mt-6 pt-6 border-t border-gray-100 space-y-0.5">
-                <p className="text-xs font-semibold text-gray-950 uppercase tracking-wider mb-2">Quick links</p>
-                <Link href="/create-business" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
-                  <Building2 className="h-4 w-4" /> New business
-                </Link>
-                <Link href="/classifieds/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
-                  <Tag className="h-4 w-4" /> Post ad
+              {/* Business management */}
+              {activeBusiness && (
+                <div className="mt-5">
+                  <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1.5 px-2">Business</p>
+                  <nav className="space-y-0.5">
+                    {NAV_ITEMS.filter(i => !i.exact).map((item) => {
+                      const isActive = pathname.startsWith(item.href);
+                      return (
+                        <Link key={item.href} href={item.href}
+                          className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                            isActive ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                          }`}>
+                          <item.icon className="h-4 w-4" />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </div>
+              )}
+
+              {/* Create */}
+              <div className="mt-5 pt-5 border-t border-gray-100">
+                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1.5 px-2">Create</p>
+                <nav className="space-y-0.5">
+                  <Link href="/classifieds/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <Tag className="h-4 w-4" /> Post ad
+                  </Link>
+                  <Link href="/jobs/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <Briefcase className="h-4 w-4" /> Post job
+                  </Link>
+                  <Link href="/events/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <CalendarPlus className="h-4 w-4" /> Post event
+                  </Link>
+                  <Link href="/lost-found/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <AlertTriangle className="h-4 w-4" /> Report item
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Account */}
+              <div className="mt-5 pt-5 border-t border-gray-100 space-y-0.5">
+                <Link href="/dashboard/messages" className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
+                  pathname === '/dashboard/messages' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
+                }`}>
+                  <Mail className="h-4 w-4" /> Messages
                 </Link>
                 <Link href="/dashboard/account" className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm cursor-pointer transition-colors ${
                   pathname === '/dashboard/account' ? 'bg-gray-100 text-gray-950 font-medium' : 'text-gray-500 hover:text-gray-950'
                 }`}>
                   <User className="h-4 w-4" /> Account
                 </Link>
+                <button onClick={handleLogout} className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors w-full cursor-pointer">
+                  <LogOut className="h-4 w-4" /> Sign out
+                </button>
               </div>
             </aside>
 
-            {/* Mobile tabs */}
-            <div className="lg:hidden w-full -mt-4 mb-4">
+            {/* Mobile header */}
+            <div className="lg:hidden w-full -mt-4 mb-4 space-y-3">
+              {/* Mobile business switcher */}
+              {activeBusiness && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2.5 w-full border border-gray-200 rounded-lg px-3 py-2.5 cursor-pointer">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                        style={{ backgroundColor: activeBusiness.primaryColor || '#1e293b' }}>
+                        {activeBusiness.businessName.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0 text-left">
+                        <p className="text-sm font-semibold text-gray-950 truncate">{activeBusiness.businessName}</p>
+                      </div>
+                      <ChevronsUpDown className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-64 bg-white border border-gray-200 shadow-lg rounded-lg p-1">
+                    {businesses.map((b) => (
+                      <DropdownMenuItem key={b.id} onClick={() => switchBusiness(b)} className="flex items-center gap-2.5 cursor-pointer rounded-md px-2 py-2">
+                        <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
+                          style={{ backgroundColor: b.primaryColor || '#1e293b' }}>
+                          {b.businessName.charAt(0)}
+                        </div>
+                        <span className="text-sm truncate flex-1">{b.businessName}</span>
+                        {b.id === activeBusiness.id && <Check className="h-3.5 w-3.5 text-gray-950" />}
+                      </DropdownMenuItem>
+                    ))}
+                    {businesses.length < 5 && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.push('/create-business')} className="cursor-pointer rounded-md">
+                          <Plus className="h-4 w-4 mr-2 text-gray-400" /> Add business
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {/* Mobile nav tabs */}
               <div className="flex gap-1 overflow-x-auto scrollbar-none border-b border-gray-100 pb-2">
                 {NAV_ITEMS.map((item) => {
                   const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);

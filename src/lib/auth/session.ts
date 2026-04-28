@@ -1,6 +1,9 @@
 import { cookies } from 'next/headers';
 import { verifyToken, type TokenPayload } from './jwt';
-import { getJwtSecret } from '@/lib/cloudflare';
+import { getJwtSecret, getD1Database } from '@/lib/cloudflare';
+import { getDb } from '@/lib/db';
+import { users } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 const AUTH_COOKIE_NAME = 'auth_token';
 
@@ -13,6 +16,15 @@ export async function getSession(): Promise<TokenPayload | null> {
   }
 
   return await verifyToken(token, getJwtSecret());
+}
+
+export async function isAdmin(userId: string): Promise<boolean> {
+  try {
+    const d1 = getD1Database();
+    const db = getDb(d1);
+    const result = await db.select({ isAdmin: users.isAdmin }).from(users).where(eq(users.id, userId)).limit(1);
+    return result[0]?.isAdmin === true;
+  } catch { return false; }
 }
 
 export async function setAuthCookie(token: string) {

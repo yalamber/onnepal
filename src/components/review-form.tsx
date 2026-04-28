@@ -48,7 +48,7 @@ export function ReviewForm({ businessId, onSubmitted }: ReviewFormProps) {
 
   if (submitted) {
     return (
-      <div className="border border-gray-100 rounded-lg p-6 text-center">
+      <div className="border border-gray-100 rounded-md p-6 text-center">
         <p className="font-medium text-gray-950">Thank you for your review!</p>
         <p className="text-sm text-gray-400 mt-1">It will appear once approved.</p>
       </div>
@@ -56,7 +56,7 @@ export function ReviewForm({ businessId, onSubmitted }: ReviewFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border border-gray-100 rounded-lg p-5 space-y-4">
+    <form onSubmit={handleSubmit} className="border border-gray-100 rounded-md p-5 space-y-4">
       <p className="text-sm font-semibold text-gray-950">Leave a review</p>
 
       <div>
@@ -64,7 +64,7 @@ export function ReviewForm({ businessId, onSubmitted }: ReviewFormProps) {
         <input
           type="text" value={name} onChange={(e) => setName(e.target.value)} required
           placeholder="Your name"
-          className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
+          className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
         />
       </div>
 
@@ -91,14 +91,14 @@ export function ReviewForm({ businessId, onSubmitted }: ReviewFormProps) {
         <textarea
           value={content} onChange={(e) => setContent(e.target.value)} rows={3}
           placeholder="Tell others about your experience..."
-          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none"
+          className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none"
         />
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       <button type="submit" disabled={submitting || !name.trim() || rating === 0}
-        className="h-9 px-4 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-30 cursor-pointer transition-colors">
+        className="h-9 px-4 bg-gray-950 text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-30 cursor-pointer transition-colors">
         {submitting ? 'Submitting...' : 'Submit review'}
       </button>
     </form>

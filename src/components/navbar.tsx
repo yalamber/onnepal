@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield, Mail } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -60,6 +60,9 @@ export function Navbar() {
   const navLinks = [
     { href: '/directory', label: 'Directory' },
     { href: '/classifieds', label: 'Classifieds' },
+    { href: '/jobs', label: 'Jobs' },
+    { href: '/events', label: 'Events' },
+    { href: '/lost-found', label: 'Lost & Found' },
   ];
 
   return (
@@ -92,6 +95,10 @@ export function Navbar() {
             {authLoading ? (
               <div className="w-16" />
             ) : user ? (
+              <>
+              <Link href="/dashboard/messages" className="p-2 text-gray-400 hover:text-gray-950 transition-colors" title="Messages">
+                <Mail className="h-4 w-4" />
+              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-950 transition-colors px-2 py-1.5 rounded-lg hover:bg-gray-50 cursor-pointer">
@@ -121,6 +128,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </>
             ) : (
               <>
                 <Link href="/login" className="text-sm text-gray-400 hover:text-gray-950 transition-colors px-3 py-1.5">

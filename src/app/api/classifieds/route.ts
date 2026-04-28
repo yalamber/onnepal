@@ -4,6 +4,7 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getClassifieds, getClassifiedsCount, getClassifiedCategories, createClassified } from '@/lib/db/queries/classifieds';
 import { getSession } from '@/lib/auth/session';
 import { z } from 'zod';
+import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
 
 const createClassifiedSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(200),
@@ -34,13 +35,15 @@ export async function GET(request: NextRequest) {
       getClassifiedCategories(db),
     ]);
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       listings,
       total,
       page,
       totalPages: Math.ceil(total / limit),
       categories,
     });
+    res.headers.set('Cache-Control', 'public, s-maxage=300');
+    return res;
   } catch (error) {
     console.error('Classifieds API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -53,6 +56,10 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const d1 = getD1Database();
+    const rl = await checkRateLimit(d1, 'classified:create', session.userId, 10, 86400);
+    if (!rl.allowed) return tooManyRequests(86400);
 
     const body = await request.json();
     const validation = createClassifiedSchema.safeParse(body);
@@ -70,7 +77,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const d1 = getD1Database();
     const db = getDb(d1);
 
     const result = await createClassified(db, session.userId, validation.data);

@@ -55,10 +55,11 @@ export async function createBooking(
 export async function updateBookingStatus(
   db: Database,
   id: string,
-  status: 'confirmed' | 'cancelled'
+  status: 'confirmed' | 'cancelled',
+  businessId: string
 ) {
   await db
     .update(bookings)
     .set({ status })
-    .where(eq(bookings.id, id));
+    .where(and(eq(bookings.id, id), eq(bookings.businessId, businessId)));
 }

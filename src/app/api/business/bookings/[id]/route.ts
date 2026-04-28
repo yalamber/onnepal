@@ -20,7 +20,7 @@ export async function PATCH(
       );
     }
 
-    await updateBookingStatus(auth.db, id, body.status as 'confirmed' | 'cancelled');
+    await updateBookingStatus(auth.db, id, body.status as 'confirmed' | 'cancelled', auth.businessId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

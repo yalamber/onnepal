@@ -15,25 +15,30 @@ import { getTeamMembers } from '@/lib/db/queries/team';
 import { getFaqs } from '@/lib/db/queries/faq';
 import { BusinessPage } from '@/components/business-page';
 
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ subdomain: string }>;
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ subdomain: string }> }) {
   const { subdomain } = await params;
   const d1 = getD1Database();
   const db = getDb(d1);
   const business = await getBusinessBySubdomain(db, subdomain);
-
-  if (!business || !business.isPublished) {
-    return { title: 'Not Found' };
-  }
-
+  if (!business || !business.isPublished) return { title: 'Not Found' };
+  const logoImg = business.logoUrl ? `https://images.onnepal.com/${business.logoUrl}` : undefined;
   return {
-    title: `${business.businessName} | OnNepal`,
+    title: business.businessName,
     description: business.description || `${business.businessName} on OnNepal`,
+    openGraph: {
+      title: business.businessName,
+      description: business.description || `${business.businessName} — Business page on OnNepal`,
+      url: `https://${subdomain}.onnepal.com`,
+      type: 'profile',
+      ...(logoImg && { images: [{ url: logoImg, width: 200, height: 200 }] }),
+    },
+    twitter: {
+      card: 'summary',
+      title: business.businessName,
+      description: business.description || `${business.businessName} on OnNepal`,
+      ...(logoImg && { images: [logoImg] }),
+    },
+    alternates: { canonical: `https://${subdomain}.onnepal.com` },
   };
 }
 
@@ -48,9 +53,7 @@ export default async function SitePage({
   const db = getDb(d1);
 
   const business = await getBusinessBySubdomain(db, subdomain);
-  if (!business || !business.isPublished) {
-    notFound();
-  }
+  if (!business || !business.isPublished) notFound();
 
   const [links, announcements, products, ctas, gallery, reviews, menuItems, offers, teamMembers, faqs, avgRating] = await Promise.all([
     getSocialLinks(db, business.id),
@@ -68,7 +71,24 @@ export default async function SitePage({
 
   recordPageView(db, business.id).catch(() => {});
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: business.businessName,
+    description: business.description || undefined,
+    url: `https://${business.subdomain}.onnepal.com`,
+    ...(business.phone && { telephone: business.phone }),
+    ...(business.address && { address: { '@type': 'PostalAddress', streetAddress: business.address } }),
+    ...(business.logoUrl && { image: `https://images.onnepal.com/${business.logoUrl}` }),
+    ...(business.businessCategory && { category: business.businessCategory }),
+    ...(avgRating && avgRating.count > 0 && {
+      aggregateRating: { '@type': 'AggregateRating', ratingValue: avgRating.average.toFixed(1), reviewCount: avgRating.count },
+    }),
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <BusinessPage
       business={{
         businessName: business.businessName,
@@ -83,15 +103,16 @@ export default async function SitePage({
         whatsappNumber: business.whatsappNumber,
         mapAddress: business.mapAddress,
         bookingEnabled: business.bookingEnabled,
+        isVerified: business.isVerified,
         primaryColor: business.primaryColor || '#1e293b',
-        accentColor: business.accentColor || '#334155',
+        accentColor: business.accentColor || '#1e293b',
         subdomain: business.subdomain,
         id: business.id,
         enabledModules: business.enabledModules,
       }}
       links={links}
       announcements={announcements}
-      products={products}
+      products={products.map(p => ({ id: p.id, name: p.name, description: p.description, price: p.price, imageUrl: p.imageUrl }))}
       ctas={ctas}
       gallery={gallery}
       reviews={reviews}
@@ -101,5 +122,6 @@ export default async function SitePage({
       faqs={faqs}
       averageRating={avgRating}
     />
+    </>
   );
 }

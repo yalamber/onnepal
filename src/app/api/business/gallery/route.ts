@@ -27,6 +27,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'imageKey is required' }, { status: 400 });
     }
 
+    if (!body.imageKey.startsWith('http') && !body.imageKey.startsWith(auth.session.userId + '/')) {
+      return NextResponse.json({ error: 'Invalid image key' }, { status: 403 });
+    }
+
     const result = await addGalleryImage(auth.db, auth.businessId, {
       imageKey: body.imageKey,
       caption: body.caption || undefined,

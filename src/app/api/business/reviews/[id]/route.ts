@@ -11,7 +11,7 @@ export async function PATCH(
     if ('error' in auth) return auth.error;
 
     const { id } = await params;
-    await approveReview(auth.db, id);
+    await approveReview(auth.db, id, auth.businessId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -29,7 +29,7 @@ export async function DELETE(
     if ('error' in auth) return auth.error;
 
     const { id } = await params;
-    await deleteReview(auth.db, id);
+    await deleteReview(auth.db, id, auth.businessId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -155,6 +155,36 @@ export async function deleteClassified(db: Database, id: string, userId: string)
   await db.delete(classifieds).where(and(eq(classifieds.id, id), eq(classifieds.userId, userId)));
 }
 
+export async function updateClassified(
+  db: Database,
+  id: string,
+  userId: string,
+  data: {
+    title?: string;
+    description?: string | null;
+    price?: string | null;
+    category?: string;
+    location?: string | null;
+    contactPhone?: string | null;
+    contactWhatsapp?: string | null;
+    imageUrls?: string[] | null;
+    status?: string;
+  }
+) {
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  if (data.title !== undefined) updates.title = data.title;
+  if (data.description !== undefined) updates.description = data.description;
+  if (data.price !== undefined) updates.price = data.price;
+  if (data.category !== undefined) updates.category = data.category;
+  if (data.location !== undefined) updates.location = data.location;
+  if (data.contactPhone !== undefined) updates.contactPhone = data.contactPhone;
+  if (data.contactWhatsapp !== undefined) updates.contactWhatsapp = data.contactWhatsapp;
+  if (data.imageUrls !== undefined) updates.imageUrls = data.imageUrls ? JSON.stringify(data.imageUrls) : null;
+  if (data.status !== undefined) updates.status = data.status;
+
+  await db.update(classifieds).set(updates).where(and(eq(classifieds.id, id), eq(classifieds.userId, userId)));
+}
+
 export async function getClassifiedCategories(db: Database) {
   const results = await db
     .select({

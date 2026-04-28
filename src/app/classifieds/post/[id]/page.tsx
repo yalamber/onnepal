@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -16,12 +16,20 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Edit2,
+  Trash2,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getClassifiedCategoryBySlug } from '@/lib/classified-categories';
+import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
+import { CommentSection } from '@/components/comment-section';
+import { MessageButton } from '@/components/message-button';
+import { ImageUpload, imageUrl } from '@/components/image-upload';
 
 interface ClassifiedListing {
   id: string;
+  userId: string;
   title: string;
   description: string | null;
   price: string | null;
@@ -68,75 +76,74 @@ function parseImageUrls(imageUrls: string | null): string[] {
 
 function ImageGallery({ images }: { images: string[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
 
-  if (images.length === 0) {
-    return (
-      <div className="w-full aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center gap-2">
-        <ImageOff className="h-12 w-12 text-gray-200" />
-        <p className="text-sm text-gray-300">No images</p>
-      </div>
-    );
-  }
+  if (images.length === 0) return null;
 
   return (
-    <div className="space-y-3">
+    <>
       {/* Main image */}
-      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
-        <img
-          src={images[activeIndex]}
-          alt={`Image ${activeIndex + 1}`}
-          className="w-full h-full object-cover"
-        />
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={() => setActiveIndex((prev) => (prev - 1 + images.length) % images.length)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/60 transition-colors"
-              aria-label="Previous image"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => setActiveIndex((prev) => (prev + 1) % images.length)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/60 transition-colors"
-              aria-label="Next image"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-            <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
-              {activeIndex + 1} / {images.length}
-            </div>
-          </>
-        )}
+      <div className="w-full max-h-96 rounded-md overflow-hidden bg-gray-50 cursor-pointer flex items-center justify-center"
+        onClick={() => setLightbox(true)}>
+        <img src={imageUrl(images[activeIndex])!} alt="" className="w-full max-h-96 object-contain" />
       </div>
 
       {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {images.map((url, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIndex(i)}
-              className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                i === activeIndex
-                  ? 'border-indigo-500 shadow-sm'
-                  : 'border-transparent opacity-60 hover:opacity-100'
-              }`}
-            >
-              <img src={url} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
+        <div className="flex gap-1.5 mt-2 overflow-x-auto scrollbar-none">
+          {images.map((img, i) => (
+            <button key={i} onClick={() => setActiveIndex(i)}
+              className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden cursor-pointer transition-all ${
+                i === activeIndex ? 'ring-2 ring-gray-950 opacity-100' : 'opacity-60 hover:opacity-100'
+              }`}>
+              <img src={imageUrl(img)!} alt="" className="w-full h-full object-cover" />
             </button>
           ))}
         </div>
       )}
-    </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightbox(false)}>
+          <button onClick={(e) => { e.stopPropagation(); setLightbox(false); }}
+            className="absolute top-4 right-4 p-2 text-white/70 hover:text-white cursor-pointer z-10">
+            <span className="text-2xl">&times;</span>
+          </button>
+          {images.length > 1 && (
+            <>
+              <button onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev - 1 + images.length) % images.length); }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev + 1) % images.length); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </>
+          )}
+          <img src={imageUrl(images[activeIndex])!} alt="" className="max-w-[90vw] max-h-[80vh] object-contain rounded-md"
+            onClick={(e) => e.stopPropagation()} />
+          {images.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 px-3 py-2 rounded-full">
+              {images.map((img, i) => (
+                <button key={i} onClick={(e) => { e.stopPropagation(); setActiveIndex(i); }}
+                  className={`w-10 h-10 rounded-md overflow-hidden cursor-pointer transition-all ${i === activeIndex ? 'ring-2 ring-white' : 'opacity-50 hover:opacity-100'}`}>
+                  <img src={imageUrl(img)!} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 }
 
 function DetailSkeleton() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 animate-pulse">
+    <div className="max-w-4xl mx-auto px-4 py-8 animate-pulse">
       <div className="h-4 w-24 bg-gray-200 rounded mb-6" />
-      <div className="w-full aspect-[4/3] bg-gray-200 rounded-xl mb-6" />
+      <div className="w-full h-64 bg-gray-200 rounded-md mb-6" />
       <div className="h-8 w-3/4 bg-gray-200 rounded mb-3" />
       <div className="h-7 w-32 bg-gray-200 rounded mb-4" />
       <div className="flex gap-2 mb-4">
@@ -159,36 +166,74 @@ function DetailSkeleton() {
 
 export default function ClassifiedDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const [listing, setListing] = useState<ClassifiedListing | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [activeTab, setActiveTab] = useState<'details' | 'comments'>('details');
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editForm, setEditForm] = useState({ title: '', description: '', price: '', category: '', location: '', contactPhone: '', contactWhatsapp: '' });
+  const [editImages, setEditImages] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!id) return;
+    fetch('/api/auth/me').then(r => r.ok ? r.json() : null)
+      .then((d: { user?: { id: string; isAdmin?: boolean } } | null) => {
+        if (d?.user) { setCurrentUserId(d.user.id); if (d.user.isAdmin) setUserIsAdmin(true); }
+      });
+  }, []);
 
-    const fetchListing = async () => {
-      try {
-        const res = await fetch(`/api/classifieds/${id}`);
-        if (res.status === 404) {
-          setNotFound(true);
-          return;
-        }
-        if (!res.ok) {
-          setNotFound(true);
-          return;
-        }
-        const data = await res.json();
-        setListing(data.listing || data);
-      } catch {
-        setNotFound(true);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchListing = async () => {
+    try {
+      const res = await fetch(`/api/classifieds/${id}`);
+      if (!res.ok) { setNotFound(true); return; }
+      const data = await res.json();
+      setListing(data.listing || data);
+    } catch { setNotFound(true); }
+    finally { setLoading(false); }
+  };
 
-    fetchListing();
-  }, [id]);
+  useEffect(() => { if (id) fetchListing(); }, [id]);
+
+  const startEdit = () => {
+    if (!listing) return;
+    setEditForm({
+      title: listing.title, description: listing.description || '', price: listing.price || '',
+      category: listing.category, location: listing.location || '',
+      contactPhone: listing.contactPhone || '', contactWhatsapp: listing.contactWhatsapp || '',
+    });
+    setEditImages(parseImageUrls(listing.imageUrls));
+    setEditing(true);
+  };
+
+  const saveEdit = async () => {
+    if (!editForm.title.trim()) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/classifieds/${id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editForm.title.trim(), description: editForm.description.trim() || null,
+          price: editForm.price.trim() || null, category: editForm.category,
+          location: editForm.location.trim() || null, contactPhone: editForm.contactPhone.trim() || null,
+          contactWhatsapp: editForm.contactWhatsapp.trim() || null,
+          imageUrls: editImages.length > 0 ? editImages : null,
+        }),
+      });
+      if (res.ok) { setEditing(false); await fetchListing(); }
+    } finally { setSaving(false); }
+  };
+
+  const deleteListing = async () => {
+    if (!confirm('Delete this ad?')) return;
+    await fetch(`/api/classifieds/${id}`, { method: 'DELETE' });
+    router.push('/classifieds');
+  };
+
+  const isOwner = currentUserId && (listing?.userId === currentUserId || userIsAdmin);
 
   if (loading) {
     return <DetailSkeleton />;
@@ -196,7 +241,7 @@ export default function ClassifiedDetailPage() {
 
   if (notFound || !listing) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <Link
           href="/classifieds"
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-8"
@@ -232,137 +277,173 @@ export default function ClassifiedDetailPage() {
     ? `tel:${listing.contactPhone}`
     : null;
 
+  const inputClass = "w-full h-10 px-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors";
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      {/* Back link */}
-      <Link
-        href="/classifieds"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to classifieds
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <Link href="/classifieds" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6">
+        <ArrowLeft className="h-4 w-4" /> Back to classifieds
       </Link>
 
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-        {/* Image gallery */}
-        <div className="p-4 sm:p-5">
-          <ImageGallery images={images} />
-        </div>
-
-        {/* Content */}
-        <div className="px-4 sm:px-5 pb-5 space-y-5">
-          {/* Title */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
-            {listing.title}
-          </h1>
-
-          {/* Price */}
+      {/* Top: image left + details right */}
+      <div className={images.length > 0 || editing ? 'grid lg:grid-cols-2 gap-6' : ''}>
+        {(images.length > 0 || editing) && (
           <div>
-            {listing.price ? (
-              <span className="text-2xl font-bold text-emerald-600">
-                Rs. {listing.price}
-              </span>
+            {editing ? (
+              <ImageUpload value={editImages} onChange={setEditImages} max={5} label="Photos" />
             ) : (
-              <span className="text-lg font-medium text-gray-400 italic">
-                Contact for price
-              </span>
+              <ImageGallery images={images} />
             )}
           </div>
-
-          {/* Badges */}
-          <div className="flex flex-wrap gap-2">
-            {categoryLabel && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-full">
-                <Tag className="h-3 w-3" />
-                {categoryLabel}
-              </span>
-            )}
-            {listing.location && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full">
-                <MapPin className="h-3 w-3" />
-                {listing.location}
-              </span>
-            )}
-          </div>
-
-          {/* Posted info */}
-          <div className="flex items-center gap-3 text-sm text-gray-400">
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5" />
-              {timeAgo(listing.createdAt)}
-            </span>
-            {listing.userName && (
-              <>
-                <span className="text-gray-200">|</span>
-                <span className="inline-flex items-center gap-1.5">
-                  <User className="h-3.5 w-3.5" />
-                  {listing.userSubdomain ? (
-                    <a
-                      href={`https://${listing.userSubdomain}.onnepal.com`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-indigo-500 hover:text-indigo-700 font-medium inline-flex items-center gap-1 transition-colors"
-                    >
-                      {listing.userName}
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  ) : (
-                    <span className="text-gray-500 font-medium">{listing.userName}</span>
-                  )}
-                </span>
-              </>
-            )}
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-gray-100" />
-
-          {/* Description */}
-          {listing.description ? (
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Description</h3>
-              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                {listing.description}
-              </p>
+        )}
+        <div className="space-y-4">
+          {editing ? (
+            <div className="space-y-3">
+              <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                className="w-full h-12 px-0 text-lg font-semibold text-gray-950 border-0 border-b border-gray-200 focus:outline-none focus:border-gray-950 transition-colors" />
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" value={editForm.price} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
+                  placeholder="Price" className={inputClass} />
+                <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                  placeholder="Location" className={inputClass} />
+              </div>
+              <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className={inputClass}>
+                {CLASSIFIED_CATEGORIES.map((parent) => (
+                  <optgroup key={parent.slug} label={parent.name}>
+                    {parent.subcategories.map((sub) => (
+                      <option key={sub.slug} value={sub.name}>{sub.name}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                placeholder="Description..." rows={4}
+                className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400 transition-colors resize-none" />
+              <div className="grid grid-cols-2 gap-3">
+                <input type="tel" value={editForm.contactPhone} onChange={(e) => setEditForm({ ...editForm, contactPhone: e.target.value })}
+                  placeholder="Phone" className={inputClass} />
+                <input type="tel" value={editForm.contactWhatsapp} onChange={(e) => setEditForm({ ...editForm, contactWhatsapp: e.target.value })}
+                  placeholder="WhatsApp" className={inputClass} />
+              </div>
+              <div className="flex gap-2">
+                <button onClick={saveEdit} disabled={saving}
+                  className="h-9 px-4 bg-gray-950 text-white text-xs font-medium rounded-md hover:bg-gray-800 disabled:opacity-30 cursor-pointer transition-colors flex items-center gap-1.5">
+                  {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Check className="h-3.5 w-3.5" /> Save</>}
+                </button>
+                <button onClick={() => setEditing(false)}
+                  className="h-9 px-4 border border-gray-200 text-gray-600 text-xs font-medium rounded-md hover:bg-gray-50 cursor-pointer transition-colors">
+                  Cancel
+                </button>
+              </div>
             </div>
           ) : (
-            <p className="text-sm text-gray-300 italic">No description provided.</p>
+            <>
+              <div className="flex items-start justify-between gap-3">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-950 leading-tight">{listing.title}</h1>
+                {isOwner && (
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button onClick={startEdit} className="p-1.5 text-gray-400 hover:text-gray-950 cursor-pointer transition-colors" title="Edit">
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button onClick={deleteListing} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" title="Delete">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+              {listing.price ? (
+                <p className="text-2xl font-bold text-gray-950">Rs. {listing.price}</p>
+              ) : (
+                <p className="text-sm text-gray-400">Contact for price</p>
+              )}
+              <div className="flex flex-wrap gap-1.5">
+                {categoryLabel && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-700 bg-gray-100 px-2.5 py-1 rounded-md">
+                    <Tag className="h-3 w-3" /> {categoryLabel}
+                  </span>
+                )}
+                {listing.location && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-gray-100 px-2.5 py-1 rounded-md">
+                    <MapPin className="h-3 w-3" /> {listing.location}
+                  </span>
+                )}
+                {listing.status === 'sold' && (
+                  <span className="inline-flex items-center text-xs font-medium text-red-600 bg-red-50 px-2.5 py-1 rounded-md">Sold</span>
+                )}
+              </div>
+              <div className="flex items-center gap-3 text-xs text-gray-400">
+                <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {timeAgo(listing.createdAt)}</span>
+                {listing.userName && (
+                  <>
+                    <span className="text-gray-200">·</span>
+                    <span className="flex items-center gap-1">
+                      <User className="h-3 w-3" />
+                      {listing.userSubdomain ? (
+                        <a href={`https://${listing.userSubdomain}.onnepal.com`} target="_blank" rel="noopener noreferrer"
+                          className="text-gray-600 hover:text-gray-950 font-medium transition-colors">{listing.userName}</a>
+                      ) : listing.userName}
+                    </span>
+                  </>
+                )}
+              </div>
+              <div className="border-t border-gray-100 pt-4 space-y-2.5">
+                {currentUserId !== listing.userId && (
+                  <MessageButton recipientId={listing.userId} listingType="classified" listingId={listing.id} listingTitle={listing.title} />
+                )}
+                {(phoneUrl || whatsappUrl) && (
+                  <div className="flex items-center gap-3 justify-center">
+                    {phoneUrl && <a href={phoneUrl} className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><Phone className="h-3 w-3" /> Call</a>}
+                    {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><MessageCircle className="h-3 w-3" /> WhatsApp</a>}
+                  </div>
+                )}
+              </div>
+              {isOwner && listing.status === 'active' && (
+                <button onClick={async () => {
+                  await fetch(`/api/classifieds/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'sold' }) });
+                  await fetchListing();
+                }} className="text-xs text-gray-400 hover:text-gray-950 cursor-pointer transition-colors">
+                  Mark as sold
+                </button>
+              )}
+            </>
           )}
-
-          {/* Divider */}
-          <div className="border-t border-gray-100" />
-
-          {/* Contact section */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Contact</h3>
-            <div className="flex flex-col sm:flex-row gap-3">
-              {phoneUrl && (
-                <a
-                  href={phoneUrl}
-                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg bg-gray-950 hover:bg-gray-800 text-white font-medium text-sm transition-colors"
-                >
-                  <Phone className="h-4 w-4" />
-                  Call {listing.contactPhone}
-                </a>
-              )}
-              {whatsappUrl && (
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg border border-gray-200 text-gray-950 font-medium text-sm hover:bg-gray-50 transition-colors"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  WhatsApp
-                </a>
-              )}
-              {!phoneUrl && !whatsappUrl && (
-                <p className="text-sm text-gray-400 italic">No contact information provided.</p>
-              )}
-            </div>
-          </div>
         </div>
       </div>
+
+      {/* Tabs: Details / Comments */}
+      {!editing && (
+        <>
+          <div className="flex gap-0 mt-6 border-b border-gray-100">
+            {[
+              { key: 'details' as const, label: 'Details' },
+              { key: 'comments' as const, label: 'Comments' },
+            ].map((tab) => (
+              <button key={tab.key} onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer relative ${
+                  activeTab === tab.key ? 'text-gray-950' : 'text-gray-400 hover:text-gray-950'
+                }`}>
+                {tab.label}
+                {activeTab === tab.key && <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-gray-950 rounded-full" />}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'details' && listing.description && (
+            <div className="mt-5">
+              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+            </div>
+          )}
+          {activeTab === 'details' && !listing.description && (
+            <p className="mt-5 text-sm text-gray-300">No description provided.</p>
+          )}
+
+          {activeTab === 'comments' && (
+            <div className="mt-2">
+              <CommentSection targetType="classified" targetId={listing.id} />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -1,0 +1,76 @@
+import { NextResponse } from 'next/server';
+import { getDb } from '@/lib/db';
+import { getD1Database } from '@/lib/cloudflare';
+import { getLostFoundById, deleteLostFoundItem, resolveLostFoundItem } from '@/lib/db/queries/lost-found';
+import { getSession, isAdmin } from '@/lib/auth/session';
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const d1 = await getD1Database();
+    const db = getDb(d1);
+
+    const item = await getLostFoundById(db, id);
+    if (!item) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ item });
+  } catch (error) {
+    console.error('Get lost-found error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const d1 = await getD1Database();
+    const db = getDb(d1);
+
+    const admin = await isAdmin(session.userId);
+    const item = admin ? await getLostFoundById(db, id) : null;
+    await resolveLostFoundItem(db, id, admin && item ? item.userId : session.userId);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Resolve lost-found error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const d1 = await getD1Database();
+    const db = getDb(d1);
+
+    const admin2 = await isAdmin(session.userId);
+    const item2 = admin2 ? await getLostFoundById(db, id) : null;
+    await deleteLostFoundItem(db, id, admin2 && item2 ? item2.userId : session.userId);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete lost-found error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
