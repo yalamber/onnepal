@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store } from 'lucide-react';
+import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store, ArrowRight } from 'lucide-react';
 import { SubdomainChecker } from '@/components/subdomain-checker';
 import { AnimateIn } from '@/components/animate-in';
 import { CATEGORIES } from '@/lib/categories';
@@ -19,6 +19,45 @@ const FEATURES = [
   { href: '/create-business', icon: Store, label: 'Business page', desc: 'Get yourname.onnepal.com' },
 ] as const;
 
+const SECTIONS = [
+  {
+    key: 'jobs',
+    icon: Briefcase,
+    title: 'Jobs',
+    desc: 'Find opportunities or hire talent across Nepal',
+    href: '/jobs',
+    postHref: '/jobs/post/new',
+    postLabel: 'Post a job',
+    categories: JOB_CATEGORIES,
+    categoryParam: 'category',
+    basePath: '/jobs',
+  },
+  {
+    key: 'events',
+    icon: CalendarDays,
+    title: 'Events',
+    desc: 'Discover festivals, workshops, sports, and community events',
+    href: '/events',
+    postHref: '/events/post/new',
+    postLabel: 'Post an event',
+    categories: EVENT_CATEGORIES,
+    categoryParam: 'category',
+    basePath: '/events',
+  },
+  {
+    key: 'lost-found',
+    icon: HelpCircle,
+    title: 'Lost & Found',
+    desc: 'Help reunite lost items and pets with their owners',
+    href: '/lost-found',
+    postHref: '/lost-found/post/new',
+    postLabel: 'Post a listing',
+    categories: LOST_FOUND_CATEGORIES,
+    categoryParam: 'category',
+    basePath: '/lost-found',
+  },
+] as const;
+
 export default function HomePage() {
   return (
     <main>
@@ -35,7 +74,7 @@ export default function HomePage() {
             <span className="text-gray-300">One place.</span>
           </h1>
           <p className="animate-fade-up-delay-1 mt-6 text-lg sm:text-xl text-gray-500 max-w-lg leading-relaxed">
-            Businesses, classifieds, jobs, events, and more — Nepal&apos;s platform for your neighborhood.
+            Businesses, classifieds, jobs, events, and more &mdash; Nepal&apos;s platform for your neighborhood.
           </p>
         </div>
       </section>
@@ -59,8 +98,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Business pitch — moved up */}
-      <section className="py-16 sm:py-20 bg-gray-950 text-white" aria-labelledby="pitch-heading">
+      {/* Business pitch */}
+      <section className="py-16 sm:py-20 bg-gray-900 text-white" aria-labelledby="pitch-heading">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
             <AnimateIn>
@@ -68,9 +107,9 @@ export default function HomePage() {
                 Your business deserves more than a Facebook page.
               </h2>
               <p className="mt-4 text-gray-400 leading-relaxed">
-                Get a real web presence in minutes — your own subdomain, products, menu, gallery, reviews, and contact info.
+                Get a real web presence in minutes &mdash; your own subdomain, products, menu, gallery, reviews, and contact info.
               </p>
-              <dl className="mt-8 grid grid-cols-2 gap-6">
+              <dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5">
                 <div>
                   <dt className="text-sm font-semibold text-white">Your own URL</dt>
                   <dd className="text-sm text-gray-400 mt-0.5">yourshop.onnepal.com</dd>
@@ -97,119 +136,101 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Directory categories */}
+      {/* Directory — pill grid */}
       <section className="py-16 sm:py-20" aria-labelledby="directory-heading">
         <AnimateIn className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between mb-8">
+          <div className="flex items-baseline justify-between mb-6">
             <h2 id="directory-heading" className="text-lg font-semibold text-gray-950">Business directory</h2>
-            <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
-              View all &rarr;
+            <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors flex items-center gap-1">
+              View all <ArrowRight className="h-3 w-3" aria-hidden="true" />
             </Link>
           </div>
-          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3" role="list">
+          <div className="flex flex-wrap gap-2" role="list" aria-label="Directory categories">
             {CATEGORIES.map((cat) => (
-              <li key={cat.slug}>
-                <Link href={`/directory/${cat.slug}`} className="group py-0.5 inline-flex items-baseline gap-1">
-                  <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
-                  <span className="text-xs text-gray-300">{cat.subcategories.length}</span>
-                </Link>
-              </li>
+              <Link
+                key={cat.slug}
+                href={`/directory/${cat.slug}`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:border-gray-400 hover:text-gray-950 hover:bg-gray-50 transition-all duration-150"
+              >
+                {cat.name}
+                <span className="text-xs text-gray-300">{cat.subcategories.length}</span>
+              </Link>
             ))}
-          </ul>
+          </div>
         </AnimateIn>
       </section>
 
-      {/* Classifieds categories */}
+      {/* Classifieds — pill grid */}
       <section className="py-16 sm:py-20 bg-gray-50" aria-labelledby="classifieds-heading">
         <AnimateIn className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between mb-8">
+          <div className="flex items-baseline justify-between mb-6">
             <h2 id="classifieds-heading" className="text-lg font-semibold text-gray-950">Classifieds</h2>
-            <Link href="/classifieds" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
-              View all &rarr;
+            <Link href="/classifieds" className="text-sm text-gray-400 hover:text-gray-950 transition-colors flex items-center gap-1">
+              View all <ArrowRight className="h-3 w-3" aria-hidden="true" />
             </Link>
           </div>
-          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3" role="list">
+          <div className="flex flex-wrap gap-2" role="list" aria-label="Classified categories">
             {CLASSIFIED_CATEGORIES.map((cat) => (
-              <li key={cat.slug}>
-                <Link href={`/classifieds/${cat.slug}`} className="group py-0.5 inline-flex items-baseline gap-1">
-                  <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
-                  <span className="text-xs text-gray-300">{cat.subcategories.length}</span>
-                </Link>
-              </li>
+              <Link
+                key={cat.slug}
+                href={`/classifieds/${cat.slug}`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-gray-200 bg-white text-sm text-gray-600 hover:border-gray-400 hover:text-gray-950 transition-all duration-150"
+              >
+                {cat.name}
+                <span className="text-xs text-gray-300">{cat.subcategories.length}</span>
+              </Link>
             ))}
-          </ul>
-          <div className="mt-8">
-            <Link href="/classifieds/post/new" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
-              Post a free ad &rarr;
+          </div>
+          <div className="mt-6">
+            <Link href="/classifieds/post/new" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors">
+              Post a free ad <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           </div>
         </AnimateIn>
       </section>
 
-      {/* Jobs, Events, Lost & Found */}
+      {/* Jobs, Events, Lost & Found — card layout */}
       <section className="py-16 sm:py-20" aria-label="More sections">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-3 gap-12">
-            <AnimateIn>
-              <div className="flex items-baseline justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-950">Jobs</h2>
-                <Link href="/jobs" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                  View all &rarr;
-                </Link>
-              </div>
-              <ul className="flex flex-col gap-2" role="list">
-                {JOB_CATEGORIES.slice(0, 8).map((cat) => (
-                  <li key={cat.slug}>
-                    <Link href={`/jobs?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
-                      {cat.name}
+          <div className="grid sm:grid-cols-3 gap-4">
+            {SECTIONS.map((section, i) => (
+              <AnimateIn key={section.key} delay={i * 0.1}>
+                <div className="h-full flex flex-col rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-gray-300 transition-colors">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <section.icon className="h-4 w-4 text-gray-500" aria-hidden="true" />
+                    </div>
+                    <h2 className="text-base font-semibold text-gray-950">{section.title}</h2>
+                  </div>
+                  <p className="text-sm text-gray-500 leading-relaxed mb-4">{section.desc}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-5">
+                    {section.categories.slice(0, 5).map((cat) => (
+                      <Link
+                        key={cat.slug}
+                        href={`${section.basePath}?${section.categoryParam}=${cat.slug}`}
+                        className="px-2.5 py-1 rounded-full bg-gray-100 text-xs text-gray-600 hover:bg-gray-200 hover:text-gray-950 transition-colors"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                    {section.categories.length > 5 && (
+                      <Link href={section.href} className="px-2.5 py-1 rounded-full text-xs text-gray-400 hover:text-gray-950 transition-colors">
+                        +{section.categories.length - 5} more
+                      </Link>
+                    )}
+                  </div>
+                  <div className="mt-auto flex items-center gap-3">
+                    <Link href={section.href} className="text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                      Browse
                     </Link>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/jobs/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                Post a job &rarr;
-              </Link>
-            </AnimateIn>
-            <AnimateIn delay={0.1}>
-              <div className="flex items-baseline justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-950">Events</h2>
-                <Link href="/events" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                  View all &rarr;
-                </Link>
-              </div>
-              <ul className="flex flex-col gap-2" role="list">
-                {EVENT_CATEGORIES.slice(0, 8).map((cat) => (
-                  <li key={cat.slug}>
-                    <Link href={`/events?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
-                      {cat.name}
+                    <span className="text-gray-200">|</span>
+                    <Link href={section.postHref} className="text-sm font-medium text-gray-950 hover:underline flex items-center gap-1">
+                      {section.postLabel} <ArrowRight className="h-3 w-3" aria-hidden="true" />
                     </Link>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/events/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                Post an event &rarr;
-              </Link>
-            </AnimateIn>
-            <AnimateIn delay={0.2}>
-              <div className="flex items-baseline justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-950">Lost &amp; Found</h2>
-                <Link href="/lost-found" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                  View all &rarr;
-                </Link>
-              </div>
-              <ul className="flex flex-col gap-2" role="list">
-                {LOST_FOUND_CATEGORIES.slice(0, 8).map((cat) => (
-                  <li key={cat.slug}>
-                    <Link href={`/lost-found?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/lost-found/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
-                Post a listing &rarr;
-              </Link>
-            </AnimateIn>
+                  </div>
+                </div>
+              </AnimateIn>
+            ))}
           </div>
         </div>
       </section>
