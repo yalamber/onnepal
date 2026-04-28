@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
+import { timeAgo } from '@/lib/time-ago';
 
 interface Comment {
   id: string;
@@ -16,15 +17,6 @@ interface CommentSectionProps {
   targetId: string;
 }
 
-function timeAgo(date: string | Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(diff / 3600000);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(diff / 86400000);
-  return `${days}d ago`;
-}
 
 export function CommentSection({ targetType, targetId }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);

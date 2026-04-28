@@ -1,27 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { ImageUpload } from '@/components/image-upload';
 import { DatePicker } from '@/components/date-picker';
 import { TimePicker } from '@/components/time-picker';
+import { useRequireAuth } from '@/hooks/use-require-auth';
+import { PillSelector } from '@/components/pill-selector';
+import { ExpandableSection } from '@/components/expandable-section';
+import { SubmitButton } from '@/components/form-buttons';
 
 export default function PostEventPage() {
   const router = useRouter();
-  const [authed, setAuthed] = useState(false);
+  const { ready } = useRequireAuth();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [showDetails, setShowDetails] = useState(false);
   const [form, setForm] = useState({
     title: '', category: '', description: '', startDate: '', endDate: '', startTime: '', endTime: '',
     venue: '', location: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '',
     imageUrls: [] as string[],
   });
-
-  useEffect(() => { fetch('/api/auth/me').then(r => { if (!r.ok) router.push('/login'); else setAuthed(true); }); }, [router]);
 
   const handleSubmit = async () => {
     if (!form.title.trim() || form.title.length < 3) { setError('Title must be at least 3 characters'); return; }
@@ -44,7 +45,7 @@ export default function PostEventPage() {
     } catch { setError('Something went wrong'); } finally { setSubmitting(false); }
   };
 
-  if (!authed) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
+  if (!ready) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
   const inputClass = "w-full h-10 px-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors";
 
   return (
@@ -55,29 +56,15 @@ export default function PostEventPage() {
         <p className="text-sm text-gray-400 mb-6">Share an event happening in Nepal</p>
 
         <div className="space-y-5">
-          {/* Title — big, prominent */}
-          <div>
-            <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Event name *" maxLength={200}
-              className="w-full h-12 px-0 text-lg font-semibold text-gray-950 placeholder:text-gray-300 placeholder:font-normal border-0 border-b border-gray-200 focus:outline-none focus:border-gray-950 transition-colors" />
-          </div>
+          <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
+            placeholder="Event name *" maxLength={200}
+            className="w-full h-12 px-0 text-lg font-semibold text-gray-950 placeholder:text-gray-300 placeholder:font-normal border-0 border-b border-gray-200 focus:outline-none focus:border-gray-950 transition-colors" />
 
-          {/* Category as pills */}
           <div>
             <p className="text-xs font-medium text-gray-500 mb-2">Category *</p>
-            <div className="flex flex-wrap gap-1.5">
-              {EVENT_CATEGORIES.map(c => (
-                <button key={c.slug} onClick={() => setForm({ ...form, category: c.name })}
-                  className={`px-3 py-1.5 text-xs rounded-md font-medium cursor-pointer transition-colors ${
-                    form.category === c.name ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}>
-                  {c.name}
-                </button>
-              ))}
-            </div>
+            <PillSelector options={EVENT_CATEGORIES} value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
           </div>
 
-          {/* Date + time — essential */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-gray-500 mb-1.5 block">Date *</label>
@@ -89,21 +76,12 @@ export default function PostEventPage() {
             </div>
           </div>
 
-          {/* Description */}
-          <div>
-            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="Tell people about this event..." rows={3}
-              className="w-full px-3 py-2.5 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
-          </div>
+          <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
+            placeholder="Tell people about this event..." rows={3}
+            className="w-full px-3 py-2.5 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
 
-          {/* Expandable details */}
-          {!showDetails ? (
-            <button onClick={() => setShowDetails(true)}
-              className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-950 cursor-pointer transition-colors">
-              <ChevronDown className="h-4 w-4" /> Add venue, photos, tickets & contact
-            </button>
-          ) : (
-            <div className="space-y-4 pt-2 border-t border-gray-100">
+          <ExpandableSection label="Add venue, photos, tickets & contact">
+            <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-gray-500 mb-1.5 block">Venue</label>
@@ -146,14 +124,11 @@ export default function PostEventPage() {
                 </div>
               </div>
             </div>
-          )}
+          </ExpandableSection>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <button onClick={handleSubmit} disabled={submitting || !form.title.trim() || !form.category || !form.startDate}
-            className="w-full h-10 bg-gray-950 text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-30 cursor-pointer transition-colors">
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Post event'}
-          </button>
+          <SubmitButton submitting={submitting} label="Post event" disabled={!form.title.trim() || !form.category || !form.startDate} />
         </div>
       </div>
     </div>

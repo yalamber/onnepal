@@ -3,29 +3,19 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Loader2,
-  Phone,
-  MessageCircle,
-  MapPin,
-  Tag,
-  Clock,
-  User,
-  ImageOff,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
-  Edit2,
-  Trash2,
-  Check,
-} from 'lucide-react';
+import { ArrowLeft, Loader2, MapPin, Tag, Clock, User, ImageOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getClassifiedCategoryBySlug } from '@/lib/classified-categories';
-import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
+import { getClassifiedCategoryBySlug, CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
+import { ImageUpload, imageUrl } from '@/components/image-upload';
+import { parseImageUrls } from '@/lib/image-utils';
+import { timeAgo } from '@/lib/time-ago';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { ImageGallery } from '@/components/image-gallery';
+import { OwnerActions } from '@/components/owner-actions';
+import { ContactLinks } from '@/components/contact-links';
+import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
 import { MessageButton } from '@/components/message-button';
-import { ImageUpload, imageUrl } from '@/components/image-upload';
 
 interface ClassifiedListing {
   id: string;
@@ -44,147 +34,19 @@ interface ClassifiedListing {
   userSubdomain: string | null;
 }
 
-function timeAgo(dateStr: string): string {
-  const now = Date.now();
-  const date = new Date(dateStr).getTime();
-  const diffMs = now - date;
-  const diffSec = Math.floor(diffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHr = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHr / 24);
-  const diffWeek = Math.floor(diffDay / 7);
-  const diffMonth = Math.floor(diffDay / 30);
-
-  if (diffMin < 1) return 'Just now';
-  if (diffMin < 60) return `${diffMin}m ago`;
-  if (diffHr < 24) return `${diffHr}h ago`;
-  if (diffDay < 7) return `${diffDay}d ago`;
-  if (diffWeek < 5) return `${diffWeek}w ago`;
-  return `${diffMonth}mo ago`;
-}
-
-function parseImageUrls(imageUrls: string | null): string[] {
-  if (!imageUrls) return [];
-  try {
-    const parsed = JSON.parse(imageUrls);
-    if (Array.isArray(parsed)) return parsed.filter((u) => typeof u === 'string' && u.length > 0);
-  } catch {
-    // not valid JSON
-  }
-  return [];
-}
-
-function ImageGallery({ images }: { images: string[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [lightbox, setLightbox] = useState(false);
-
-  if (images.length === 0) return null;
-
-  return (
-    <>
-      {/* Main image */}
-      <div className="w-full max-h-96 rounded-md overflow-hidden bg-gray-50 cursor-pointer flex items-center justify-center"
-        onClick={() => setLightbox(true)}>
-        <img src={imageUrl(images[activeIndex])!} alt="" className="w-full max-h-96 object-contain" />
-      </div>
-
-      {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="flex gap-1.5 mt-2 overflow-x-auto scrollbar-none">
-          {images.map((img, i) => (
-            <button key={i} onClick={() => setActiveIndex(i)}
-              className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden cursor-pointer transition-all ${
-                i === activeIndex ? 'ring-2 ring-gray-950 opacity-100' : 'opacity-60 hover:opacity-100'
-              }`}>
-              <img src={imageUrl(img)!} alt="" className="w-full h-full object-cover" />
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Lightbox */}
-      {lightbox && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightbox(false)}>
-          <button onClick={(e) => { e.stopPropagation(); setLightbox(false); }}
-            className="absolute top-4 right-4 p-2 text-white/70 hover:text-white cursor-pointer z-10">
-            <span className="text-2xl">&times;</span>
-          </button>
-          {images.length > 1 && (
-            <>
-              <button onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev - 1 + images.length) % images.length); }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-              <button onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev + 1) % images.length); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white cursor-pointer">
-                <ChevronRight className="h-6 w-6" />
-              </button>
-            </>
-          )}
-          <img src={imageUrl(images[activeIndex])!} alt="" className="max-w-[90vw] max-h-[80vh] object-contain rounded-md"
-            onClick={(e) => e.stopPropagation()} />
-          {images.length > 1 && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 px-3 py-2 rounded-full">
-              {images.map((img, i) => (
-                <button key={i} onClick={(e) => { e.stopPropagation(); setActiveIndex(i); }}
-                  className={`w-10 h-10 rounded-md overflow-hidden cursor-pointer transition-all ${i === activeIndex ? 'ring-2 ring-white' : 'opacity-50 hover:opacity-100'}`}>
-                  <img src={imageUrl(img)!} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </>
-  );
-}
-
-function DetailSkeleton() {
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-8 animate-pulse">
-      <div className="h-4 w-24 bg-gray-200 rounded mb-6" />
-      <div className="w-full h-64 bg-gray-200 rounded-md mb-6" />
-      <div className="h-8 w-3/4 bg-gray-200 rounded mb-3" />
-      <div className="h-7 w-32 bg-gray-200 rounded mb-4" />
-      <div className="flex gap-2 mb-4">
-        <div className="h-6 w-20 bg-gray-200 rounded-full" />
-        <div className="h-6 w-24 bg-gray-200 rounded-full" />
-      </div>
-      <div className="h-4 w-48 bg-gray-200 rounded mb-6" />
-      <div className="space-y-2 mb-8">
-        <div className="h-4 w-full bg-gray-200 rounded" />
-        <div className="h-4 w-full bg-gray-200 rounded" />
-        <div className="h-4 w-2/3 bg-gray-200 rounded" />
-      </div>
-      <div className="flex gap-3">
-        <div className="h-12 flex-1 bg-gray-200 rounded-xl" />
-        <div className="h-12 flex-1 bg-gray-200 rounded-xl" />
-      </div>
-    </div>
-  );
-}
-
 export default function ClassifiedDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const { userId, isOwner } = useCurrentUser();
   const [listing, setListing] = useState<ClassifiedListing | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'comments'>('details');
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', description: '', price: '', category: '', location: '', contactPhone: '', contactWhatsapp: '' });
   const [editImages, setEditImages] = useState<string[]>([]);
-
-  useEffect(() => {
-    fetch('/api/auth/me').then(r => r.ok ? r.json() : null)
-      .then((d: { user?: { id: string; isAdmin?: boolean } } | null) => {
-        if (d?.user) { setCurrentUserId(d.user.id); if (d.user.isAdmin) setUserIsAdmin(true); }
-      });
-  }, []);
 
   const fetchListing = async () => {
     try {
@@ -233,50 +95,34 @@ export default function ClassifiedDetailPage() {
     router.push('/classifieds');
   };
 
-  const isOwner = currentUserId && (listing?.userId === currentUserId || userIsAdmin);
+  const owner = listing && isOwner(listing.userId);
 
-  if (loading) {
-    return <DetailSkeleton />;
-  }
+  if (loading) return (
+    <div className="max-w-4xl mx-auto px-4 py-8 animate-pulse">
+      <div className="h-4 w-24 bg-gray-200 rounded mb-6" />
+      <div className="w-full h-64 bg-gray-200 rounded-md mb-6" />
+      <div className="h-8 w-3/4 bg-gray-200 rounded mb-3" />
+      <div className="h-7 w-32 bg-gray-200 rounded mb-4" />
+    </div>
+  );
 
-  if (notFound || !listing) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <Link
-          href="/classifieds"
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-8"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to classifieds
-        </Link>
-        <div className="text-center py-20 rounded-xl border-2 border-dashed border-gray-200 bg-white">
-          <div className="w-14 h-14 rounded-xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
-            <ImageOff className="h-7 w-7 text-gray-300" />
-          </div>
-          <h2 className="text-lg font-bold text-gray-900 mb-1">Listing not found</h2>
-          <p className="text-sm text-gray-400 mb-6">
-            This classified ad may have been removed or doesn&apos;t exist.
-          </p>
-          <Button asChild className="bg-gray-950 hover:bg-gray-800 text-white">
-            <Link href="/classifieds">Browse classifieds</Link>
-          </Button>
-        </div>
+  if (notFound || !listing) return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <Link href="/classifieds" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-8">
+        <ArrowLeft className="h-4 w-4" /> Back to classifieds
+      </Link>
+      <div className="text-center py-20 rounded-lg border-2 border-dashed border-gray-200">
+        <ImageOff className="h-7 w-7 text-gray-300 mx-auto mb-4" />
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Listing not found</h2>
+        <p className="text-sm text-gray-400 mb-6">This classified ad may have been removed.</p>
+        <Button asChild><Link href="/classifieds">Browse classifieds</Link></Button>
       </div>
-    );
-  }
+    </div>
+  );
 
-  const images = parseImageUrls(listing.imageUrls);
+  const images = parseImageUrls(listing.imageUrls).map(k => imageUrl(k)!);
   const category = getClassifiedCategoryBySlug(listing.category);
   const categoryLabel = category ? `${category.icon} ${category.name}` : listing.category;
-
-  const whatsappUrl = listing.contactWhatsapp
-    ? `https://wa.me/${listing.contactWhatsapp.replace(/[^0-9]/g, '')}`
-    : null;
-
-  const phoneUrl = listing.contactPhone
-    ? `tel:${listing.contactPhone}`
-    : null;
-
   const inputClass = "w-full h-10 px-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors";
 
   return (
@@ -285,14 +131,13 @@ export default function ClassifiedDetailPage() {
         <ArrowLeft className="h-4 w-4" /> Back to classifieds
       </Link>
 
-      {/* Top: image left + details right */}
       <div className={images.length > 0 || editing ? 'grid lg:grid-cols-2 gap-6' : ''}>
         {(images.length > 0 || editing) && (
           <div>
             {editing ? (
               <ImageUpload value={editImages} onChange={setEditImages} max={5} label="Photos" />
             ) : (
-              <ImageGallery images={images} />
+              <ImageGallery images={images} alt={listing.title} />
             )}
           </div>
         )}
@@ -325,31 +170,13 @@ export default function ClassifiedDetailPage() {
                 <input type="tel" value={editForm.contactWhatsapp} onChange={(e) => setEditForm({ ...editForm, contactWhatsapp: e.target.value })}
                   placeholder="WhatsApp" className={inputClass} />
               </div>
-              <div className="flex gap-2">
-                <button onClick={saveEdit} disabled={saving}
-                  className="h-9 px-4 bg-gray-950 text-white text-xs font-medium rounded-md hover:bg-gray-800 disabled:opacity-30 cursor-pointer transition-colors flex items-center gap-1.5">
-                  {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Check className="h-3.5 w-3.5" /> Save</>}
-                </button>
-                <button onClick={() => setEditing(false)}
-                  className="h-9 px-4 border border-gray-200 text-gray-600 text-xs font-medium rounded-md hover:bg-gray-50 cursor-pointer transition-colors">
-                  Cancel
-                </button>
-              </div>
+              <SaveCancelButtons saving={saving} onSave={saveEdit} onCancel={() => setEditing(false)} />
             </div>
           ) : (
             <>
               <div className="flex items-start justify-between gap-3">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-950 leading-tight">{listing.title}</h1>
-                {isOwner && (
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <button onClick={startEdit} className="p-1.5 text-gray-400 hover:text-gray-950 cursor-pointer transition-colors" title="Edit">
-                      <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button onClick={deleteListing} className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" title="Delete">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
+                {owner && <OwnerActions onEdit={startEdit} onDelete={deleteListing} />}
               </div>
               {listing.price ? (
                 <p className="text-2xl font-bold text-gray-950">Rs. {listing.price}</p>
@@ -375,7 +202,7 @@ export default function ClassifiedDetailPage() {
                 <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {timeAgo(listing.createdAt)}</span>
                 {listing.userName && (
                   <>
-                    <span className="text-gray-200">·</span>
+                    <span className="text-gray-200">&middot;</span>
                     <span className="flex items-center gap-1">
                       <User className="h-3 w-3" />
                       {listing.userSubdomain ? (
@@ -387,17 +214,12 @@ export default function ClassifiedDetailPage() {
                 )}
               </div>
               <div className="border-t border-gray-100 pt-4 space-y-2.5">
-                {currentUserId !== listing.userId && (
+                {userId !== listing.userId && (
                   <MessageButton recipientId={listing.userId} listingType="classified" listingId={listing.id} listingTitle={listing.title} />
                 )}
-                {(phoneUrl || whatsappUrl) && (
-                  <div className="flex items-center gap-3 justify-center">
-                    {phoneUrl && <a href={phoneUrl} className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><Phone className="h-3 w-3" /> Call</a>}
-                    {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-gray-950 flex items-center gap-1 transition-colors"><MessageCircle className="h-3 w-3" /> WhatsApp</a>}
-                  </div>
-                )}
+                <ContactLinks phone={listing.contactPhone} whatsapp={listing.contactWhatsapp} />
               </div>
-              {isOwner && listing.status === 'active' && (
+              {owner && listing.status === 'active' && (
                 <button onClick={async () => {
                   await fetch(`/api/classifieds/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'sold' }) });
                   await fetchListing();
@@ -410,14 +232,13 @@ export default function ClassifiedDetailPage() {
         </div>
       </div>
 
-      {/* Tabs: Details / Comments */}
       {!editing && (
         <>
           <div className="flex gap-0 mt-6 border-b border-gray-100">
-            {[
+            {([
               { key: 'details' as const, label: 'Details' },
               { key: 'comments' as const, label: 'Comments' },
-            ].map((tab) => (
+            ]).map((tab) => (
               <button key={tab.key} onClick={() => setActiveTab(tab.key)}
                 className={`px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer relative ${
                   activeTab === tab.key ? 'text-gray-950' : 'text-gray-400 hover:text-gray-950'
