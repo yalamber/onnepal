@@ -1,17 +1,20 @@
 import Link from 'next/link';
 import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store } from 'lucide-react';
 import { SubdomainChecker } from '@/components/subdomain-checker';
+import { AnimateIn } from '@/components/animate-in';
 import { CATEGORIES } from '@/lib/categories';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 import { JOB_CATEGORIES } from '@/lib/job-categories';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
 
+const STAGGER = ['animate-fade-up', 'animate-fade-up-delay-1', 'animate-fade-up-delay-2', 'animate-fade-up-delay-3', 'animate-fade-up-delay-4', 'animate-fade-up-delay-5'] as const;
+
 const FEATURES = [
   { href: '/directory', icon: Search, label: 'Directory', desc: 'Find local businesses' },
   { href: '/classifieds', icon: ShoppingBag, label: 'Classifieds', desc: 'Buy, sell & rent' },
   { href: '/jobs', icon: Briefcase, label: 'Jobs', desc: 'Find or post jobs' },
-  { href: '/events', icon: CalendarDays, label: 'Events', desc: 'What’s happening' },
+  { href: '/events', icon: CalendarDays, label: 'Events', desc: "What's happening" },
   { href: '/lost-found', icon: HelpCircle, label: 'Lost & Found', desc: 'Help your community' },
   { href: '/create-business', icon: Store, label: 'Business page', desc: 'Get yourname.onnepal.com' },
 ] as const;
@@ -26,12 +29,12 @@ export default function HomePage() {
       {/* Hero */}
       <section id="main-content" className="pt-24 sm:pt-32 pb-16 sm:pb-20" aria-label="Hero">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-950 tracking-tight leading-[1.08]">
+          <h1 className="animate-fade-up text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-950 tracking-tight leading-[1.08]">
             Everything local.
             <br />
             <span className="text-gray-300">One place.</span>
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-gray-500 max-w-lg leading-relaxed">
+          <p className="animate-fade-up-delay-1 mt-6 text-lg sm:text-xl text-gray-500 max-w-lg leading-relaxed">
             Businesses, classifieds, jobs, events, and more — Nepal&apos;s platform for your neighborhood.
           </p>
         </div>
@@ -42,9 +45,9 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav aria-label="Main features">
             <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {FEATURES.map(({ href, icon: Icon, label, desc }) => (
-                <li key={href}>
-                  <Link href={href} className="group flex flex-col items-center text-center p-4 sm:p-5 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+              {FEATURES.map(({ href, icon: Icon, label, desc }, i) => (
+                <li key={href} className={STAGGER[i]}>
+                  <Link href={href} className="group h-full flex flex-col items-center justify-center text-center p-4 sm:p-5 rounded-lg border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200">
                     <Icon className="h-5 w-5 text-gray-400 group-hover:text-gray-950 transition-colors mb-2.5" aria-hidden="true" />
                     <span className="text-sm font-medium text-gray-950">{label}</span>
                     <span className="text-xs text-gray-400 mt-0.5 leading-snug">{desc}</span>
@@ -60,7 +63,7 @@ export default function HomePage() {
       <section className="py-16 sm:py-20 bg-gray-950 text-white" aria-labelledby="pitch-heading">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
-            <div>
+            <AnimateIn>
               <h2 id="pitch-heading" className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
                 Your business deserves more than a Facebook page.
               </h2>
@@ -85,18 +88,18 @@ export default function HomePage() {
                   <dd className="text-sm text-gray-400 mt-0.5">One account, many pages</dd>
                 </div>
               </dl>
-            </div>
-            <div className="mt-10 lg:mt-0">
+            </AnimateIn>
+            <AnimateIn delay={0.15} className="mt-10 lg:mt-0">
               <SubdomainChecker variant="dark" />
               <p className="mt-3 text-xs text-gray-500">Free. No credit card. Takes 5 minutes.</p>
-            </div>
+            </AnimateIn>
           </div>
         </div>
       </section>
 
       {/* Directory categories */}
       <section className="py-16 sm:py-20" aria-labelledby="directory-heading">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <AnimateIn className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between mb-8">
             <h2 id="directory-heading" className="text-lg font-semibold text-gray-950">Business directory</h2>
             <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
@@ -113,12 +116,12 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-        </div>
+        </AnimateIn>
       </section>
 
       {/* Classifieds categories */}
       <section className="py-16 sm:py-20 bg-gray-50" aria-labelledby="classifieds-heading">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <AnimateIn className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between mb-8">
             <h2 id="classifieds-heading" className="text-lg font-semibold text-gray-950">Classifieds</h2>
             <Link href="/classifieds" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
@@ -140,14 +143,14 @@ export default function HomePage() {
               Post a free ad &rarr;
             </Link>
           </div>
-        </div>
+        </AnimateIn>
       </section>
 
       {/* Jobs, Events, Lost & Found */}
       <section className="py-16 sm:py-20" aria-label="More sections">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-3 gap-12">
-            <div>
+            <AnimateIn>
               <div className="flex items-baseline justify-between mb-6">
                 <h2 className="text-lg font-semibold text-gray-950">Jobs</h2>
                 <Link href="/jobs" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
@@ -166,8 +169,8 @@ export default function HomePage() {
               <Link href="/jobs/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
                 Post a job &rarr;
               </Link>
-            </div>
-            <div>
+            </AnimateIn>
+            <AnimateIn delay={0.1}>
               <div className="flex items-baseline justify-between mb-6">
                 <h2 className="text-lg font-semibold text-gray-950">Events</h2>
                 <Link href="/events" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
@@ -186,8 +189,8 @@ export default function HomePage() {
               <Link href="/events/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
                 Post an event &rarr;
               </Link>
-            </div>
-            <div>
+            </AnimateIn>
+            <AnimateIn delay={0.2}>
               <div className="flex items-baseline justify-between mb-6">
                 <h2 className="text-lg font-semibold text-gray-950">Lost &amp; Found</h2>
                 <Link href="/lost-found" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
@@ -206,7 +209,7 @@ export default function HomePage() {
               <Link href="/lost-found/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
                 Post a listing &rarr;
               </Link>
-            </div>
+            </AnimateIn>
           </div>
         </div>
       </section>
