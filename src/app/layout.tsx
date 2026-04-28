@@ -80,9 +80,10 @@ export default function RootLayout({
             }),
           }}
         />
-        <NavigationProgress />
-        <Navbar />
-        {children}
+        <NavigationProgress>
+          <Navbar />
+          {children}
+        </NavigationProgress>
       </body>
     </html>
   );
