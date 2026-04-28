@@ -20,18 +20,18 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "OnNepal — Nepal's Business Directory & Classifieds",
+    default: "OnNepal — Everything Local. One Place.",
     template: '%s | OnNepal',
   },
-  description: "Find local businesses, post classifieds, jobs, events, and lost & found. Create your own business page at yourname.onnepal.com.",
-  keywords: ['Nepal', 'business directory', 'classifieds', 'yellow pages', 'jobs Nepal', 'events Nepal', 'lost and found Nepal'],
+  description: "Nepal's local platform — business directory, classifieds, jobs, events, and lost & found. Create your own business page at yourname.onnepal.com.",
+  keywords: ['Nepal', 'business directory', 'classifieds', 'yellow pages', 'jobs Nepal', 'events Nepal', 'lost and found Nepal', 'local platform Nepal'],
   authors: [{ name: 'OnNepal' }],
   creator: 'OnNepal',
   icons: { icon: '/icon.svg' },
   metadataBase: new URL('https://onnepal.com'),
   openGraph: {
-    title: "OnNepal — Nepal's Business Directory & Classifieds",
-    description: "Find local businesses, post classifieds, jobs, events, and create your own business page.",
+    title: "OnNepal — Everything Local. One Place.",
+    description: "Nepal's local platform — businesses, classifieds, jobs, events, and more.",
     siteName: 'OnNepal',
     type: 'website',
     locale: 'en_US',
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "OnNepal — Nepal's Business Directory & Classifieds",
-    description: "Find local businesses, post classifieds, jobs, events, and create your own business page.",
+    title: "OnNepal — Everything Local. One Place.",
+    description: "Nepal's local platform — businesses, classifieds, jobs, events, and more.",
   },
   robots: {
     index: true,
@@ -71,7 +71,7 @@ export default function RootLayout({
               '@type': 'WebSite',
               name: 'OnNepal',
               url: 'https://onnepal.com',
-              description: "Nepal's Business Directory & Classifieds Platform",
+              description: "Nepal's local platform — businesses, classifieds, jobs, events, and more.",
               potentialAction: {
                 '@type': 'SearchAction',
                 target: 'https://onnepal.com/classifieds?search={search_term_string}',

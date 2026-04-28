@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store } from 'lucide-react';
 import { SubdomainChecker } from '@/components/subdomain-checker';
 import { CATEGORIES } from '@/lib/categories';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
@@ -6,73 +7,134 @@ import { JOB_CATEGORIES } from '@/lib/job-categories';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
 
+const FEATURES = [
+  { href: '/directory', icon: Search, label: 'Directory', desc: 'Find local businesses' },
+  { href: '/classifieds', icon: ShoppingBag, label: 'Classifieds', desc: 'Buy, sell & rent' },
+  { href: '/jobs', icon: Briefcase, label: 'Jobs', desc: 'Find or post jobs' },
+  { href: '/events', icon: CalendarDays, label: 'Events', desc: 'What’s happening' },
+  { href: '/lost-found', icon: HelpCircle, label: 'Lost & Found', desc: 'Help your community' },
+  { href: '/create-business', icon: Store, label: 'Business page', desc: 'Get yourname.onnepal.com' },
+] as const;
+
 export default function HomePage() {
   return (
     <main>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-gray-950 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm">
+        Skip to content
+      </a>
+
       {/* Hero */}
-      <section className="pt-28 sm:pt-36 pb-20 sm:pb-28">
+      <section id="main-content" className="pt-24 sm:pt-32 pb-16 sm:pb-20" aria-label="Hero">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-[2.75rem] sm:text-6xl lg:text-7xl font-bold text-gray-950 tracking-tight leading-[1.05]">
-            Nepal&apos;s business
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-950 tracking-tight leading-[1.08]">
+            Everything local.
             <br />
-            directory &amp; classifieds
+            <span className="text-gray-300">One place.</span>
           </h1>
-          <p className="mt-6 text-xl sm:text-2xl text-gray-400 max-w-xl leading-relaxed font-light">
-            Discover local businesses. Buy and sell anything. Get your own page at yourname.onnepal.com.
+          <p className="mt-6 text-lg sm:text-xl text-gray-500 max-w-lg leading-relaxed">
+            Businesses, classifieds, jobs, events, and more — Nepal&apos;s platform for your neighborhood.
           </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="/directory" className="px-5 py-2.5 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
-              Browse directory
-            </Link>
-            <Link href="/classifieds" className="px-5 py-2.5 text-gray-950 text-sm font-medium rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
-              Classifieds
-            </Link>
-            <Link href="/create-business" className="px-5 py-2.5 text-gray-500 text-sm font-medium rounded-lg hover:text-gray-950 transition-colors">
-              List your business &rarr;
-            </Link>
+        </div>
+      </section>
+
+      {/* Quick access grid */}
+      <section className="pb-16 sm:pb-20" aria-label="Explore">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav aria-label="Main features">
+            <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {FEATURES.map(({ href, icon: Icon, label, desc }) => (
+                <li key={href}>
+                  <Link href={href} className="group flex flex-col items-center text-center p-4 sm:p-5 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+                    <Icon className="h-5 w-5 text-gray-400 group-hover:text-gray-950 transition-colors mb-2.5" aria-hidden="true" />
+                    <span className="text-sm font-medium text-gray-950">{label}</span>
+                    <span className="text-xs text-gray-400 mt-0.5 leading-snug">{desc}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </section>
+
+      {/* Business pitch — moved up */}
+      <section className="py-16 sm:py-20 bg-gray-950 text-white" aria-labelledby="pitch-heading">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
+            <div>
+              <h2 id="pitch-heading" className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
+                Your business deserves more than a Facebook page.
+              </h2>
+              <p className="mt-4 text-gray-400 leading-relaxed">
+                Get a real web presence in minutes — your own subdomain, products, menu, gallery, reviews, and contact info.
+              </p>
+              <dl className="mt-8 grid grid-cols-2 gap-6">
+                <div>
+                  <dt className="text-sm font-semibold text-white">Your own URL</dt>
+                  <dd className="text-sm text-gray-400 mt-0.5">yourshop.onnepal.com</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-semibold text-white">All your links</dt>
+                  <dd className="text-sm text-gray-400 mt-0.5">Social, WhatsApp, maps</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-semibold text-white">Products &amp; menu</dt>
+                  <dd className="text-sm text-gray-400 mt-0.5">Photos, prices, availability</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-semibold text-white">Up to 5 businesses</dt>
+                  <dd className="text-sm text-gray-400 mt-0.5">One account, many pages</dd>
+                </div>
+              </dl>
+            </div>
+            <div className="mt-10 lg:mt-0">
+              <SubdomainChecker variant="dark" />
+              <p className="mt-3 text-xs text-gray-500">Free. No credit card. Takes 5 minutes.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
-
       {/* Directory categories */}
-      <section className="py-20">
+      <section className="py-16 sm:py-20" aria-labelledby="directory-heading">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between mb-8">
-            <h2 className="text-lg font-semibold text-gray-950">Business directory</h2>
+            <h2 id="directory-heading" className="text-lg font-semibold text-gray-950">Business directory</h2>
             <Link href="/directory" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
               View all &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3" role="list">
             {CATEGORIES.map((cat) => (
-              <Link key={cat.slug} href={`/directory/${cat.slug}`} className="group py-0.5">
-                <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
-                <span className="text-xs text-gray-300 ml-1">{cat.subcategories.length}</span>
-              </Link>
+              <li key={cat.slug}>
+                <Link href={`/directory/${cat.slug}`} className="group py-0.5 inline-flex items-baseline gap-1">
+                  <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
+                  <span className="text-xs text-gray-300">{cat.subcategories.length}</span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
       {/* Classifieds categories */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 sm:py-20 bg-gray-50" aria-labelledby="classifieds-heading">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between mb-8">
-            <h2 className="text-lg font-semibold text-gray-950">Classifieds</h2>
+            <h2 id="classifieds-heading" className="text-lg font-semibold text-gray-950">Classifieds</h2>
             <Link href="/classifieds" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
               View all &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-3" role="list">
             {CLASSIFIED_CATEGORIES.map((cat) => (
-              <Link key={cat.slug} href={`/classifieds/${cat.slug}`} className="group py-0.5">
-                <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
-                <span className="text-xs text-gray-300 ml-1">{cat.subcategories.length}</span>
-              </Link>
+              <li key={cat.slug}>
+                <Link href={`/classifieds/${cat.slug}`} className="group py-0.5 inline-flex items-baseline gap-1">
+                  <span className="text-[0.9375rem] text-gray-600 group-hover:text-gray-950 transition-colors">{cat.name}</span>
+                  <span className="text-xs text-gray-300">{cat.subcategories.length}</span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
           <div className="mt-8">
             <Link href="/classifieds/post/new" className="text-sm text-gray-400 hover:text-gray-950 transition-colors">
               Post a free ad &rarr;
@@ -82,7 +144,7 @@ export default function HomePage() {
       </section>
 
       {/* Jobs, Events, Lost & Found */}
-      <section className="py-20">
+      <section className="py-16 sm:py-20" aria-label="More sections">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-3 gap-12">
             <div>
@@ -92,13 +154,15 @@ export default function HomePage() {
                   View all &rarr;
                 </Link>
               </div>
-              <div className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-2" role="list">
                 {JOB_CATEGORIES.slice(0, 8).map((cat) => (
-                  <Link key={cat.slug} href={`/jobs?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
-                    {cat.name}
-                  </Link>
+                  <li key={cat.slug}>
+                    <Link href={`/jobs?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
+                      {cat.name}
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
               <Link href="/jobs/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
                 Post a job &rarr;
               </Link>
@@ -110,13 +174,15 @@ export default function HomePage() {
                   View all &rarr;
                 </Link>
               </div>
-              <div className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-2" role="list">
                 {EVENT_CATEGORIES.slice(0, 8).map((cat) => (
-                  <Link key={cat.slug} href={`/events?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
-                    {cat.name}
-                  </Link>
+                  <li key={cat.slug}>
+                    <Link href={`/events?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
+                      {cat.name}
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
               <Link href="/events/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
                 Post an event &rarr;
               </Link>
@@ -128,13 +194,15 @@ export default function HomePage() {
                   View all &rarr;
                 </Link>
               </div>
-              <div className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-2" role="list">
                 {LOST_FOUND_CATEGORIES.slice(0, 8).map((cat) => (
-                  <Link key={cat.slug} href={`/lost-found?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
-                    {cat.name}
-                  </Link>
+                  <li key={cat.slug}>
+                    <Link href={`/lost-found?category=${cat.slug}`} className="text-[0.9375rem] text-gray-600 hover:text-gray-950 transition-colors">
+                      {cat.name}
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
               <Link href="/lost-found/post/new" className="inline-block mt-4 text-sm text-gray-400 hover:text-gray-950 transition-colors">
                 Post a listing &rarr;
               </Link>
@@ -143,59 +211,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
-
-      {/* Business pages pitch */}
-      <section className="py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-gray-400 mb-4 uppercase tracking-wider font-medium">For business owners</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight leading-tight">
-            Your business deserves<br />more than a Facebook page.
-          </h2>
-          <p className="mt-6 text-lg text-gray-400 max-w-lg leading-relaxed">
-            Get a real web presence in minutes. Your own subdomain, social links, products, announcements, and contact info — all in one place.
-          </p>
-          <div className="mt-12 grid sm:grid-cols-2 gap-8">
-            <div>
-              <p className="text-sm font-semibold text-gray-950 mb-1">Your own URL</p>
-              <p className="text-sm text-gray-400 leading-relaxed">yourshop.onnepal.com — share it on WhatsApp, print it on cards.</p>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-950 mb-1">All your links</p>
-              <p className="text-sm text-gray-400 leading-relaxed">Facebook, Instagram, TikTok, WhatsApp — one page for everything.</p>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-950 mb-1">Products &amp; prices</p>
-              <p className="text-sm text-gray-400 leading-relaxed">Show what you sell with photos, descriptions, and pricing.</p>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-950 mb-1">Up to 5 businesses</p>
-              <p className="text-sm text-gray-400 leading-relaxed">One account, multiple businesses. Each gets its own page.</p>
-            </div>
-          </div>
-          <div className="mt-12">
-            <SubdomainChecker />
-          </div>
-          <p className="mt-3 text-xs text-gray-300">Free. No credit card. Takes 5 minutes.</p>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="py-12 border-t border-gray-100">
+      <footer className="py-12 border-t border-gray-100" role="contentinfo">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
               <p className="text-sm font-semibold text-gray-950">OnNepal</p>
-              <p className="text-sm text-gray-400 mt-1">Nepal&apos;s Yellow Pages &amp; classifieds.</p>
+              <p className="text-sm text-gray-400 mt-1">Everything local. One place.</p>
             </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400">
-              <Link href="/directory" className="hover:text-gray-950 transition-colors">Directory</Link>
-              <Link href="/classifieds" className="hover:text-gray-950 transition-colors">Classifieds</Link>
-              <Link href="/jobs" className="hover:text-gray-950 transition-colors">Jobs</Link>
-              <Link href="/events" className="hover:text-gray-950 transition-colors">Events</Link>
-              <Link href="/lost-found" className="hover:text-gray-950 transition-colors">Lost &amp; Found</Link>
-              <Link href="/signup" className="hover:text-gray-950 transition-colors">Sign up</Link>
-            </div>
+            <nav aria-label="Footer">
+              <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400">
+                <li><Link href="/directory" className="hover:text-gray-950 transition-colors">Directory</Link></li>
+                <li><Link href="/classifieds" className="hover:text-gray-950 transition-colors">Classifieds</Link></li>
+                <li><Link href="/jobs" className="hover:text-gray-950 transition-colors">Jobs</Link></li>
+                <li><Link href="/events" className="hover:text-gray-950 transition-colors">Events</Link></li>
+                <li><Link href="/lost-found" className="hover:text-gray-950 transition-colors">Lost &amp; Found</Link></li>
+                <li><Link href="/signup" className="hover:text-gray-950 transition-colors">Sign up</Link></li>
+              </ul>
+            </nav>
           </div>
           <p className="mt-8 text-xs text-gray-300">&copy; {new Date().getFullYear()} OnNepal</p>
         </div>
