@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
+import { NavigationProgress } from "@/components/progress-bar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff2",
@@ -79,6 +80,7 @@ export default function RootLayout({
             }),
           }}
         />
+        <NavigationProgress />
         <Navbar />
         {children}
       </body>
