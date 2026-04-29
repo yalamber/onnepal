@@ -7,6 +7,8 @@ import {
 import { ReviewForm } from './review-form';
 import { BookingForm } from './booking-form';
 import { SectionTabs } from './section-tabs';
+import { BusinessCartWrapper } from './business-cart-wrapper';
+import { AddToCartButton } from './add-to-cart-button';
 
 function imgSrc(key: string | null): string | null {
   if (!key) return null;
@@ -125,7 +127,10 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
   };
   const tabs = sectionOrder.map(key => allTabs[key]).filter(Boolean) as Array<{ id: string; label: string }>;
 
+  const hasOrderableItems = (mod("products") && products.length > 0) || (mod("menu") && menuItems.length > 0);
+
   return (
+    <BusinessCartWrapper businessName={name} whatsappNumber={hasOrderableItems ? business.whatsappNumber : null}>
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="max-w-4xl mx-auto">
@@ -257,7 +262,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{category}</h3>
                 <div className="space-y-3">
                   {items.map((item) => (
-                    <div key={item.id} className="flex items-start gap-3">
+                    <div key={item.id} className="flex items-center gap-3">
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium text-gray-950 ${!item.isAvailable ? 'line-through text-gray-400' : ''}`}>{item.name}</p>
                         {item.description && <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{item.description}</p>}
@@ -268,6 +273,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                           <p className="text-sm font-semibold text-gray-950 flex-shrink-0">{item.price}</p>
                         </>
                       )}
+                      {item.isAvailable && <AddToCartButton id={`menu-${item.id}`} name={item.name} price={item.price} />}
                     </div>
                   ))}
                 </div>
@@ -293,7 +299,10 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
                     )}
                   </div>
                   <div className="mt-2.5">
-                    <h3 className="text-sm font-semibold text-gray-950 group-hover:text-gray-700 transition-colors">{product.name}</h3>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="text-sm font-semibold text-gray-950 group-hover:text-gray-700 transition-colors">{product.name}</h3>
+                      <AddToCartButton id={`product-${product.id}`} name={product.name} price={product.price} />
+                    </div>
                     {product.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">{product.description}</p>}
                     {product.price && <span className="inline-block mt-1.5 px-2 py-0.5 rounded text-xs font-semibold text-white" style={{ backgroundColor: primary }}>{product.price}</span>}
                   </div>
@@ -496,5 +505,6 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
         </a>
       )}
     </div>
+    </BusinessCartWrapper>
   );
 }
