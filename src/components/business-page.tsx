@@ -126,10 +126,10 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
   const tabs = sectionOrder.map(key => allTabs[key]).filter(Boolean) as Array<{ id: string; label: string }>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header card: cover + profile + tabs */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white overflow-hidden">
           {/* Cover image */}
           {imgSrc(business.coverImageUrl) ? (
             <div className="h-48 sm:h-64 lg:h-72 overflow-hidden">
@@ -147,11 +147,11 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
             <div className="-mt-10 sm:-mt-12 mb-4">
               {imgSrc(business.logoUrl) ? (
                 <img src={imgSrc(business.logoUrl)!} alt={name}
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover border-4 border-white bg-white"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover border-4 border-white bg-white"
                   loading="eager" fetchPriority="high" decoding="async"
                   width="112" height="112" />
               ) : (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border-4 border-white flex items-center justify-center text-white text-3xl sm:text-4xl font-bold"
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg border-4 border-white flex items-center justify-center text-white text-3xl sm:text-4xl font-bold"
                   style={{ backgroundColor: primary }}>
                   {name.charAt(0)}
                 </div>
@@ -210,10 +210,10 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       {tabs.length > 0 && <SectionTabs tabs={tabs} accentColor={primary} />}
 
       {/* Content sections — ordered by business category */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 flex flex-col gap-4">
+      <div className="max-w-4xl mx-auto flex flex-col">
 
         {mod("offers") && offers.length > 0 && (
-          <div id="offers" style={{ order: sectionOrder.indexOf('offers') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="offers" style={{ order: sectionOrder.indexOf('offers') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-4">Special Offers</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {offers.map((offer) => (
@@ -233,7 +233,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Business Hours */}
         {mod("hours") && hours && (
-          <div id="hours" style={{ order: sectionOrder.indexOf('hours') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="hours" style={{ order: sectionOrder.indexOf('hours') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-4">Business Hours</h2>
             <div className="max-w-xs space-y-0.5">
               {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((day) => (
@@ -250,7 +250,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Menu */}
         {mod("menu") && menuItems.length > 0 && (
-          <div id="menu" style={{ order: sectionOrder.indexOf('menu') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="menu" style={{ order: sectionOrder.indexOf('menu') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-5">Menu</h2>
             {Object.entries(menuByCategory).map(([category, items]) => (
               <div key={category} className="mb-6 last:mb-0">
@@ -278,7 +278,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Products */}
         {mod("products") && products.length > 0 && (
-          <div id="products" style={{ order: sectionOrder.indexOf('products') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="products" style={{ order: sectionOrder.indexOf('products') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-5">Products & Services</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
@@ -305,7 +305,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Gallery */}
         {mod("gallery") && gallery.length > 0 && (
-          <div id="gallery" style={{ order: sectionOrder.indexOf('gallery') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="gallery" style={{ order: sectionOrder.indexOf('gallery') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-4">Gallery</h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
               {gallery.map((img) => (
@@ -324,7 +324,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Announcements */}
         {mod("announcements") && announcements.length > 0 && (
-          <div id="announcements" style={{ order: sectionOrder.indexOf('announcements') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="announcements" style={{ order: sectionOrder.indexOf('announcements') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-4">News & Updates</h2>
             <div className="space-y-2.5">
               {[...announcements].sort((a, b) => Number(b.isPinned) - Number(a.isPinned)).map((item) => (
@@ -347,7 +347,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Team */}
         {mod("team") && teamMembers.length > 0 && (
-          <div id="team" style={{ order: sectionOrder.indexOf('team') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="team" style={{ order: sectionOrder.indexOf('team') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-5">Our Team</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {teamMembers.map((member) => (
@@ -368,7 +368,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Reviews */}
         {mod("reviews") && (
-          <div id="reviews" style={{ order: sectionOrder.indexOf('reviews') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="reviews" style={{ order: sectionOrder.indexOf('reviews') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <div className="flex items-baseline gap-3 mb-5">
               <h2 className="text-base font-semibold text-gray-950">Reviews</h2>
               {averageRating && averageRating.count > 0 && (
@@ -403,7 +403,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* FAQ */}
         {mod("faq") && faqs.length > 0 && (
-          <div id="faq" style={{ order: sectionOrder.indexOf('faq') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="faq" style={{ order: sectionOrder.indexOf('faq') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-3">Frequently Asked Questions</h2>
             <div className="divide-y divide-gray-100">
               {faqs.map((faq) => (
@@ -421,7 +421,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Booking */}
         {business.bookingEnabled && (
-          <div id="booking" style={{ order: sectionOrder.indexOf('booking') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="booking" style={{ order: sectionOrder.indexOf('booking') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <div className="grid lg:grid-cols-2 gap-6">
               <div>
                 <h2 className="text-base font-semibold text-gray-950">Book an appointment</h2>
@@ -449,7 +449,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
 
         {/* Social Links */}
         {mod("links") && links.length > 0 && (
-          <div id="links" style={{ order: sectionOrder.indexOf('links') }} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 scroll-mt-20">
+          <div id="links" style={{ order: sectionOrder.indexOf('links') }} className="py-8 px-4 sm:px-6 border-t border-gray-100 scroll-mt-16">
             <h2 className="text-base font-semibold text-gray-950 mb-4">Connect</h2>
             <div className="grid sm:grid-cols-2 gap-2">
               {links.map((link) => {
@@ -468,7 +468,7 @@ export function BusinessPage({ business, links, announcements, products, ctas, g
       </div>
 
       {/* Footer */}
-      <footer className="py-8">
+      <footer className="py-10 border-t border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
