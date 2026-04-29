@@ -75,7 +75,7 @@ export default function RootLayout({
                 description: "Nepal's local platform — businesses, classifieds, jobs, events, and more.",
                 potentialAction: {
                   '@type': 'SearchAction',
-                  target: 'https://onnepal.com/classifieds?search={search_term_string}',
+                  target: 'https://onnepal.com/search?q={search_term_string}',
                   'query-input': 'required name=search_term_string',
                 },
               },

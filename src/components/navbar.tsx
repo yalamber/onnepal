@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield, Mail } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield, Mail, Search } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -62,6 +62,7 @@ export function Navbar() {
     { href: '/classifieds', label: 'Classifieds' },
     { href: '/jobs', label: 'Jobs' },
     { href: '/events', label: 'Events' },
+    { href: '/places', label: 'Places' },
     { href: '/lost-found', label: 'Lost & Found' },
   ];
 
@@ -92,6 +93,9 @@ export function Navbar() {
 
           {/* Desktop — min-h prevents CLS during auth check */}
           <div className="hidden sm:flex items-center gap-1 min-h-[36px]">
+            <Link href="/search" className="p-2 text-gray-400 hover:text-gray-950 transition-colors" title="Search">
+              <Search className="h-4 w-4" />
+            </Link>
             {authLoading ? (
               <div className="w-16" />
             ) : user ? (
@@ -161,6 +165,13 @@ export function Navbar() {
                       {link.label}
                     </Link>
                   ))}
+                  <Link
+                    href="/search"
+                    onClick={() => setMobileOpen(false)}
+                    className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors"
+                  >
+                    Search
+                  </Link>
                   <div className="h-px bg-gray-100 my-3" />
                   {authLoading ? (
                     <div className="px-3 py-2.5"><Loader2 className="h-4 w-4 animate-spin text-gray-300" /></div>

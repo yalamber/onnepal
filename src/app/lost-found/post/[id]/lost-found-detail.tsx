@@ -101,7 +101,7 @@ export default function LostFoundDetailPage({ initialData }: { initialData?: Ite
               {item.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3 text-gray-400" /> {item.location}</span>}
               {item.itemDate && <span className="flex items-center gap-1"><Calendar className="h-3 w-3 text-gray-400" /> {item.type === 'lost' ? 'Lost' : 'Found'} on {item.itemDate}</span>}
               <span className="text-gray-400">Posted {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-              {item.userName && <span className="text-gray-400">by {item.userName}</span>}
+              {item.userName && <span className="text-gray-400">by <Link href={`/user/${item.userId}`} className="hover:text-gray-950 transition-colors">{item.userName}</Link></span>}
             </div>
             {item.reward && (
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-sm font-medium rounded-md">

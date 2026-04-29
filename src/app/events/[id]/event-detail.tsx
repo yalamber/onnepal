@@ -165,7 +165,7 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
           </div>
         )}
 
-        <p className="mt-4 text-xs text-gray-400">Posted by {item.userName || 'Anonymous'} · {new Date(item.createdAt).toLocaleDateString()}</p>
+        <p className="mt-4 text-xs text-gray-400">Posted by {item.userName ? <Link href={`/user/${item.userId}`} className="hover:text-gray-950 transition-colors">{item.userName}</Link> : 'Anonymous'} · {new Date(item.createdAt).toLocaleDateString()}</p>
 
         <CommentSection targetType="event" targetId={item.id} />
       </div>

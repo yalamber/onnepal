@@ -1,6 +1,6 @@
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
-import { businesses, classifieds, jobs, events, lostFound } from '@/lib/db/schema';
+import { businesses, classifieds, jobs, events, lostFound, places } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
 export default async function sitemap() {

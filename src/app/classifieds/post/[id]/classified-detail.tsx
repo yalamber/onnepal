@@ -205,10 +205,8 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
                     <span className="text-gray-200">&middot;</span>
                     <span className="flex items-center gap-1">
                       <User className="h-3 w-3" />
-                      {listing.userSubdomain ? (
-                        <a href={`https://${listing.userSubdomain}.onnepal.com`} target="_blank" rel="noopener noreferrer"
-                          className="text-gray-600 hover:text-gray-950 font-medium transition-colors">{listing.userName}</a>
-                      ) : listing.userName}
+                      <Link href={`/user/${listing.userId}`}
+                        className="text-gray-600 hover:text-gray-950 font-medium transition-colors">{listing.userName}</Link>
                     </span>
                   </>
                 )}

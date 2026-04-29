@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Clock, Phone, Mail, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Phone, Mail, ExternalLink, Loader2, User } from 'lucide-react';
 import { JOB_TYPES } from '@/lib/job-categories';
 import { CommentSection } from '@/components/comment-section';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -137,7 +137,7 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
               </div>
             )}
 
-            <p className="text-xs text-gray-400">Posted {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {item.category}</p>
+            <p className="text-xs text-gray-400">Posted {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {item.category}{item.userName && <> · <Link href={`/user/${item.userId}`} className="hover:text-gray-950 transition-colors">{item.userName}</Link></>}</p>
 
             <CommentSection targetType="job" targetId={item.id} />
           </div>
