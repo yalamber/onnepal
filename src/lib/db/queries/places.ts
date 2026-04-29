@@ -7,14 +7,14 @@ interface PlaceFilters {
   category?: string;
   search?: string;
   location?: string;
-  district?: string;
+  city?: string;
   page: number;
   limit: number;
 }
 
 export async function getPlaces(
   db: Database,
-  { category, search, location, district, page, limit }: PlaceFilters
+  { category, search, location, city, page, limit }: PlaceFilters
 ) {
   const conditions = [
     eq(places.status, 'active'),
@@ -30,8 +30,8 @@ export async function getPlaces(
   if (location) {
     conditions.push(sql`${places.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
   }
-  if (district) {
-    conditions.push(eq(places.district, district));
+  if (city) {
+    conditions.push(eq(places.city, city));
   }
 
   const offset = (page - 1) * limit;
@@ -43,7 +43,7 @@ export async function getPlaces(
       description: places.description,
       category: places.category,
       location: places.location,
-      district: places.district,
+      city: places.city,
       address: places.address,
       imageUrls: places.imageUrls,
       contactPhone: places.contactPhone,
@@ -63,7 +63,7 @@ export async function getPlaces(
 
 export async function getPlacesCount(
   db: Database,
-  { category, search, location, district }: { category?: string; search?: string; location?: string; district?: string }
+  { category, search, location, city }: { category?: string; search?: string; location?: string; city?: string }
 ) {
   const conditions = [eq(places.status, 'active')];
   if (category) conditions.push(eq(places.category, category));
@@ -74,7 +74,7 @@ export async function getPlacesCount(
     );
   }
   if (location) conditions.push(sql`${places.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
-  if (district) conditions.push(eq(places.district, district));
+  if (city) conditions.push(eq(places.city, city));
 
   const result = await db.select({ count: sql<number>`count(*)` }).from(places).where(and(...conditions));
   return result[0]?.count ?? 0;
@@ -89,7 +89,7 @@ export async function getPlaceById(db: Database, id: string) {
       description: places.description,
       category: places.category,
       location: places.location,
-      district: places.district,
+      city: places.city,
       address: places.address,
       imageUrls: places.imageUrls,
       contactPhone: places.contactPhone,
@@ -114,7 +114,7 @@ export async function createPlace(
     description?: string;
     category: string;
     location?: string;
-    district?: string;
+    city?: string;
     address?: string;
     contactPhone?: string;
     contactWhatsapp?: string;
@@ -132,7 +132,7 @@ export async function createPlace(
     description: data.description || null,
     category: data.category,
     location: data.location || null,
-    district: data.district || null,
+    city: data.city || null,
     address: data.address || null,
     contactPhone: data.contactPhone || null,
     contactWhatsapp: data.contactWhatsapp || null,
@@ -154,7 +154,7 @@ interface UpdatePlaceData {
   description?: string | null;
   category?: string;
   location?: string | null;
-  district?: string | null;
+  city?: string | null;
   address?: string | null;
   imageUrls?: string[] | null;
   contactPhone?: string | null;
@@ -172,7 +172,7 @@ export async function updatePlace(
   if (data.description !== undefined) updates.description = data.description;
   if (data.category !== undefined) updates.category = data.category;
   if (data.location !== undefined) updates.location = data.location;
-  if (data.district !== undefined) updates.district = data.district;
+  if (data.city !== undefined) updates.city = data.city;
   if (data.address !== undefined) updates.address = data.address;
   if (data.contactPhone !== undefined) updates.contactPhone = data.contactPhone;
   if (data.contactWhatsapp !== undefined) updates.contactWhatsapp = data.contactWhatsapp;

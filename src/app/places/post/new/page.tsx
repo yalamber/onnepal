@@ -10,7 +10,7 @@ import { useRequireAuth } from '@/hooks/use-require-auth';
 import { PillSelector } from '@/components/pill-selector';
 import { ExpandableSection } from '@/components/expandable-section';
 import { SubmitButton } from '@/components/form-buttons';
-import { DistrictSelector } from '@/components/district-selector';
+import { CitySelector } from '@/components/city-selector';
 
 export default function PostPlacePage() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function PostPlacePage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    title: '', category: '', description: '', location: '', district: '', address: '',
+    title: '', category: '', description: '', location: '', city: '', address: '',
     website: '', contactPhone: '', contactWhatsapp: '',
     imageUrls: [] as string[],
   });
@@ -32,7 +32,7 @@ export default function PostPlacePage() {
       const res = await fetch('/api/places', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, description: form.description || null,
-          location: form.location || null, district: form.district || null,
+          location: form.location || null, city: form.city || null,
           address: form.address || null, website: form.website || null,
           contactPhone: form.contactPhone || null, contactWhatsapp: form.contactWhatsapp || null,
           imageUrls: form.imageUrls.length > 0 ? form.imageUrls : undefined }),
@@ -73,8 +73,8 @@ export default function PostPlacePage() {
               <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-500 mb-1.5 block">District</label>
-              <DistrictSelector value={form.district} onChange={(v) => setForm({ ...form, district: v })} />
+              <label className="text-xs font-medium text-gray-500 mb-1.5 block">City</label>
+              <CitySelector value={form.city} onChange={(v) => setForm({ ...form, city: v })} />
             </div>
           </div>
 

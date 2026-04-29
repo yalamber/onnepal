@@ -10,7 +10,7 @@ import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
 import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
-import { DistrictSelector } from '@/components/district-selector';
+import { CitySelector } from '@/components/city-selector';
 
 interface Item {
   id: string;
@@ -41,7 +41,7 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
   const [search, setSearch] = useState('');
   const [type, setType] = useState('');
   const [category, setCategory] = useState('');
-  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
@@ -52,7 +52,7 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
       const params = new URLSearchParams();
       if (type) params.set('type', type);
       if (category) params.set('category', category);
-      if (district) params.set('district', district);
+      if (city) params.set('city', city);
       if (search) params.set('search', search);
       params.set('page', String(page));
       params.set('limit', '12');
@@ -65,9 +65,9 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
         setTotalPages(data.totalPages || 1);
       }
     } catch {} finally { setLoading(false); }
-  }, [type, category, district, search, page]);
+  }, [type, category, city, search, page]);
 
-  useEffect(() => { if (type || category || district || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
+  useEffect(() => { if (type || category || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
 
   useEffect(() => {
     const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350);
@@ -100,7 +100,7 @@ export default function LostFoundClient({ initialData }: { initialData: LostFoun
             <SearchInput value={search} onChange={setSearch} placeholder="Search lost & found items..." />
           </div>
           <div className="w-full sm:w-48">
-            <DistrictSelector value={district} onChange={(v) => { setDistrict(v); setPage(1); }} />
+            <CitySelector value={city} onChange={(v) => { setCity(v); setPage(1); }} />
           </div>
           <div className="flex gap-2">
             {['', 'lost', 'found'].map((t) => (

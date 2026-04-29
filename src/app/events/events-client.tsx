@@ -9,7 +9,7 @@ import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
 import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
-import { DistrictSelector } from '@/components/district-selector';
+import { CitySelector } from '@/components/city-selector';
 
 interface Event {
   id: string;
@@ -41,7 +41,7 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
-  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
@@ -55,7 +55,7 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
       const params = new URLSearchParams();
       const catName = categoryNameFromSlug(category);
       if (catName) params.set('category', catName);
-      if (district) params.set('district', district);
+      if (city) params.set('city', city);
       if (search) params.set('search', search);
       params.set('page', String(page));
       params.set('limit', '12');
@@ -67,9 +67,9 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
         setTotalPages(data.totalPages || 1);
       }
     } catch {} finally { setLoading(false); }
-  }, [category, district, search, page]);
+  }, [category, city, search, page]);
 
-  useEffect(() => { if (category || district || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
+  useEffect(() => { if (category || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 
   const handleCategorySelect = (slug: string) => {
@@ -96,7 +96,7 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
             <SearchInput value={search} onChange={setSearch} placeholder="Search events..." />
           </div>
           <div className="w-full sm:w-48">
-            <DistrictSelector value={district} onChange={(v) => { setDistrict(v); setPage(1); }} />
+            <CitySelector value={city} onChange={(v) => { setCity(v); setPage(1); }} />
           </div>
         </div>
 

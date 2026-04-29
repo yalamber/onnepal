@@ -7,14 +7,14 @@ interface EventFilters {
   category?: string;
   search?: string;
   location?: string;
-  district?: string;
+  city?: string;
   page: number;
   limit: number;
 }
 
 export async function getEvents(
   db: Database,
-  { category, search, location, district, page, limit }: EventFilters
+  { category, search, location, city, page, limit }: EventFilters
 ) {
   const conditions = [
     sql`${events.status} IN ('upcoming', 'ongoing')`,
@@ -30,8 +30,8 @@ export async function getEvents(
   if (location) {
     conditions.push(sql`${events.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
   }
-  if (district) {
-    conditions.push(eq(events.district, district));
+  if (city) {
+    conditions.push(eq(events.city, city));
   }
 
   const offset = (page - 1) * limit;
@@ -64,7 +64,7 @@ export async function getEvents(
 
 export async function getEventsCount(
   db: Database,
-  { category, search, location, district }: { category?: string; search?: string; location?: string; district?: string }
+  { category, search, location, city }: { category?: string; search?: string; location?: string; city?: string }
 ) {
   const conditions = [sql`${events.status} IN ('upcoming', 'ongoing')`];
   if (category) conditions.push(eq(events.category, category));
@@ -75,7 +75,7 @@ export async function getEventsCount(
     );
   }
   if (location) conditions.push(sql`${events.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
-  if (district) conditions.push(eq(events.district, district));
+  if (city) conditions.push(eq(events.city, city));
 
   const result = await db.select({ count: sql<number>`count(*)` }).from(events).where(and(...conditions));
   return result[0]?.count ?? 0;

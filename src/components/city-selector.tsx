@@ -2,13 +2,13 @@
 
 import { NEPAL_CITIES } from '@/lib/nepal-cities';
 
-interface DistrictSelectorProps {
+interface CitySelectorProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
 }
 
-export function DistrictSelector({ value, onChange, className }: DistrictSelectorProps) {
+export function CitySelector({ value, onChange, className }: CitySelectorProps) {
   return (
     <select
       value={value}

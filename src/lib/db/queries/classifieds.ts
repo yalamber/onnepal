@@ -7,14 +7,14 @@ interface ClassifiedFilters {
   category?: string;
   search?: string;
   location?: string;
-  district?: string;
+  city?: string;
   page: number;
   limit: number;
 }
 
 export async function getClassifieds(
   db: Database,
-  { category, search, location, district, page, limit }: ClassifiedFilters
+  { category, search, location, city, page, limit }: ClassifiedFilters
 ) {
   const conditions = [eq(classifieds.status, 'active')];
 
@@ -31,8 +31,8 @@ export async function getClassifieds(
     const pattern = `%${location}%`;
     conditions.push(sql`${classifieds.location} LIKE ${pattern} COLLATE NOCASE`);
   }
-  if (district) {
-    conditions.push(eq(classifieds.district, district));
+  if (city) {
+    conditions.push(eq(classifieds.city, city));
   }
 
   const offset = (page - 1) * limit;
@@ -62,7 +62,7 @@ export async function getClassifieds(
 
 export async function getClassifiedsCount(
   db: Database,
-  { category, search, location, district }: { category?: string; search?: string; location?: string; district?: string }
+  { category, search, location, city }: { category?: string; search?: string; location?: string; city?: string }
 ) {
   const conditions = [eq(classifieds.status, 'active')];
   if (category) conditions.push(eq(classifieds.category, category));
@@ -75,8 +75,8 @@ export async function getClassifiedsCount(
   if (location) {
     conditions.push(sql`${classifieds.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
   }
-  if (district) {
-    conditions.push(eq(classifieds.district, district));
+  if (city) {
+    conditions.push(eq(classifieds.city, city));
   }
 
   const result = await db

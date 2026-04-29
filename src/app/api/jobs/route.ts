@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const type = sp.get('type') || undefined;
     const search = sp.get('search') || undefined;
     const location = sp.get('location') || undefined;
-    const district = sp.get('district') || undefined;
+    const city = sp.get('city') || undefined;
     const page = Math.max(1, parseInt(sp.get('page') || '1', 10));
     const limit = Math.min(48, Math.max(1, parseInt(sp.get('limit') || '12', 10)));
 
@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
     const db = getDb(d1);
 
     const [items, total] = await Promise.all([
-      getJobs(db, { category, type, search, location, district, page, limit }),
-      getJobsCount(db, { category, type, search, location, district }),
+      getJobs(db, { category, type, search, location, city, page, limit }),
+      getJobsCount(db, { category, type, search, location, city }),
     ]);
 
     const res = NextResponse.json({ items, total, page, totalPages: Math.ceil(total / limit) });

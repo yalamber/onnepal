@@ -10,7 +10,7 @@ import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
 import { Search } from 'lucide-react';
-import { DistrictSelector } from '@/components/district-selector';
+import { CitySelector } from '@/components/city-selector';
 
 interface Listing {
   id: string;
@@ -49,7 +49,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
-  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(initialData.listings.length === 0);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -61,18 +61,18 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
     params.set('limit', String(PER_PAGE));
     if (s) params.set('search', s);
     if (c) params.set('category', c);
-    if (district) params.set('district', district);
+    if (city) params.set('city', city);
     try {
       const res = await fetch(`/api/classifieds?${params}`);
       const data = await res.json() as APIResponse;
       setListings(data.listings); setTotal(data.total);
       setTotalPages(data.totalPages); setCategories(data.categories);
     } catch {} finally { setLoading(false); setInitialLoad(false); }
-  }, [district]);
+  }, [city]);
 
-  const districtMounted = useRef(false);
-  useEffect(() => { if (activeCategory || activeSearch || district || page > 1 || initialData.listings.length === 0) fetchListings(page, activeSearch, activeCategory); }, []);
-  useEffect(() => { if (districtMounted.current) { fetchListings(1, activeSearch, activeCategory); } else { districtMounted.current = true; } }, [district]);
+  const cityMounted = useRef(false);
+  useEffect(() => { if (activeCategory || activeSearch || city || page > 1 || initialData.listings.length === 0) fetchListings(page, activeSearch, activeCategory); }, []);
+  useEffect(() => { if (cityMounted.current) { fetchListings(1, activeSearch, activeCategory); } else { cityMounted.current = true; } }, [city]);
 
   const handleSearch = (value: string) => {
     setSearchInput(value);
@@ -121,7 +121,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
               <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search classifieds..." />
             </form>
             <div className="w-full sm:w-48">
-              <DistrictSelector value={district} onChange={(v) => { setDistrict(v); setPage(1); }} />
+              <CitySelector value={city} onChange={(v) => { setCity(v); setPage(1); }} />
             </div>
           </div>
         </div>

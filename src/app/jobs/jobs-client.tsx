@@ -9,7 +9,7 @@ import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
 import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
-import { DistrictSelector } from '@/components/district-selector';
+import { CitySelector } from '@/components/city-selector';
 
 interface Job {
   id: string; title: string; company: string; description: string | null; category: string;
@@ -28,7 +28,7 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [type, setType] = useState('');
-  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
@@ -43,7 +43,7 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
       const catName = categoryNameFromSlug(category);
       if (catName) params.set('category', catName);
       if (type) params.set('type', type);
-      if (district) params.set('district', district);
+      if (city) params.set('city', city);
       if (search) params.set('search', search);
       params.set('page', String(page));
       params.set('limit', '12');
@@ -55,9 +55,9 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
         setTotalPages(data.totalPages || 1);
       }
     } catch {} finally { setLoading(false); }
-  }, [category, type, district, search, page]);
+  }, [category, type, city, search, page]);
 
-  useEffect(() => { if (category || type || district || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
+  useEffect(() => { if (category || type || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 
   const handleCategorySelect = (slug: string) => {
@@ -89,7 +89,7 @@ export default function JobsClient({ initialData }: { initialData: JobsInitialDa
             {JOB_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
           <div className="w-full sm:w-48">
-            <DistrictSelector value={district} onChange={(v) => { setDistrict(v); setPage(1); }} />
+            <CitySelector value={city} onChange={(v) => { setCity(v); setPage(1); }} />
           </div>
         </div>
 

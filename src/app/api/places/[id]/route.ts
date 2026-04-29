@@ -10,7 +10,7 @@ const updateSchema = z.object({
   description: z.string().max(2000).nullish(),
   category: z.string().optional(),
   location: z.string().max(200).nullish(),
-  district: z.string().max(100).nullish(),
+  city: z.string().max(100).nullish(),
   address: z.string().max(500).nullish(),
   contactPhone: z.string().max(20).nullish(),
   contactWhatsapp: z.string().max(20).nullish(),

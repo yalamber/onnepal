@@ -12,11 +12,11 @@ import { OwnerActions } from '@/components/owner-actions';
 import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
-import { DistrictSelector } from '@/components/district-selector';
+import { CitySelector } from '@/components/city-selector';
 
 interface Place {
   id: string; userId: string; title: string; description: string | null; category: string;
-  location: string | null; district: string | null; address: string | null;
+  location: string | null; city: string | null; address: string | null;
   imageUrls: string | null; contactPhone: string | null; contactWhatsapp: string | null;
   website: string | null; status: string; createdAt: string; userName: string | null;
 }
@@ -43,14 +43,14 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editForm, setEditForm] = useState({ title: '', description: '', category: '', location: '', district: '', address: '', website: '', contactPhone: '', contactWhatsapp: '' });
+  const [editForm, setEditForm] = useState({ title: '', description: '', category: '', location: '', city: '', address: '', website: '', contactPhone: '', contactWhatsapp: '' });
   const [editImages, setEditImages] = useState<string[]>([]);
 
   const startEdit = () => {
     if (!item) return;
     setEditForm({
       title: item.title, description: item.description || '', category: item.category,
-      location: item.location || '', district: item.district || '', address: item.address || '',
+      location: item.location || '', city: item.city || '', address: item.address || '',
       website: item.website || '', contactPhone: item.contactPhone || '', contactWhatsapp: item.contactWhatsapp || '',
     });
     setEditImages(parseImageUrls(item.imageUrls));
@@ -65,7 +65,7 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: editForm.title, description: editForm.description || null, category: editForm.category,
-          location: editForm.location || null, district: editForm.district || null,
+          location: editForm.location || null, city: editForm.city || null,
           address: editForm.address || null, website: editForm.website || null,
           contactPhone: editForm.contactPhone || null, contactWhatsapp: editForm.contactWhatsapp || null,
           imageUrls: editImages.length > 0 ? editImages : null,
@@ -106,7 +106,7 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
                 <div className="grid grid-cols-2 gap-3">
                   <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
                     placeholder="Location" className={inputClass} />
-                  <DistrictSelector value={editForm.district} onChange={(v) => setEditForm({ ...editForm, district: v })} className={inputClass} />
+                  <CitySelector value={editForm.city} onChange={(v) => setEditForm({ ...editForm, city: v })} className={inputClass} />
                 </div>
                 <input type="text" value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
                   placeholder="Address" className={`w-full ${inputClass}`} />
@@ -134,8 +134,8 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
             )}
 
             <div className="space-y-2 text-sm text-gray-600">
-              {(item.location || item.district) && (
-                <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gray-400" /> {[item.location, item.district].filter(Boolean).join(', ')}</p>
+              {(item.location || item.city) && (
+                <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gray-400" /> {[item.location, item.city].filter(Boolean).join(', ')}</p>
               )}
               {item.address && <p className="text-sm text-gray-500">{item.address}</p>}
             </div>
