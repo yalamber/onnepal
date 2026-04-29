@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Mail, Send, ArrowLeft, ChevronRight } from 'lucide-react';
 import { useActiveBusiness } from '../layout';
+import { timeAgo } from '@/lib/time-ago';
 
 interface Conversation {
   otherUserId: string;
@@ -21,16 +22,6 @@ interface Message {
   content: string;
   createdAt: string;
   senderName: string | null;
-}
-
-function timeAgo(date: string | Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m`;
-  const hrs = Math.floor(diff / 3600000);
-  if (hrs < 24) return `${hrs}h`;
-  const days = Math.floor(diff / 86400000);
-  return `${days}d`;
 }
 
 export default function MessagesPage() {

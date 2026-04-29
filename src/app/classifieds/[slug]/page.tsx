@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getClassifiedCategoryBySlug, getClassifiedSubcategoryBySlug } from '@/lib/classified-categories';
-import { imageUrl } from '@/components/image-upload';
+import { timeAgo } from '@/lib/time-ago';
+import { firstImageUrl } from '@/lib/image-utils';
 
 interface Listing {
   id: string;
@@ -15,22 +16,6 @@ interface Listing {
   location: string | null;
   imageUrls: string | null;
   createdAt: string;
-}
-
-function timeAgo(date: string | Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  const hrs = Math.floor(mins / 60);
-  const days = Math.floor(hrs / 24);
-  if (days > 0) return `${days}d`;
-  if (hrs > 0) return `${hrs}h`;
-  if (mins > 0) return `${mins}m`;
-  return 'now';
-}
-
-function firstImage(urls: string | null): string | null {
-  if (!urls) return null;
-  try { const key = (JSON.parse(urls) as string[])[0]; return key ? imageUrl(key) : null; } catch { return null; }
 }
 
 const PER_PAGE = 12;
@@ -148,7 +133,7 @@ export default function ClassifiedCategoryPage() {
           <>
             <div className={`divide-y divide-gray-100 ${loading && !initialLoad ? 'opacity-40' : ''} transition-opacity`}>
               {listings.map((listing) => {
-                const img = firstImage(listing.imageUrls);
+                const img = firstImageUrl(listing.imageUrls);
                 return (
                   <Link key={listing.id} href={`/classifieds/post/${listing.id}`} className="group flex gap-4 py-4 first:pt-0">
                     {img ? (

@@ -7,19 +7,11 @@ import {
   Briefcase, Calendar, AlertTriangle, ShoppingBag, LinkIcon, Megaphone,
 } from 'lucide-react';
 import { useActiveBusiness } from './layout';
+import { timeAgo } from '@/lib/time-ago';
 
 interface ClassifiedAd {
   id: string; title: string; price: string | null; category: string;
   location: string | null; status: string; createdAt: string;
-}
-
-function timeAgo(date: string | Date): string {
-  const diff = Date.now() - new Date(date).getTime();
-  const days = Math.floor(diff / 86400000);
-  if (days > 0) return `${days}d ago`;
-  const hrs = Math.floor(diff / 3600000);
-  if (hrs > 0) return `${hrs}h ago`;
-  return 'just now';
 }
 
 export default function DashboardPage() {
