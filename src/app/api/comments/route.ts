@@ -3,16 +3,8 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getComments, createComment } from '@/lib/db/queries/comments';
 import { getSession } from '@/lib/auth/session';
-import { z } from 'zod';
+import { createCommentSchema } from '@/lib/validators/listings';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
-
-const VALID_TYPES = ['classified', 'job', 'event', 'lost-found'];
-
-const createSchema = z.object({
-  targetType: z.string().refine(t => VALID_TYPES.includes(t)),
-  targetId: z.string().min(1),
-  content: z.string().min(1).max(2000),
-});
 
 export async function GET(request: NextRequest) {
   try {
@@ -42,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!rl.allowed) return tooManyRequests(3600);
 
     const body = await request.json();
-    const validation = createSchema.safeParse(body);
+    const validation = createCommentSchema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     const db = getDb(d1);
     const result = await createComment(db, session.userId, validation.data);

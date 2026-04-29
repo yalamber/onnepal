@@ -3,21 +3,8 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getLostFoundItems, getLostFoundCount, createLostFoundItem } from '@/lib/db/queries/lost-found';
 import { getSession } from '@/lib/auth/session';
-import { z } from 'zod';
+import { createLostFoundSchema } from '@/lib/validators/listings';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
-
-const createSchema = z.object({
-  type: z.enum(['lost', 'found']),
-  title: z.string().min(3, 'Title must be at least 3 characters').max(200),
-  description: z.string().max(2000).nullish(),
-  category: z.string().min(1, 'Category is required'),
-  location: z.string().max(200).nullish(),
-  itemDate: z.string().max(20).nullish(),
-  reward: z.string().max(100).nullish(),
-  contactPhone: z.string().max(20).nullish(),
-  contactWhatsapp: z.string().max(20).nullish(),
-  imageUrls: z.array(z.string().max(500)).max(5).optional(),
-});
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,7 +50,7 @@ export async function POST(request: NextRequest) {
     if (!rl.allowed) return tooManyRequests(86400);
 
     const body = await request.json();
-    const validation = createSchema.safeParse(body);
+    const validation = createLostFoundSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid input', details: validation.error.flatten() },

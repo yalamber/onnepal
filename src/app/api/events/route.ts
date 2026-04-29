@@ -3,25 +3,8 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getEvents, getEventsCount, createEvent } from '@/lib/db/queries/events';
 import { getSession } from '@/lib/auth/session';
-import { z } from 'zod';
+import { createEventSchema } from '@/lib/validators/listings';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
-
-const createSchema = z.object({
-  title: z.string().min(3).max(200),
-  description: z.string().max(2000).nullish(),
-  category: z.string().min(1),
-  startDate: z.string().min(1),
-  endDate: z.string().nullish(),
-  startTime: z.string().nullish(),
-  endTime: z.string().nullish(),
-  venue: z.string().max(200).nullish(),
-  location: z.string().max(200).nullish(),
-  ticketPrice: z.string().max(100).nullish(),
-  ticketUrl: z.string().max(500).nullish(),
-  contactPhone: z.string().max(20).nullish(),
-  contactWhatsapp: z.string().max(20).nullish(),
-  imageUrls: z.array(z.string().max(500)).max(5).optional(),
-});
 
 export async function GET(request: NextRequest) {
   try {
@@ -59,7 +42,7 @@ export async function POST(request: NextRequest) {
     if (!rl.allowed) return tooManyRequests(86400);
 
     const body = await request.json();
-    const validation = createSchema.safeParse(body);
+    const validation = createEventSchema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: 'Invalid input', details: validation.error.flatten() }, { status: 400 });
 
     if (validation.data.imageUrls) {

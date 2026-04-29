@@ -3,24 +3,8 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getJobs, getJobsCount, createJob } from '@/lib/db/queries/jobs';
 import { getSession } from '@/lib/auth/session';
-import { z } from 'zod';
+import { createJobSchema } from '@/lib/validators/listings';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
-
-const createSchema = z.object({
-  title: z.string().min(3).max(200),
-  company: z.string().min(1).max(200),
-  description: z.string().max(5000).nullish(),
-  category: z.string().min(1),
-  type: z.enum(['full-time', 'part-time', 'contract', 'freelance', 'internship']),
-  location: z.string().max(200).nullish(),
-  isRemote: z.boolean().optional(),
-  salary: z.string().max(100).nullish(),
-  experience: z.string().max(100).nullish(),
-  applyUrl: z.string().max(500).nullish(),
-  contactEmail: z.string().max(200).nullish(),
-  contactPhone: z.string().max(20).nullish(),
-  imageUrls: z.array(z.string().max(500)).max(3).optional(),
-});
 
 export async function GET(request: NextRequest) {
   try {
@@ -59,7 +43,7 @@ export async function POST(request: NextRequest) {
     if (!rl.allowed) return tooManyRequests(86400);
 
     const body = await request.json();
-    const validation = createSchema.safeParse(body);
+    const validation = createJobSchema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: 'Invalid input', details: validation.error.flatten() }, { status: 400 });
 
     if (validation.data.imageUrls) {

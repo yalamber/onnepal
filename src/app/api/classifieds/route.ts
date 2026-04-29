@@ -3,19 +3,9 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getClassifieds, getClassifiedsCount, getClassifiedCategories, createClassified } from '@/lib/db/queries/classifieds';
 import { getSession } from '@/lib/auth/session';
-import { z } from 'zod';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
+import { createClassifiedSchema } from '@/lib/validators/listings';
 
-const createClassifiedSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters').max(200),
-  description: z.string().max(2000).nullish(),
-  price: z.string().max(50).nullish(),
-  category: z.string().min(1, 'Category is required'),
-  location: z.string().max(200).nullish(),
-  contactPhone: z.string().max(20).nullish(),
-  contactWhatsapp: z.string().max(20).nullish(),
-  imageUrls: z.array(z.string().max(500)).max(5).optional(),
-});
 
 export async function GET(request: NextRequest) {
   try {
