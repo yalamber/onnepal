@@ -57,8 +57,21 @@ export const createLostFoundSchema = z.object({
   imageUrls: z.array(z.string().max(500)).max(5).optional(),
 });
 
+export const createPlaceSchema = z.object({
+  title: z.string().min(3).max(200),
+  description: z.string().max(2000).nullish(),
+  category: z.string().min(1),
+  location: z.string().max(200).nullish(),
+  district: z.string().max(100).nullish(),
+  address: z.string().max(500).nullish(),
+  contactPhone: z.string().max(20).nullish(),
+  contactWhatsapp: z.string().max(20).nullish(),
+  website: z.string().max(500).nullish(),
+  imageUrls: z.array(z.string().max(500)).max(5).optional(),
+});
+
 export const createCommentSchema = z.object({
-  targetType: z.enum(['classified', 'job', 'event', 'lost-found']),
+  targetType: z.enum(['classified', 'job', 'event', 'lost-found', 'place']),
   targetId: z.string().min(1),
   content: z.string().min(1).max(1000),
 });

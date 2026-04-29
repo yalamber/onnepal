@@ -240,6 +240,7 @@ export const bookings = sqliteTable('bookings', {
 export const usersRelations = relations(users, ({ many }) => ({
   businesses: many(businesses),
   classifieds: many(classifieds),
+  places: many(places),
 }));
 
 export const businessesRelations = relations(businesses, ({ one, many }) => ({
@@ -437,4 +438,32 @@ export const messages = sqliteTable('messages', {
 
 export const messagesRelations = relations(messages, ({ one }) => ({
   sender: one(users, { fields: [messages.senderId], references: [users.id] }),
+}));
+
+export const places = sqliteTable('places', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  category: text('category').notNull(),
+  location: text('location'),
+  district: text('district'),
+  address: text('address'),
+  imageUrls: text('image_urls'),
+  contactPhone: text('contact_phone'),
+  contactWhatsapp: text('contact_whatsapp'),
+  website: text('website'),
+  status: text('status', { enum: ['active', 'inactive'] }).notNull().default('active'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('places_user_idx').on(table.userId),
+  index('places_category_idx').on(table.category),
+  index('places_status_idx').on(table.status),
+  index('places_district_idx').on(table.district),
+  index('places_created_idx').on(table.createdAt),
+]));
+
+export const placesRelations = relations(places, ({ one }) => ({
+  user: one(users, { fields: [places.userId], references: [users.id] }),
 }));
