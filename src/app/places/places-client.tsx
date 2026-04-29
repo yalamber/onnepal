@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Plus, MapPin, Loader2 } from 'lucide-react';
 import { PLACE_CATEGORIES } from '@/lib/place-categories';
-import { ALL_DISTRICTS } from '@/lib/nepal-districts';
 import { firstImageUrl } from '@/lib/image-utils';
 import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
@@ -33,10 +32,6 @@ export interface PlacesInitialData {
   total: number;
 }
 
-function districtName(slug: string | null) {
-  if (!slug) return null;
-  return ALL_DISTRICTS.find(d => d.slug === slug)?.name || slug;
-}
 
 export default function PlacesClient({ initialData }: { initialData: PlacesInitialData }) {
   const [items, setItems] = useState<Place[]>(initialData.items);
@@ -138,7 +133,7 @@ export default function PlacesClient({ initialData }: { initialData: PlacesIniti
                       <h3 className="text-sm font-semibold text-gray-950 group-hover:text-gray-700 line-clamp-2">{item.title}</h3>
                       <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
                         {item.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{item.location}</span>}
-                        {item.district && <span>{districtName(item.district)}</span>}
+                        {item.district && <span>{item.district}</span>}
                       </div>
                     </div>
                   </Link>

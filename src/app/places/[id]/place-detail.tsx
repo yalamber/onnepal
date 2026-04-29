@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { ArrowLeft, MapPin, Loader2, ExternalLink } from 'lucide-react';
 import { imageUrl, ImageUpload } from '@/components/image-upload';
 import { parseImageUrls } from '@/lib/image-utils';
-import { ALL_DISTRICTS } from '@/lib/nepal-districts';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { ImageGallery } from '@/components/image-gallery';
 import { OwnerActions } from '@/components/owner-actions';
@@ -22,10 +21,6 @@ interface Place {
   website: string | null; status: string; createdAt: string; userName: string | null;
 }
 
-function districtName(slug: string | null) {
-  if (!slug) return null;
-  return ALL_DISTRICTS.find(d => d.slug === slug)?.name || slug;
-}
 
 export default function PlaceDetailPage({ initialData }: { initialData?: Place | null }) {
   const { id } = useParams<{ id: string }>();
@@ -140,7 +135,7 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
 
             <div className="space-y-2 text-sm text-gray-600">
               {(item.location || item.district) && (
-                <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gray-400" /> {[item.location, districtName(item.district)].filter(Boolean).join(', ')}</p>
+                <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gray-400" /> {[item.location, item.district].filter(Boolean).join(', ')}</p>
               )}
               {item.address && <p className="text-sm text-gray-500">{item.address}</p>}
             </div>

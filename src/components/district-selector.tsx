@@ -1,6 +1,6 @@
 'use client';
 
-import { PROVINCES } from '@/lib/nepal-districts';
+import { NEPAL_CITIES } from '@/lib/nepal-cities';
 
 interface DistrictSelectorProps {
   value: string;
@@ -18,15 +18,11 @@ export function DistrictSelector({ value, onChange, className }: DistrictSelecto
         'h-10 w-full px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400 transition-colors bg-white'
       }
     >
-      <option value="">All districts</option>
-      {PROVINCES.map((province) => (
-        <optgroup key={province.slug} label={province.name}>
-          {province.districts.map((district) => (
-            <option key={district.slug} value={district.slug}>
-              {district.name}
-            </option>
-          ))}
-        </optgroup>
+      <option value="">All cities</option>
+      {NEPAL_CITIES.map((city) => (
+        <option key={city.slug} value={city.name}>
+          {city.name}
+        </option>
       ))}
     </select>
   );
