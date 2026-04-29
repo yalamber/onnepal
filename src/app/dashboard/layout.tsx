@@ -7,7 +7,7 @@ import {
   LayoutDashboard, LinkIcon, ShoppingBag, Megaphone, Settings, Eye, Loader2,
   Plus, ChevronDown, Check, Tag, Building2, User, QrCode,
   UtensilsCrossed, Gift, Image, Star, Users, HelpCircle, Calendar,
-  ChevronsUpDown, LogOut, Briefcase, AlertTriangle, CalendarPlus, Mail,
+  ChevronsUpDown, LogOut, Briefcase, AlertTriangle, CalendarPlus, Mail, MapPin,
 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -212,6 +212,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </Link>
                   <Link href="/events/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
                     <CalendarPlus className="h-4 w-4" /> Post event
+                  </Link>
+                  <Link href="/places/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
+                    <MapPin className="h-4 w-4" /> Add place
                   </Link>
                   <Link href="/lost-found/post/new" className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-gray-500 hover:text-gray-950 transition-colors">
                     <AlertTriangle className="h-4 w-4" /> Report item

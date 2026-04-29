@@ -8,13 +8,14 @@ interface JobFilters {
   type?: string;
   search?: string;
   location?: string;
+  district?: string;
   page: number;
   limit: number;
 }
 
 export async function getJobs(
   db: Database,
-  { category, type, search, location, page, limit }: JobFilters
+  { category, type, search, location, district, page, limit }: JobFilters
 ) {
   const conditions = [eq(jobs.status, 'open')];
 
@@ -27,6 +28,7 @@ export async function getJobs(
     );
   }
   if (location) conditions.push(sql`${jobs.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
+  if (district) conditions.push(eq(jobs.district, district));
 
   const offset = (page - 1) * limit;
 
@@ -55,7 +57,7 @@ export async function getJobs(
 
 export async function getJobsCount(
   db: Database,
-  { category, type, search, location }: { category?: string; type?: string; search?: string; location?: string }
+  { category, type, search, location, district }: { category?: string; type?: string; search?: string; location?: string; district?: string }
 ) {
   const conditions = [eq(jobs.status, 'open')];
   if (category) conditions.push(eq(jobs.category, category));
@@ -67,6 +69,7 @@ export async function getJobsCount(
     );
   }
   if (location) conditions.push(sql`${jobs.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
+  if (district) conditions.push(eq(jobs.district, district));
 
   const result = await db.select({ count: sql<number>`count(*)` }).from(jobs).where(and(...conditions));
   return result[0]?.count ?? 0;

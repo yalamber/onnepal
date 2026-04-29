@@ -8,13 +8,14 @@ interface LostFoundFilters {
   category?: string;
   search?: string;
   location?: string;
+  district?: string;
   page: number;
   limit: number;
 }
 
 export async function getLostFoundItems(
   db: Database,
-  { type, category, search, location, page, limit }: LostFoundFilters
+  { type, category, search, location, district, page, limit }: LostFoundFilters
 ) {
   const conditions = [eq(lostFound.status, 'open')];
 
@@ -32,6 +33,9 @@ export async function getLostFoundItems(
   }
   if (location) {
     conditions.push(sql`${lostFound.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
+  }
+  if (district) {
+    conditions.push(eq(lostFound.district, district));
   }
 
   const offset = (page - 1) * limit;
@@ -63,7 +67,7 @@ export async function getLostFoundItems(
 
 export async function getLostFoundCount(
   db: Database,
-  { type, category, search, location }: { type?: string; category?: string; search?: string; location?: string }
+  { type, category, search, location, district }: { type?: string; category?: string; search?: string; location?: string; district?: string }
 ) {
   const conditions = [eq(lostFound.status, 'open')];
   if (type === 'lost' || type === 'found') conditions.push(eq(lostFound.type, type));
@@ -76,6 +80,9 @@ export async function getLostFoundCount(
   }
   if (location) {
     conditions.push(sql`${lostFound.location} LIKE ${`%${location}%`} COLLATE NOCASE`);
+  }
+  if (district) {
+    conditions.push(eq(lostFound.district, district));
   }
 
   const result = await db

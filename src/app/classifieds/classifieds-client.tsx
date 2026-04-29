@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { MapPin, ChevronDown, Loader2 } from 'lucide-react';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
@@ -10,6 +10,7 @@ import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
 import { Search } from 'lucide-react';
+import { DistrictSelector } from '@/components/district-selector';
 
 interface Listing {
   id: string;
@@ -48,6 +49,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
+  const [district, setDistrict] = useState('');
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(initialData.listings.length === 0);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -59,15 +61,18 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
     params.set('limit', String(PER_PAGE));
     if (s) params.set('search', s);
     if (c) params.set('category', c);
+    if (district) params.set('district', district);
     try {
       const res = await fetch(`/api/classifieds?${params}`);
       const data = await res.json() as APIResponse;
       setListings(data.listings); setTotal(data.total);
       setTotalPages(data.totalPages); setCategories(data.categories);
     } catch {} finally { setLoading(false); setInitialLoad(false); }
-  }, []);
+  }, [district]);
 
-  useEffect(() => { if (activeCategory || activeSearch || page > 1 || initialData.listings.length === 0) fetchListings(page, activeSearch, activeCategory); }, []);
+  const districtMounted = useRef(false);
+  useEffect(() => { if (activeCategory || activeSearch || district || page > 1 || initialData.listings.length === 0) fetchListings(page, activeSearch, activeCategory); }, []);
+  useEffect(() => { if (districtMounted.current) { fetchListings(1, activeSearch, activeCategory); } else { districtMounted.current = true; } }, [district]);
 
   const handleSearch = (value: string) => {
     setSearchInput(value);
@@ -111,9 +116,14 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
               Post ad
             </Link>
           </div>
-          <form onSubmit={handleSearchSubmit} className="mt-6 max-w-md">
-            <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search classifieds..." />
-          </form>
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 max-w-lg">
+            <form onSubmit={handleSearchSubmit} className="flex-1">
+              <SearchInput value={searchInput} onChange={handleSearch} placeholder="Search classifieds..." />
+            </form>
+            <div className="w-full sm:w-48">
+              <DistrictSelector value={district} onChange={(v) => { setDistrict(v); setPage(1); }} />
+            </div>
+          </div>
         </div>
       </section>
 

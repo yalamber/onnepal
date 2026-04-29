@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category') || undefined;
     const search = searchParams.get('search') || undefined;
     const location = searchParams.get('location') || undefined;
+    const district = searchParams.get('district') || undefined;
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(48, Math.max(1, parseInt(searchParams.get('limit') || '12', 10)));
 
@@ -20,8 +21,8 @@ export async function GET(request: NextRequest) {
     const db = getDb(d1);
 
     const [listings, total, categories] = await Promise.all([
-      getClassifieds(db, { category, search, location, page, limit }),
-      getClassifiedsCount(db, { category, search, location }),
+      getClassifieds(db, { category, search, location, district, page, limit }),
+      getClassifiedsCount(db, { category, search, location, district }),
       getClassifiedCategories(db),
     ]);
 

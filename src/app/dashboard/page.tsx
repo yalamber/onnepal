@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowUpRight, Plus, Loader2, Tag, MapPin, Eye, Settings, Copy, Check,
-  Briefcase, Calendar, AlertTriangle, ShoppingBag, LinkIcon, Megaphone,
+  Briefcase, Calendar, AlertTriangle, ShoppingBag, LinkIcon, Megaphone, Compass,
 } from 'lucide-react';
 import { useActiveBusiness } from './layout';
 import { timeAgo } from '@/lib/time-ago';
@@ -58,6 +58,7 @@ export default function DashboardPage() {
     { href: '/classifieds/post/new', label: 'Post ad', desc: 'Sell or buy items', icon: Tag, color: 'bg-blue-50 text-blue-600' },
     { href: '/jobs/post/new', label: 'Post job', desc: 'Hire talent', icon: Briefcase, color: 'bg-emerald-50 text-emerald-600' },
     { href: '/events/post/new', label: 'Post event', desc: 'Share happenings', icon: Calendar, color: 'bg-purple-50 text-purple-600' },
+    { href: '/places/post/new', label: 'Add place', desc: 'Share a hidden gem', icon: Compass, color: 'bg-teal-50 text-teal-600' },
     { href: '/lost-found/post/new', label: 'Report item', desc: 'Lost or found', icon: AlertTriangle, color: 'bg-amber-50 text-amber-600' },
   ];
 
@@ -72,7 +73,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         {quickActions.map((action) => (
           <Link key={action.href} href={action.href}
             className="flex flex-col items-start p-3.5 border border-gray-100 rounded-lg hover:border-gray-200 transition-colors group">
@@ -185,6 +186,7 @@ export default function DashboardPage() {
             { href: '/classifieds', label: 'Classifieds' },
             { href: '/jobs', label: 'Jobs' },
             { href: '/events', label: 'Events' },
+            { href: '/places', label: 'Places' },
             { href: '/lost-found', label: 'Lost & Found' },
           ].map((link) => (
             <Link key={link.href} href={link.href}

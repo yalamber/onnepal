@@ -11,6 +11,7 @@ export default async function sitemap() {
     { url: 'https://onnepal.com/jobs', lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.8 },
     { url: 'https://onnepal.com/events', lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.8 },
     { url: 'https://onnepal.com/lost-found', lastModified: new Date(), changeFrequency: 'hourly' as const, priority: 0.7 },
+    { url: 'https://onnepal.com/places', lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.8 },
     { url: 'https://onnepal.com/login', changeFrequency: 'monthly' as const, priority: 0.3 },
     { url: 'https://onnepal.com/signup', changeFrequency: 'monthly' as const, priority: 0.3 },
   ];
@@ -21,7 +22,7 @@ export default async function sitemap() {
     const d1 = getD1Database();
     const db = getDb(d1);
 
-    const [publishedBusinesses, activeClassifieds, openJobs, upcomingEvents, activeLostFound] = await Promise.all([
+    const [publishedBusinesses, activeClassifieds, openJobs, upcomingEvents, activeLostFound, activePlaces] = await Promise.all([
       db.select({ subdomain: businesses.subdomain, updatedAt: businesses.updatedAt })
         .from(businesses).where(eq(businesses.isPublished, true)),
       db.select({ id: classifieds.id, updatedAt: classifieds.updatedAt })
@@ -32,6 +33,8 @@ export default async function sitemap() {
         .from(events).where(eq(events.status, 'upcoming')).orderBy(desc(events.createdAt)).limit(500),
       db.select({ id: lostFound.id, updatedAt: lostFound.updatedAt })
         .from(lostFound).where(eq(lostFound.status, 'open')).orderBy(desc(lostFound.createdAt)).limit(500),
+      db.select({ id: places.id, updatedAt: places.updatedAt })
+        .from(places).where(eq(places.status, 'active')).orderBy(desc(places.createdAt)).limit(500),
     ]);
 
     for (const b of publishedBusinesses) {
@@ -48,6 +51,9 @@ export default async function sitemap() {
     }
     for (const l of activeLostFound) {
       dynamicPages.push({ url: `https://onnepal.com/lost-found/post/${l.id}`, lastModified: l.updatedAt, changeFrequency: 'daily', priority: 0.5 });
+    }
+    for (const p of activePlaces) {
+      dynamicPages.push({ url: `https://onnepal.com/places/${p.id}`, lastModified: p.updatedAt, changeFrequency: 'daily', priority: 0.6 });
     }
   } catch {}
 
