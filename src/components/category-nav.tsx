@@ -1,18 +1,18 @@
-'use client';
+import Link from 'next/link';
 
 interface CategoryNavProps {
   categories: { name: string; slug: string }[];
   activeCategory: string;
-  onSelect: (category: string) => void;
+  basePath: string;
   allLabel?: string;
 }
 
-export function CategorySidebar({ categories, activeCategory, onSelect, allLabel = 'All' }: CategoryNavProps) {
+export function CategorySidebar({ categories, activeCategory, basePath, allLabel = 'All' }: CategoryNavProps) {
   return (
     <nav className="hidden lg:block">
       <div className="flex flex-col gap-1">
-        <button
-          onClick={() => onSelect('')}
+        <Link
+          href={basePath}
           className={`rounded-lg px-3 py-2 text-left text-sm transition-colors ${
             activeCategory === ''
               ? 'bg-gray-100 font-medium text-gray-950'
@@ -20,11 +20,11 @@ export function CategorySidebar({ categories, activeCategory, onSelect, allLabel
           }`}
         >
           {allLabel}
-        </button>
+        </Link>
         {categories.map((cat) => (
-          <button
+          <Link
             key={cat.slug}
-            onClick={() => onSelect(cat.slug)}
+            href={`${basePath}/category/${cat.slug}`}
             className={`rounded-lg px-3 py-2 text-left text-sm transition-colors ${
               activeCategory === cat.slug
                 ? 'bg-gray-100 font-medium text-gray-950'
@@ -32,18 +32,18 @@ export function CategorySidebar({ categories, activeCategory, onSelect, allLabel
             }`}
           >
             {cat.name}
-          </button>
+          </Link>
         ))}
       </div>
     </nav>
   );
 }
 
-export function CategoryMobilePills({ categories, activeCategory, onSelect, allLabel = 'All' }: CategoryNavProps) {
+export function CategoryMobilePills({ categories, activeCategory, basePath, allLabel = 'All' }: CategoryNavProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 lg:hidden">
-      <button
-        onClick={() => onSelect('')}
+    <div className="flex gap-2 overflow-x-auto pb-2 lg:hidden scrollbar-none">
+      <Link
+        href={basePath}
         className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition-colors ${
           activeCategory === ''
             ? 'bg-gray-950 text-white'
@@ -51,11 +51,11 @@ export function CategoryMobilePills({ categories, activeCategory, onSelect, allL
         }`}
       >
         {allLabel}
-      </button>
+      </Link>
       {categories.map((cat) => (
-        <button
+        <Link
           key={cat.slug}
-          onClick={() => onSelect(cat.slug)}
+          href={`${basePath}/category/${cat.slug}`}
           className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition-colors ${
             activeCategory === cat.slug
               ? 'bg-gray-950 text-white'
@@ -63,7 +63,7 @@ export function CategoryMobilePills({ categories, activeCategory, onSelect, allL
           }`}
         >
           {cat.name}
-        </button>
+        </Link>
       ))}
     </div>
   );

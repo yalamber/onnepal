@@ -40,7 +40,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [type, setType] = useState('');
-  const [category, setCategory] = useState(initialCategory || '');
+  const categorySlug = initialCategory || '';
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
@@ -51,7 +51,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
     try {
       const params = new URLSearchParams();
       if (type) params.set('type', type);
-      if (category) params.set('category', category);
+      if (categorySlug) params.set('category', categorySlug);
       if (city) params.set('city', city);
       if (search) params.set('search', search);
       params.set('page', String(page));
@@ -65,19 +65,14 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
         setTotalPages(data.totalPages || 1);
       }
     } catch {} finally { setLoading(false); }
-  }, [type, category, city, search, page]);
+  }, [type, city, search, page]);
 
-  useEffect(() => { if (type || category || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
-  useEffect(() => { fetchItems(); }, [type, category, city, page]);
+  useEffect(() => { if (type || categorySlug || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
+  useEffect(() => { fetchItems(); }, [type, city, page]);
   useEffect(() => {
     const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350);
     return () => clearTimeout(t);
   }, [search]);
-
-  const handleCategorySelect = (cat: string) => {
-    setCategory(cat);
-    setPage(1);
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -118,8 +113,8 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
         <div className="mb-6">
           <CategoryMobilePills
             categories={categoryNavItems}
-            activeCategory={category}
-            onSelect={handleCategorySelect}
+            activeCategory={categorySlug}
+            basePath="/lost-found"
             allLabel="All"
           />
         </div>
@@ -129,8 +124,8 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
           <aside className="hidden lg:block w-48 flex-shrink-0">
             <CategorySidebar
               categories={categoryNavItems}
-              activeCategory={category}
-              onSelect={handleCategorySelect}
+              activeCategory={categorySlug}
+              basePath="/lost-found"
               allLabel="All items"
             />
           </aside>

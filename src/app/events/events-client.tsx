@@ -40,7 +40,7 @@ export default function EventsClient({ initialData, initialCategory }: { initial
   const [items, setItems] = useState<Event[]>(initialData.items);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState(initialCategory || '');
+  const categorySlug = initialCategory || '';
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
@@ -53,7 +53,7 @@ export default function EventsClient({ initialData, initialCategory }: { initial
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      const catName = categoryNameFromSlug(category);
+      const catName = categoryNameFromSlug(categorySlug);
       if (catName) params.set('category', catName);
       if (city) params.set('city', city);
       if (search) params.set('search', search);
@@ -67,16 +67,11 @@ export default function EventsClient({ initialData, initialCategory }: { initial
         setTotalPages(data.totalPages || 1);
       }
     } catch {} finally { setLoading(false); }
-  }, [category, city, search, page]);
+  }, [city, search, page]);
 
-  useEffect(() => { if (category || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
-  useEffect(() => { fetchItems(); }, [category, city, page]);
+  useEffect(() => { if (categorySlug || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
+  useEffect(() => { fetchItems(); }, [city, page]);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
-
-  const handleCategorySelect = (slug: string) => {
-    setCategory(slug);
-    setPage(1);
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -102,12 +97,12 @@ export default function EventsClient({ initialData, initialCategory }: { initial
         </div>
 
         <div className="mb-6">
-          <CategoryMobilePills categories={EVENT_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All" />
+          <CategoryMobilePills categories={EVENT_CATEGORIES} activeCategory={categorySlug} basePath="/events" allLabel="All" />
         </div>
 
         <div className="flex gap-10">
           <aside className="w-48 flex-shrink-0">
-            <CategorySidebar categories={EVENT_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All events" />
+            <CategorySidebar categories={EVENT_CATEGORIES} activeCategory={categorySlug} basePath="/events" allLabel="All events" />
           </aside>
 
           {/* Content */}

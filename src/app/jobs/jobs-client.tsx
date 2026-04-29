@@ -26,7 +26,7 @@ export default function JobsClient({ initialData, initialCategory }: { initialDa
   const [items, setItems] = useState<Job[]>(initialData.items);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState(initialCategory || '');
+  const categorySlug = initialCategory || '';
   const [type, setType] = useState('');
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
@@ -40,7 +40,7 @@ export default function JobsClient({ initialData, initialCategory }: { initialDa
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      const catName = categoryNameFromSlug(category);
+      const catName = categoryNameFromSlug(categorySlug);
       if (catName) params.set('category', catName);
       if (type) params.set('type', type);
       if (city) params.set('city', city);
@@ -55,16 +55,11 @@ export default function JobsClient({ initialData, initialCategory }: { initialDa
         setTotalPages(data.totalPages || 1);
       }
     } catch {} finally { setLoading(false); }
-  }, [category, type, city, search, page]);
+  }, [type, city, search, page]);
 
-  useEffect(() => { if (category || type || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
-  useEffect(() => { fetchItems(); }, [category, type, city, page]);
+  useEffect(() => { if (categorySlug || type || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
+  useEffect(() => { fetchItems(); }, [type, city, page]);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
-
-  const handleCategorySelect = (slug: string) => {
-    setCategory(slug);
-    setPage(1);
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -95,12 +90,12 @@ export default function JobsClient({ initialData, initialCategory }: { initialDa
         </div>
 
         <div className="mb-6">
-          <CategoryMobilePills categories={JOB_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All" />
+          <CategoryMobilePills categories={JOB_CATEGORIES} activeCategory={categorySlug} basePath="/jobs" allLabel="All" />
         </div>
 
         <div className="flex gap-10">
           <aside className="w-48 flex-shrink-0">
-            <CategorySidebar categories={JOB_CATEGORIES} activeCategory={category} onSelect={handleCategorySelect} allLabel="All jobs" />
+            <CategorySidebar categories={JOB_CATEGORIES} activeCategory={categorySlug} basePath="/jobs" allLabel="All jobs" />
           </aside>
 
           {/* Content */}
