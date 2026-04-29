@@ -1,131 +1,39 @@
-'use client';
+import type { Metadata } from 'next';
+import { getDb } from '@/lib/db';
+import { getD1Database } from '@/lib/cloudflare';
+import { getLostFoundById } from '@/lib/db/queries/lost-found';
+import LostFoundDetail from './lost-found-detail';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft, MapPin, Calendar, Loader2 } from 'lucide-react';
-import { imageUrl } from '@/components/image-upload';
-import { parseImageUrls } from '@/lib/image-utils';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { ImageGallery } from '@/components/image-gallery';
-import { OwnerActions } from '@/components/owner-actions';
-import { ContactLinks } from '@/components/contact-links';
-import { CommentSection } from '@/components/comment-section';
-import { MessageButton } from '@/components/message-button';
-
-interface Item {
-  id: string;
-  userId: string;
-  type: string;
-  title: string;
-  description: string | null;
-  category: string;
-  location: string | null;
-  itemDate: string | null;
-  reward: string | null;
-  contactPhone: string | null;
-  contactWhatsapp: string | null;
-  imageUrls: string | null;
-  status: string;
-  createdAt: string;
-  userName: string | null;
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const db = getDb(getD1Database());
+    const item = await getLostFoundById(db, id);
+    if (!item) return { title: 'Not Found' };
+    const img = item.imageUrls ? (() => { try { const a = JSON.parse(item.imageUrls as string) as string[]; return a[0] ? `https://images.onnepal.com/${a[0]}` : undefined; } catch { return undefined; } })() : undefined;
+    return {
+      title: `${item.type === 'lost' ? 'Lost' : 'Found'}: ${item.title}`,
+      description: item.description?.slice(0, 160) || `${item.title} — ${item.type} item on OnNepal`,
+      openGraph: {
+        title: `${item.type === 'lost' ? 'Lost' : 'Found'}: ${item.title}`,
+        description: item.description?.slice(0, 160) || `${item.title} on OnNepal`,
+        type: 'website',
+        ...(img && { images: [{ url: img }] }),
+      },
+    };
+  } catch { return { title: 'Lost & Found' }; }
 }
 
-export default function LostFoundDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const { userId, isOwner } = useCurrentUser();
-  const [item, setItem] = useState<Item | null>(null);
-  const [loading, setLoading] = useState(true);
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  let initialData = null;
+  try {
+    const db = getDb(getD1Database());
+    const item = await getLostFoundById(db, id);
+    if (item) {
+      initialData = { ...item, createdAt: item.createdAt instanceof Date ? item.createdAt.toISOString() : String(item.createdAt) };
+    }
+  } catch {}
 
-  const fetchItem = async () => {
-    const res = await fetch(`/api/lost-found/${id}`);
-    if (res.ok) { const data = await res.json() as { item: Item }; setItem(data.item); }
-  };
-
-  useEffect(() => {
-    fetch(`/api/lost-found/${id}`)
-      .then(r => r.ok ? r.json() : null)
-      .then((data: { item: Item } | null) => { if (data) setItem(data.item); })
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  const deleteItem = async () => {
-    if (!confirm('Delete this item?')) return;
-    await fetch(`/api/lost-found/${id}`, { method: 'DELETE' });
-    router.push('/lost-found');
-  };
-  const resolveItem = async () => {
-    await fetch(`/api/lost-found/${id}`, { method: 'PATCH' });
-    await fetchItem();
-  };
-
-  if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
-  if (!item) return (
-    <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-      <p className="text-sm text-gray-500 mb-4">Item not found</p>
-      <Link href="/lost-found" className="text-sm text-gray-400 hover:text-gray-950">Back to Lost &amp; Found</Link>
-    </div>
-  );
-
-  const images = parseImageUrls(item.imageUrls).map(k => imageUrl(k)!);
-  const owner = item && isOwner(item.userId);
-
-  return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/lost-found" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6">
-          <ArrowLeft className="h-4 w-4" /> Back to Lost &amp; Found
-        </Link>
-
-        <div className={images.length > 0 ? 'grid lg:grid-cols-2 gap-6' : ''}>
-          {images.length > 0 && (
-            <ImageGallery images={images} alt={item.title} />
-          )}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 text-xs font-semibold uppercase rounded ${item.type === 'lost' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>{item.type}</span>
-              <span className="text-xs text-gray-400">{item.category}</span>
-              {item.status === 'resolved' && <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500 rounded">Resolved</span>}
-            </div>
-            <div className="flex items-start justify-between gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
-              {owner && (
-                <OwnerActions
-                  onDelete={deleteItem}
-                  onResolve={item.status === 'open' ? resolveItem : undefined}
-                />
-              )}
-            </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-500">
-              {item.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3 text-gray-400" /> {item.location}</span>}
-              {item.itemDate && <span className="flex items-center gap-1"><Calendar className="h-3 w-3 text-gray-400" /> {item.type === 'lost' ? 'Lost' : 'Found'} on {item.itemDate}</span>}
-              <span className="text-gray-400">Posted {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-              {item.userName && <span className="text-gray-400">by {item.userName}</span>}
-            </div>
-            {item.reward && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-sm font-medium rounded-md">
-                Reward: {item.reward}
-              </div>
-            )}
-            <div className="border-t border-gray-100 pt-4 space-y-2.5">
-              {userId !== item.userId && (
-                <MessageButton recipientId={item.userId} listingType="lost-found" listingId={item.id} listingTitle={item.title} />
-              )}
-              <ContactLinks phone={item.contactPhone} whatsapp={item.contactWhatsapp} />
-            </div>
-          </div>
-        </div>
-
-        {item.description && (
-          <div className="mt-6 pt-6 border-t border-gray-100">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Description</h3>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{item.description}</p>
-          </div>
-        )}
-
-        <CommentSection targetType="lost-found" targetId={item.id} />
-      </div>
-    </div>
-  );
+  return <LostFoundDetail initialData={initialData} />;
 }

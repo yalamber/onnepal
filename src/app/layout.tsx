@@ -66,18 +66,28 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: 'OnNepal',
-              url: 'https://onnepal.com',
-              description: "Nepal's local platform — businesses, classifieds, jobs, events, and more.",
-              potentialAction: {
-                '@type': 'SearchAction',
-                target: 'https://onnepal.com/classifieds?search={search_term_string}',
-                'query-input': 'required name=search_term_string',
+            __html: JSON.stringify([
+              {
+                '@context': 'https://schema.org',
+                '@type': 'WebSite',
+                name: 'OnNepal',
+                url: 'https://onnepal.com',
+                description: "Nepal's local platform — businesses, classifieds, jobs, events, and more.",
+                potentialAction: {
+                  '@type': 'SearchAction',
+                  target: 'https://onnepal.com/classifieds?search={search_term_string}',
+                  'query-input': 'required name=search_term_string',
+                },
               },
-            }),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Organization',
+                name: 'OnNepal',
+                url: 'https://onnepal.com',
+                logo: 'https://onnepal.com/icon.svg',
+                description: "Nepal's local platform for businesses, classifieds, jobs, events, and community.",
+              },
+            ]),
           }}
         />
         <NavigationProgress>
