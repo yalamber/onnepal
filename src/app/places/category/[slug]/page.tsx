@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getPlaces, getPlacesCount } from '@/lib/db/queries/places';
 import { PLACE_CATEGORIES } from '@/lib/place-categories';
+import { buildBreadcrumbJsonLd } from '@/lib/breadcrumbs';
 import PlacesClient from '../../places-client';
 import type { Metadata } from 'next';
 
@@ -38,5 +39,16 @@ export default async function PlaceCategoryPage({ params }: { params: Promise<{ 
     console.error('Places category SSR error:', e);
   }
 
-  return <PlacesClient initialData={initialData} initialCategory={slug} />;
+  const breadcrumbs = buildBreadcrumbJsonLd([
+    { name: 'Home', url: 'https://onnepal.com' },
+    { name: 'Places', url: 'https://onnepal.com/places' },
+    { name: cat?.name || slug, url: `https://onnepal.com/places/category/${slug}` },
+  ]);
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <PlacesClient initialData={initialData} initialCategory={slug} />
+    </>
+  );
 }

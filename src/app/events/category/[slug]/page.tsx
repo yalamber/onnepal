@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getEvents, getEventsCount } from '@/lib/db/queries/events';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
+import { buildBreadcrumbJsonLd } from '@/lib/breadcrumbs';
 import EventsClient from '../../events-client';
 import type { Metadata } from 'next';
 
@@ -38,5 +39,16 @@ export default async function EventCategoryPage({ params }: { params: Promise<{ 
     console.error('Events category SSR error:', e);
   }
 
-  return <EventsClient initialData={initialData} initialCategory={slug} />;
+  const breadcrumbs = buildBreadcrumbJsonLd([
+    { name: 'Home', url: 'https://onnepal.com' },
+    { name: 'Events', url: 'https://onnepal.com/events' },
+    { name: cat?.name || slug, url: `https://onnepal.com/events/category/${slug}` },
+  ]);
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <EventsClient initialData={initialData} initialCategory={slug} />
+    </>
+  );
 }

@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getLostFoundItems, getLostFoundCount } from '@/lib/db/queries/lost-found';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
+import { buildBreadcrumbJsonLd } from '@/lib/breadcrumbs';
 import LostFoundClient from '../../lost-found-client';
 import type { Metadata } from 'next';
 
@@ -39,5 +40,16 @@ export default async function LostFoundCategoryPage({ params }: { params: Promis
     console.error('LostFound category SSR error:', e);
   }
 
-  return <LostFoundClient initialData={initialData} initialCategory={slug} />;
+  const breadcrumbs = buildBreadcrumbJsonLd([
+    { name: 'Home', url: 'https://onnepal.com' },
+    { name: 'Lost & Found', url: 'https://onnepal.com/lost-found' },
+    { name: cat?.name || slug, url: `https://onnepal.com/lost-found/category/${slug}` },
+  ]);
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <LostFoundClient initialData={initialData} initialCategory={slug} />
+    </>
+  );
 }

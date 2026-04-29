@@ -51,6 +51,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://onnepal.com',
   },
+  manifest: '/manifest.webmanifest',
+  other: {
+    'geo.region': 'NP',
+    'geo.placename': 'Nepal',
+    'geo.position': '27.7172;85.3240',
+    'ICBM': '27.7172, 85.3240',
+  },
 };
 
 export default function RootLayout({

@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getJobs, getJobsCount } from '@/lib/db/queries/jobs';
 import { JOB_CATEGORIES } from '@/lib/job-categories';
+import { buildBreadcrumbJsonLd } from '@/lib/breadcrumbs';
 import JobsClient from '../../jobs-client';
 import type { Metadata } from 'next';
 
@@ -38,5 +39,16 @@ export default async function JobCategoryPage({ params }: { params: Promise<{ sl
     console.error('Jobs category SSR error:', e);
   }
 
-  return <JobsClient initialData={initialData} initialCategory={slug} />;
+  const breadcrumbs = buildBreadcrumbJsonLd([
+    { name: 'Home', url: 'https://onnepal.com' },
+    { name: 'Jobs', url: 'https://onnepal.com/jobs' },
+    { name: cat?.name || slug, url: `https://onnepal.com/jobs/category/${slug}` },
+  ]);
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <JobsClient initialData={initialData} initialCategory={slug} />
+    </>
+  );
 }
