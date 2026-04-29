@@ -70,6 +70,7 @@ export default function EventsClient({ initialData }: { initialData: EventsIniti
   }, [category, city, search, page]);
 
   useEffect(() => { if (category || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
+  useEffect(() => { fetchItems(); }, [category, city, page]);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 
   const handleCategorySelect = (slug: string) => {
