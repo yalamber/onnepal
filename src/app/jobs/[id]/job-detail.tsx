@@ -36,7 +36,8 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
 
   const deleteItem = async () => {
     if (!confirm('Delete this job posting?')) return;
-    await fetch(`/api/jobs/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/jobs/${id}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Failed to delete'); return; }
     router.push('/jobs');
   };
   const startEdit = () => {

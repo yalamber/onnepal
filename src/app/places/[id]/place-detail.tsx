@@ -37,7 +37,8 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
   const owner = item && isOwner(item.userId);
   const deleteItem = async () => {
     if (!confirm('Delete this place?')) return;
-    await fetch(`/api/places/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/places/${id}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Failed to delete'); return; }
     router.push('/places');
   };
 

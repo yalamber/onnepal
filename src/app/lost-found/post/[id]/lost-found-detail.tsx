@@ -52,7 +52,8 @@ export default function LostFoundDetailPage({ initialData }: { initialData?: Ite
 
   const deleteItem = async () => {
     if (!confirm('Delete this item?')) return;
-    await fetch(`/api/lost-found/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/lost-found/${id}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Failed to delete'); return; }
     router.push('/lost-found');
   };
   const resolveItem = async () => {

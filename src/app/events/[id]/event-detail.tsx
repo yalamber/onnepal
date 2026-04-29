@@ -36,7 +36,8 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
   const owner = item && isOwner(item.userId);
   const deleteItem = async () => {
     if (!confirm('Delete this event?')) return;
-    await fetch(`/api/events/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/events/${id}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Failed to delete'); return; }
     router.push('/events');
   };
 

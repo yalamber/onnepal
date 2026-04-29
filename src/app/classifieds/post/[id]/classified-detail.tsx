@@ -91,7 +91,8 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
 
   const deleteListing = async () => {
     if (!confirm('Delete this ad?')) return;
-    await fetch(`/api/classifieds/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/classifieds/${id}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Failed to delete'); return; }
     router.push('/classifieds');
   };
 
