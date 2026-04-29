@@ -16,6 +16,7 @@ import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
 import { MessageButton } from '@/components/message-button';
+import { toast } from 'sonner';
 
 interface ClassifiedListing {
   id: string;
@@ -85,14 +86,15 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
           imageUrls: editImages.length > 0 ? editImages : null,
         }),
       });
-      if (res.ok) { setEditing(false); await fetchListing(); }
+      if (res.ok) { setEditing(false); await fetchListing(); toast.success('Changes saved'); }
     } finally { setSaving(false); }
   };
 
   const deleteListing = async () => {
     if (!confirm('Delete this ad?')) return;
     const res = await fetch(`/api/classifieds/${id}`, { method: 'DELETE' });
-    if (!res.ok) { alert('Failed to delete'); return; }
+    if (!res.ok) { toast.error('Failed to delete'); return; }
+    toast.success('Ad deleted');
     router.push('/classifieds');
   };
 
@@ -220,7 +222,8 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
               </div>
               {owner && listing.status === 'active' && (
                 <button onClick={async () => {
-                  await fetch(`/api/classifieds/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'sold' }) });
+                  const r = await fetch(`/api/classifieds/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'sold' }) });
+                  if (r.ok) toast.success('Marked as sold');
                   await fetchListing();
                 }} className="text-xs text-gray-400 hover:text-gray-950 cursor-pointer transition-colors">
                   Mark as sold

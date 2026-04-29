@@ -13,6 +13,7 @@ import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
 import { CitySelector } from '@/components/city-selector';
+import { toast } from 'sonner';
 
 interface Place {
   id: string; userId: string; title: string; description: string | null; category: string;
@@ -38,7 +39,8 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
   const deleteItem = async () => {
     if (!confirm('Delete this place?')) return;
     const res = await fetch(`/api/places/${id}`, { method: 'DELETE' });
-    if (!res.ok) { alert('Failed to delete'); return; }
+    if (!res.ok) { toast.error('Failed to delete'); return; }
+    toast.success('Place deleted');
     router.push('/places');
   };
 
@@ -75,6 +77,7 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
       setEditing(false);
       const res = await fetch(`/api/places/${id}`);
       if (res.ok) { const d = await res.json() as { item: Place }; setItem(d.item); }
+      toast.success('Changes saved');
     } finally { setSaving(false); }
   };
 

@@ -10,6 +10,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { OwnerActions } from '@/components/owner-actions';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { ContactLinks } from '@/components/contact-links';
+import { toast } from 'sonner';
 
 interface Job {
   id: string; userId: string; title: string; company: string; description: string | null; category: string;
@@ -37,7 +38,8 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
   const deleteItem = async () => {
     if (!confirm('Delete this job posting?')) return;
     const res = await fetch(`/api/jobs/${id}`, { method: 'DELETE' });
-    if (!res.ok) { alert('Failed to delete'); return; }
+    if (!res.ok) { toast.error('Failed to delete'); return; }
+    toast.success('Job deleted');
     router.push('/jobs');
   };
   const startEdit = () => {
@@ -64,6 +66,7 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
       setEditing(false);
       const res = await fetch(`/api/jobs/${id}`);
       if (res.ok) { const d = await res.json() as { item: Job }; setItem(d.item); }
+      toast.success('Changes saved');
     } finally { setSaving(false); }
   };
 

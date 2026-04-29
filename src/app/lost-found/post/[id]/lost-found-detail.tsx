@@ -12,6 +12,7 @@ import { OwnerActions } from '@/components/owner-actions';
 import { ContactLinks } from '@/components/contact-links';
 import { CommentSection } from '@/components/comment-section';
 import { MessageButton } from '@/components/message-button';
+import { toast } from 'sonner';
 
 interface Item {
   id: string;
@@ -53,12 +54,14 @@ export default function LostFoundDetailPage({ initialData }: { initialData?: Ite
   const deleteItem = async () => {
     if (!confirm('Delete this item?')) return;
     const res = await fetch(`/api/lost-found/${id}`, { method: 'DELETE' });
-    if (!res.ok) { alert('Failed to delete'); return; }
+    if (!res.ok) { toast.error('Failed to delete'); return; }
+    toast.success('Item deleted');
     router.push('/lost-found');
   };
   const resolveItem = async () => {
     await fetch(`/api/lost-found/${id}`, { method: 'PATCH' });
     await fetchItem();
+    toast.success('Item marked as resolved');
   };
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;

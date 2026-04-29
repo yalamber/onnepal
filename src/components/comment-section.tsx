@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import { timeAgo } from '@/lib/time-ago';
+import { toast } from 'sonner';
 
 interface Comment {
   id: string;
@@ -45,9 +46,10 @@ export function CommentSection({ targetType, targetId }: CommentSectionProps) {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ targetType, targetId, content: content.trim() }),
       });
-      if (res.status === 401) { setError('Please log in to comment'); return; }
-      if (!res.ok) { setError('Failed to post comment'); return; }
+      if (res.status === 401) { setError('Please log in to comment'); toast.error('Please log in to comment'); return; }
+      if (!res.ok) { setError('Failed to post comment'); toast.error('Failed to post comment'); return; }
       setContent('');
+      toast.success('Comment posted');
       await fetchComments();
     } catch { setError('Something went wrong'); } finally { setSubmitting(false); }
   };

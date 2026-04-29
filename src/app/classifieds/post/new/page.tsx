@@ -9,6 +9,7 @@ import { ImageUpload } from '@/components/image-upload';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { ExpandableSection } from '@/components/expandable-section';
 import { SubmitButton } from '@/components/form-buttons';
+import { toast } from 'sonner';
 
 export default function NewClassifiedPage() {
   const router = useRouter();
@@ -37,10 +38,11 @@ export default function NewClassifiedPage() {
           imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
         }),
       });
-      if (!res.ok) { const d = await res.json().catch(() => null) as { error?: string } | null; setError(d?.error || 'Failed'); return; }
+      if (!res.ok) { const d = await res.json().catch(() => null) as { error?: string } | null; setError(d?.error || 'Failed'); toast.error(d?.error || 'Failed to post'); return; }
       const data = await res.json() as { id?: string; listing?: { id: string } };
+      toast.success('Posted successfully');
       router.push(`/classifieds/post/${data.listing?.id || data.id}`);
-    } catch { setError('Something went wrong'); } finally { setSubmitting(false); }
+    } catch { setError('Something went wrong'); toast.error('Something went wrong'); } finally { setSubmitting(false); }
   };
 
   if (!ready) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;

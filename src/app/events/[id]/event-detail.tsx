@@ -12,6 +12,7 @@ import { OwnerActions } from '@/components/owner-actions';
 import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
+import { toast } from 'sonner';
 
 interface Event {
   id: string; userId: string; title: string; description: string | null; category: string;
@@ -37,7 +38,8 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
   const deleteItem = async () => {
     if (!confirm('Delete this event?')) return;
     const res = await fetch(`/api/events/${id}`, { method: 'DELETE' });
-    if (!res.ok) { alert('Failed to delete'); return; }
+    if (!res.ok) { toast.error('Failed to delete'); return; }
+    toast.success('Event deleted');
     router.push('/events');
   };
 
@@ -77,6 +79,7 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
       setEditing(false);
       const res = await fetch(`/api/events/${id}`);
       if (res.ok) { const d = await res.json() as { item: Event }; setItem(d.item); }
+      toast.success('Changes saved');
     } finally { setSaving(false); }
   };
 

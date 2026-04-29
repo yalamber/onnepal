@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { NavigationProgress } from "@/components/progress-bar";
+import { Toaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff2",
@@ -94,6 +95,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </NavigationProgress>
+        <Toaster position="bottom-right" toastOptions={{ style: { fontSize: '14px' } }} />
       </body>
     </html>
   );
