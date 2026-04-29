@@ -35,12 +35,12 @@ export interface LostFoundInitialData {
 // so we use name as the slug value for seamless interop.
 const categoryNavItems = LOST_FOUND_CATEGORIES.map((c) => ({ name: c.name, slug: c.name }));
 
-export default function LostFoundClient({ initialData }: { initialData: LostFoundInitialData }) {
+export default function LostFoundClient({ initialData, initialCategory }: { initialData: LostFoundInitialData; initialCategory?: string }) {
   const [items, setItems] = useState<Item[]>(initialData.items);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [type, setType] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState(initialCategory || '');
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));

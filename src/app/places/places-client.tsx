@@ -33,11 +33,11 @@ export interface PlacesInitialData {
 }
 
 
-export default function PlacesClient({ initialData }: { initialData: PlacesInitialData }) {
+export default function PlacesClient({ initialData, initialCategory }: { initialData: PlacesInitialData; initialCategory?: string }) {
   const [items, setItems] = useState<Place[]>(initialData.items);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState(initialCategory || '');
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));

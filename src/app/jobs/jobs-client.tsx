@@ -22,11 +22,11 @@ export interface JobsInitialData {
   total: number;
 }
 
-export default function JobsClient({ initialData }: { initialData: JobsInitialData }) {
+export default function JobsClient({ initialData, initialCategory }: { initialData: JobsInitialData; initialCategory?: string }) {
   const [items, setItems] = useState<Job[]>(initialData.items);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState(initialCategory || '');
   const [type, setType] = useState('');
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);

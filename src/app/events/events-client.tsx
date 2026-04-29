@@ -36,11 +36,11 @@ export interface EventsInitialData {
   total: number;
 }
 
-export default function EventsClient({ initialData }: { initialData: EventsInitialData }) {
+export default function EventsClient({ initialData, initialCategory }: { initialData: EventsInitialData; initialCategory?: string }) {
   const [items, setItems] = useState<Event[]>(initialData.items);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState(initialCategory || '');
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));

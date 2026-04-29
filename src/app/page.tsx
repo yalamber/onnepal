@@ -221,7 +221,7 @@ export default function HomePage() {
                     {section.categories.slice(0, 5).map((cat) => (
                       <Link
                         key={cat.slug}
-                        href={`${section.basePath}?${section.categoryParam}=${cat.slug}`}
+                        href={`${section.basePath}/category/${cat.slug}`}
                         className="px-2.5 py-1 rounded-full bg-gray-100 text-xs text-gray-600 hover:bg-gray-200 hover:text-gray-950 transition-colors"
                       >
                         {cat.name}
