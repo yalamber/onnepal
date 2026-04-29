@@ -33,7 +33,7 @@ export interface LostFoundInitialData {
 
 // CategorySidebar/MobilePills expect slug-based identity; the API filters by name,
 // so we use name as the slug value for seamless interop.
-const categoryNavItems = LOST_FOUND_CATEGORIES.map((c) => ({ name: c.name, slug: c.name }));
+const categoryNavItems = LOST_FOUND_CATEGORIES.map((c) => ({ name: c.name, slug: c.slug }));
 
 export default function LostFoundClient({ initialData, initialCategory }: { initialData: LostFoundInitialData; initialCategory?: string }) {
   const [items, setItems] = useState<Item[]>(initialData.items);
@@ -46,12 +46,15 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
 
+  const categoryNameFromSlug = (slug: string) => LOST_FOUND_CATEGORIES.find(c => c.slug === slug)?.name || '';
+
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (type) params.set('type', type);
-      if (categorySlug) params.set('category', categorySlug);
+      const catName = categoryNameFromSlug(categorySlug);
+      if (catName) params.set('category', catName);
       if (city) params.set('city', city);
       if (search) params.set('search', search);
       params.set('page', String(page));

@@ -39,6 +39,5 @@ export default async function LostFoundCategoryPage({ params }: { params: Promis
     console.error('LostFound category SSR error:', e);
   }
 
-  // Pass the category name as initialCategory since lost-found-client uses name (not slug) for filtering
-  return <LostFoundClient initialData={initialData} initialCategory={categoryName} />;
+  return <LostFoundClient initialData={initialData} initialCategory={slug} />;
 }
