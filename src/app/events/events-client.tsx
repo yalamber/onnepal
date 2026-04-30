@@ -76,7 +76,6 @@ export default function EventsClient({ initialData, initialCategory }: { initial
     } catch {} finally { setLoading(false); }
   }, [city, search, page]);
 
-  useEffect(() => { if (categorySlug || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { fetchItems(); }, [city, page]);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 

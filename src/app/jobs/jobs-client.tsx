@@ -64,7 +64,6 @@ export default function JobsClient({ initialData, initialCategory }: { initialDa
     } catch {} finally { setLoading(false); }
   }, [type, city, search, page]);
 
-  useEffect(() => { if (categorySlug || type || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { fetchItems(); }, [type, city, page]);
   useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
 

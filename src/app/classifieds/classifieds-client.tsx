@@ -71,7 +71,6 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
   }, [city]);
 
   const cityMounted = useRef(false);
-  useEffect(() => { if (activeCategory || activeSearch || city || page > 1 || initialData.listings.length === 0) fetchListings(page, activeSearch, activeCategory); }, []);
   useEffect(() => { if (cityMounted.current) { fetchListings(1, activeSearch, activeCategory); } else { cityMounted.current = true; } }, [city]);
 
   const handleSearch = (value: string) => {

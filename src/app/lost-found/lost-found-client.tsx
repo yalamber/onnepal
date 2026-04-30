@@ -77,7 +77,6 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
     } catch {} finally { setLoading(false); }
   }, [type, city, search, page]);
 
-  useEffect(() => { if (type || categorySlug || city || search || page > 1 || initialData.items.length === 0) fetchItems(); }, []);
   useEffect(() => { fetchItems(); }, [type, city, page]);
   useEffect(() => {
     const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350);
