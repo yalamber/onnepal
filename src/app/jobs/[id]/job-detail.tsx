@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Clock, Phone, Mail, ExternalLink, Loader2, User } from 'lucide-react';
+import { ShareButtons } from '@/components/share-buttons';
 import { JOB_TYPES } from '@/lib/job-categories';
 import { CommentSection } from '@/components/comment-section';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { OwnerActions } from '@/components/owner-actions';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { ContactLinks } from '@/components/contact-links';
+import { BookmarkButton } from '@/components/bookmark-button';
+import { ReportButton } from '@/components/report-button';
 import { toast } from 'sonner';
 
 interface Job {
@@ -118,9 +121,13 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
                       <h1 className="text-xl font-bold text-gray-950">{item.title}</h1>
                       <p className="text-sm text-gray-600 mt-0.5">{item.company}</p>
                     </div>
-                    {ownerOfItem && (
-                      <OwnerActions onEdit={startEdit} onDelete={deleteItem} />
-                    )}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <BookmarkButton targetType="job" targetId={item.id} />
+                      <ReportButton targetType="job" targetId={item.id} />
+                      {ownerOfItem && (
+                        <OwnerActions onEdit={startEdit} onDelete={deleteItem} />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -133,6 +140,8 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
               {item.experience && <span className="flex items-center gap-1"><Clock className="h-3 w-3 text-gray-400" /> {item.experience}</span>}
               {item.salary && <span className="font-semibold text-gray-950">{item.salary}</span>}
             </div>
+
+            <ShareButtons url={`https://onnepal.com/jobs/${id}`} title={`${item.title} at ${item.company}`} />
 
             {item.description && (
               <div className="pt-4 border-t border-gray-100">

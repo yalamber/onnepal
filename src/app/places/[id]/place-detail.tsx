@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Loader2, ExternalLink } from 'lucide-react';
+import { ShareButtons } from '@/components/share-buttons';
 import { imageUrl, ImageUpload } from '@/components/image-upload';
 import { parseImageUrls } from '@/lib/image-utils';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -154,6 +155,8 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
             )}
 
             <ContactLinks phone={item.contactPhone} whatsapp={item.contactWhatsapp} />
+
+            <ShareButtons url={`https://onnepal.com/places/${id}`} title={item.title} />
           </div>
         </div>
 

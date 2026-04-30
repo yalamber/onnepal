@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Calendar, Loader2 } from 'lucide-react';
+import { ShareButtons } from '@/components/share-buttons';
 import { imageUrl } from '@/components/image-upload';
 import { parseImageUrls } from '@/lib/image-utils';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -118,6 +119,7 @@ export default function LostFoundDetailPage({ initialData }: { initialData?: Ite
               )}
               <ContactLinks phone={item.contactPhone} whatsapp={item.contactWhatsapp} />
             </div>
+            <ShareButtons url={`https://onnepal.com/lost-found/post/${id}`} title={item.title} />
           </div>
         </div>
 

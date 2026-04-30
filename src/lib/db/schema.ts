@@ -471,3 +471,37 @@ export const places = sqliteTable('places', {
 export const placesRelations = relations(places, ({ one }) => ({
   user: one(users, { fields: [places.userId], references: [users.id] }),
 }));
+
+// Bookmarks
+export const bookmarks = sqliteTable('bookmarks', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  targetType: text('target_type').notNull(), // 'classified', 'job', 'event', 'lost-found', 'place'
+  targetId: text('target_id').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('bookmarks_user_idx').on(table.userId),
+  index('bookmarks_target_idx').on(table.targetType, table.targetId),
+]));
+
+export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
+  user: one(users, { fields: [bookmarks.userId], references: [users.id] }),
+}));
+
+// Reports
+export const reports = sqliteTable('reports', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  targetType: text('target_type').notNull(),
+  targetId: text('target_id').notNull(),
+  reason: text('reason').notNull(),
+  status: text('status', { enum: ['pending', 'reviewed', 'dismissed'] }).notNull().default('pending'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('reports_user_idx').on(table.userId),
+  index('reports_status_idx').on(table.status),
+]));
+
+export const reportsRelations = relations(reports, ({ one }) => ({
+  user: one(users, { fields: [reports.userId], references: [users.id] }),
+}));

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, MapPin, Tag, Clock, User, ImageOff } from 'lucide-react';
+import { ShareButtons } from '@/components/share-buttons';
 import { Button } from '@/components/ui/button';
 import { getClassifiedCategoryBySlug, CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 import { ImageUpload, imageUrl } from '@/components/image-upload';
@@ -16,6 +17,8 @@ import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
 import { MessageButton } from '@/components/message-button';
+import { BookmarkButton } from '@/components/bookmark-button';
+import { ReportButton } from '@/components/report-button';
 import { toast } from 'sonner';
 
 interface ClassifiedListing {
@@ -179,7 +182,11 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
             <>
               <div className="flex items-start justify-between gap-3">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-950 leading-tight">{listing.title}</h1>
-                {owner && <OwnerActions onEdit={startEdit} onDelete={deleteListing} />}
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <BookmarkButton targetType="classified" targetId={listing.id} />
+                  <ReportButton targetType="classified" targetId={listing.id} />
+                  {owner && <OwnerActions onEdit={startEdit} onDelete={deleteListing} />}
+                </div>
               </div>
               {listing.price ? (
                 <p className="text-2xl font-bold text-gray-950">Rs. {listing.price}</p>
@@ -220,6 +227,7 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
                 )}
                 <ContactLinks phone={listing.contactPhone} whatsapp={listing.contactWhatsapp} />
               </div>
+              <ShareButtons url={`https://onnepal.com/classifieds/post/${id}`} title={listing.title} />
               {owner && listing.status === 'active' && (
                 <button onClick={async () => {
                   const r = await fetch(`/api/classifieds/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'sold' }) });
