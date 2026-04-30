@@ -110,7 +110,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
             {['', 'lost', 'found'].map((t) => (
               <button key={t} onClick={() => { setType(t); setPage(1); }}
                 className={`px-3 py-2 text-sm rounded-md font-medium transition-colors cursor-pointer ${
-                  type === t ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  type === t ? 'bg-cyan-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}>
                 {t === '' ? 'All' : t === 'lost' ? 'Lost' : 'Found'}
               </button>
