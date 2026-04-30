@@ -15,7 +15,7 @@ export function CategorySidebar({ categories, activeCategory, basePath, allLabel
           href={basePath}
           className={`rounded-lg px-3 py-2 text-left text-sm transition-colors ${
             activeCategory === ''
-              ? 'bg-gray-100 font-medium text-gray-950'
+              ? 'bg-cyan-50 font-medium text-cyan-700'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-950'
           }`}
         >
@@ -27,7 +27,7 @@ export function CategorySidebar({ categories, activeCategory, basePath, allLabel
             href={`${basePath}/category/${cat.slug}`}
             className={`rounded-lg px-3 py-2 text-left text-sm transition-colors ${
               activeCategory === cat.slug
-                ? 'bg-gray-100 font-medium text-gray-950'
+                ? 'bg-cyan-50 font-medium text-cyan-700'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-950'
             }`}
           >
@@ -46,7 +46,7 @@ export function CategoryMobilePills({ categories, activeCategory, basePath, allL
         href={basePath}
         className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition-colors ${
           activeCategory === ''
-            ? 'bg-gray-950 text-white'
+            ? 'bg-cyan-600 text-white'
             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
         }`}
       >
@@ -58,7 +58,7 @@ export function CategoryMobilePills({ categories, activeCategory, basePath, allL
           href={`${basePath}/category/${cat.slug}`}
           className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition-colors ${
             activeCategory === cat.slug
-              ? 'bg-gray-950 text-white'
+              ? 'bg-cyan-600 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >

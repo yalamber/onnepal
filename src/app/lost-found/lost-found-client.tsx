@@ -93,7 +93,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
             <p className="text-sm text-gray-500 mt-0.5">Help reunite lost items with their owners</p>
           </div>
           <Link href="/lost-found/post/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded-md hover:bg-cyan-700 transition-colors">
             <Plus className="h-4 w-4" /> Post item
           </Link>
         </div>
