@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { DISCUSSION_CATEGORIES } from '@/lib/discussion-categories';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { PillSelector } from '@/components/pill-selector';
+import { MarkdownEditor } from '@/components/markdown-editor';
 import { SubmitButton } from '@/components/form-buttons';
 import { toast } from 'sonner';
 
@@ -53,9 +54,12 @@ export default function NewDiscussionPage() {
             <PillSelector options={DISCUSSION_CATEGORIES} value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
           </div>
 
-          <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })}
-            placeholder="Add more details (optional)..." rows={5}
-            className="w-full px-3 py-2.5 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
+          <MarkdownEditor
+            value={form.content}
+            onChange={(v) => setForm({ ...form, content: v })}
+            placeholder="Add more details (optional)... Supports **bold**, *italic*, lists, and links."
+            rows={6}
+          />
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
