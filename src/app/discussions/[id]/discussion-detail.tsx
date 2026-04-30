@@ -29,12 +29,18 @@ export default function DiscussionDetail({ initialData, initialReplies }: { init
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (initialData) return;
+    if (initialData) {
+      setDiscussion(initialData);
+      setReplies(initialReplies || []);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     fetch(`/api/discussions/${id}`).then(r => r.ok ? r.json() : null)
       .then((d: { item: Discussion; replies: Reply[] } | null) => {
         if (d) { setDiscussion(d.item); setReplies(d.replies); }
       }).finally(() => setLoading(false));
-  }, [id]);
+  }, [id, initialData]);
 
   const deleteDiscussion = async () => {
     if (!confirm('Delete this discussion?')) return;
