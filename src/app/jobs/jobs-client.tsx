@@ -99,8 +99,8 @@ export default function JobsClient({ initialData, initialCategory }: { initialDa
           <CategoryMobilePills categories={JOB_CATEGORIES} activeCategory={categorySlug} basePath="/jobs" allLabel="All" />
         </div>
 
-        <div className="flex gap-10">
-          <aside className="w-48 flex-shrink-0">
+        <div className="flex lg:gap-10">
+          <aside className="hidden lg:block w-48 flex-shrink-0">
             <CategorySidebar categories={JOB_CATEGORIES} activeCategory={categorySlug} basePath="/jobs" allLabel="All jobs" />
           </aside>
 

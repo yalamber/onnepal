@@ -128,7 +128,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
           />
         </div>
 
-        <div className="flex gap-10">
+        <div className="flex lg:gap-10">
           {/* Sidebar — desktop only */}
           <aside className="hidden lg:block w-48 flex-shrink-0">
             <CategorySidebar

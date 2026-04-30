@@ -108,7 +108,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <DashboardContext.Provider value={{ user, business: activeBusiness, businesses, setBusiness: switchBusiness }}>
       <div className="min-h-screen bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex gap-10">
+          <div className="flex flex-col lg:flex-row lg:gap-10">
             {/* Sidebar */}
             <aside className="hidden lg:block w-52 flex-shrink-0">
               {/* Business switcher — top, prominent */}

@@ -79,8 +79,8 @@ export default function DiscussionsClient({ initialData, initialCategory }: { in
           <CategoryMobilePills categories={DISCUSSION_CATEGORIES} activeCategory={categorySlug} basePath="/discussions" allLabel="All" />
         </div>
 
-        <div className="flex gap-10">
-          <aside className="w-48 flex-shrink-0">
+        <div className="flex lg:gap-10">
+          <aside className="hidden lg:block w-48 flex-shrink-0">
             <CategorySidebar categories={DISCUSSION_CATEGORIES} activeCategory={categorySlug} basePath="/discussions" allLabel="All topics" />
           </aside>
 

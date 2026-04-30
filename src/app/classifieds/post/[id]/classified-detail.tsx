@@ -152,7 +152,7 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
             <div className="space-y-3">
               <input type="text" value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
                 className="w-full h-12 px-0 text-lg font-semibold text-gray-950 border-0 border-b border-gray-200 focus:outline-none focus:border-gray-950 transition-colors" />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input type="text" value={editForm.price} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
                   placeholder="Price" className={inputClass} />
                 <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
@@ -170,7 +170,7 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
               <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                 placeholder="Description..." rows={4}
                 className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400 transition-colors resize-none" />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input type="tel" value={editForm.contactPhone} onChange={(e) => setEditForm({ ...editForm, contactPhone: e.target.value })}
                   placeholder="Phone" className={inputClass} />
                 <input type="tel" value={editForm.contactWhatsapp} onChange={(e) => setEditForm({ ...editForm, contactWhatsapp: e.target.value })}

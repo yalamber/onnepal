@@ -106,8 +106,8 @@ export default function EventsClient({ initialData, initialCategory }: { initial
           <CategoryMobilePills categories={EVENT_CATEGORIES} activeCategory={categorySlug} basePath="/events" allLabel="All" />
         </div>
 
-        <div className="flex gap-10">
-          <aside className="w-48 flex-shrink-0">
+        <div className="flex lg:gap-10">
+          <aside className="hidden lg:block w-48 flex-shrink-0">
             <CategorySidebar categories={EVENT_CATEGORIES} activeCategory={categorySlug} basePath="/events" allLabel="All events" />
           </aside>
 

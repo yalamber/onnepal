@@ -137,7 +137,7 @@ export default function HomePage() {
               <p className="mt-4 text-gray-400 leading-relaxed">
                 Get a real web presence in minutes &mdash; your own subdomain, products, menu, gallery, reviews, and contact info.
               </p>
-              <dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5">
+              <dl className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
                 <div>
                   <dt className="text-sm font-semibold text-white">Your own URL</dt>
                   <dd className="text-sm text-gray-400 mt-0.5">yourshop.onnepal.com</dd>
