@@ -13,6 +13,8 @@ import { OwnerActions } from '@/components/owner-actions';
 import { ContactLinks } from '@/components/contact-links';
 import { CommentSection } from '@/components/comment-section';
 import { MessageButton } from '@/components/message-button';
+import { BookmarkButton } from '@/components/bookmark-button';
+import { ReportButton } from '@/components/report-button';
 import { toast } from 'sonner';
 
 interface Item {
@@ -95,12 +97,16 @@ export default function LostFoundDetailPage({ initialData }: { initialData?: Ite
             </div>
             <div className="flex items-start justify-between gap-2">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
-              {owner && (
-                <OwnerActions
-                  onDelete={deleteItem}
-                  onResolve={item.status === 'open' ? resolveItem : undefined}
-                />
-              )}
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <BookmarkButton targetType="lost-found" targetId={item.id} />
+                <ReportButton targetType="lost-found" targetId={item.id} />
+                {owner && (
+                  <OwnerActions
+                    onDelete={deleteItem}
+                    onResolve={item.status === 'open' ? resolveItem : undefined}
+                  />
+                )}
+              </div>
             </div>
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-500">
               {item.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3 text-gray-400" /> {item.location}</span>}

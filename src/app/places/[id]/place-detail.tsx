@@ -14,6 +14,8 @@ import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
 import { CitySelector } from '@/components/city-selector';
+import { BookmarkButton } from '@/components/bookmark-button';
+import { ReportButton } from '@/components/report-button';
 import { toast } from 'sonner';
 
 interface Place {
@@ -133,7 +135,11 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
                 <span className="text-xs text-gray-400">{item.category}</span>
                 <div className="flex items-start justify-between gap-2">
                   <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
-                  {owner && <OwnerActions onEdit={startEdit} onDelete={deleteItem} />}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <BookmarkButton targetType="place" targetId={item.id} />
+                    <ReportButton targetType="place" targetId={item.id} />
+                    {owner && <OwnerActions onEdit={startEdit} onDelete={deleteItem} />}
+                  </div>
                 </div>
               </>
             )}

@@ -13,6 +13,8 @@ import { OwnerActions } from '@/components/owner-actions';
 import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
+import { BookmarkButton } from '@/components/bookmark-button';
+import { ReportButton } from '@/components/report-button';
 import { toast } from 'sonner';
 
 interface Event {
@@ -135,7 +137,11 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
                 <span className="text-xs text-gray-400">{item.category}</span>
                 <div className="flex items-start justify-between gap-2">
                   <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>
-                  {owner && <OwnerActions onEdit={startEdit} onDelete={deleteItem} />}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <BookmarkButton targetType="event" targetId={item.id} />
+                    <ReportButton targetType="event" targetId={item.id} />
+                    {owner && <OwnerActions onEdit={startEdit} onDelete={deleteItem} />}
+                  </div>
                 </div>
               </>
             )}
