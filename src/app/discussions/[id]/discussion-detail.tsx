@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2, MessageSquare, Send, Trash2 } from 'lucide-react';
 import { timeAgo } from '@/lib/time-ago';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { SafeMarkdown } from '@/components/safe-markdown';
+import { CommentSection } from '@/components/comment-section';
 import { toast } from 'sonner';
 
 interface Discussion {
@@ -29,18 +30,11 @@ export default function DiscussionDetail({ initialData, initialReplies }: { init
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (initialData) {
-      setDiscussion(initialData);
-      setReplies(initialReplies || []);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
     fetch(`/api/discussions/${id}`).then(r => r.ok ? r.json() : null)
       .then((d: { item: Discussion; replies: Reply[] } | null) => {
         if (d) { setDiscussion(d.item); setReplies(d.replies); }
       }).finally(() => setLoading(false));
-  }, [id, initialData]);
+  }, [id]);
 
   const deleteDiscussion = async () => {
     if (!confirm('Delete this discussion?')) return;
@@ -142,6 +136,8 @@ export default function DiscussionDetail({ initialData, initialReplies }: { init
             </div>
           )}
         </div>
+
+        <CommentSection targetType="discussion" targetId={discussion.id} />
       </div>
     </div>
   );
