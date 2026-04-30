@@ -68,7 +68,7 @@ export function SubdomainChecker({ variant = 'light' }: { variant?: 'light' | 'd
           className={`px-4 py-2 text-sm font-medium rounded-md disabled:opacity-20 disabled:cursor-default transition-colors cursor-pointer ${
             dark
               ? 'bg-white text-gray-950 hover:bg-gray-100'
-              : 'bg-emerald-600 text-white hover:bg-emerald-700'
+              : 'bg-gray-950 text-white hover:bg-gray-800'
           }`}
         >
           {status === 'checking' ? (

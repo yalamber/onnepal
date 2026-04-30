@@ -23,7 +23,7 @@ export function SaveCancelButtons({ saving, onSave, onCancel }: SaveCancelProps)
         type="button"
         onClick={onSave}
         disabled={saving}
-        className="flex h-9 items-center gap-2 rounded-lg bg-emerald-600 px-4 text-sm text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+        className="flex h-9 items-center gap-2 rounded-lg bg-gray-950 px-4 text-sm text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
       >
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
         Save
@@ -45,7 +45,7 @@ export function SubmitButton({ submitting, label, disabled, onClick }: SubmitBut
       type={onClick ? 'button' : 'submit'}
       onClick={onClick}
       disabled={submitting || disabled}
-      className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 text-sm text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+      className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-gray-950 text-sm text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
     >
       {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
       {label}

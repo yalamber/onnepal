@@ -66,7 +66,7 @@ export default function DiscussionsClient({ initialData, initialCategory }: { in
             <p className="text-sm text-gray-500 mt-0.5">Join the conversation</p>
           </div>
           <Link href="/discussions/post/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-md hover:bg-emerald-700 transition-colors">
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
             <Plus className="h-4 w-4" /> Start discussion
           </Link>
         </div>

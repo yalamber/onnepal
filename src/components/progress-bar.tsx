@@ -6,7 +6,7 @@ export function NavigationProgress({ children }: { children: React.ReactNode }) 
   return (
     <ProgressProvider
       height="2px"
-      color="#059669"
+      color="#171717"
       options={{ showSpinner: false }}
       shallowRouting
     >

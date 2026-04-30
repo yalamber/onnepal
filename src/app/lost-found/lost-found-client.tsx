@@ -93,7 +93,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
             <p className="text-sm text-gray-500 mt-0.5">Help reunite lost items with their owners</p>
           </div>
           <Link href="/lost-found/post/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-md hover:bg-emerald-700 transition-colors">
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
             <Plus className="h-4 w-4" /> Post item
           </Link>
         </div>
@@ -110,7 +110,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
             {['', 'lost', 'found'].map((t) => (
               <button key={t} onClick={() => { setType(t); setPage(1); }}
                 className={`px-3 py-2 text-sm rounded-md font-medium transition-colors cursor-pointer ${
-                  type === t ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  type === t ? 'bg-gray-950 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}>
                 {t === '' ? 'All' : t === 'lost' ? 'Lost' : 'Found'}
               </button>

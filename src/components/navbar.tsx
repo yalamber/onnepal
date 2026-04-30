@@ -82,7 +82,7 @@ export function Navbar() {
                   href={link.href}
                   className={`text-sm transition-colors ${
                     pathname.startsWith(link.href)
-                      ? 'text-emerald-600 font-medium'
+                      ? 'text-gray-950 font-medium'
                       : 'text-gray-400 hover:text-gray-950'
                   }`}
                 >
@@ -147,7 +147,7 @@ export function Navbar() {
                 <Link href="/login" className="text-sm text-gray-400 hover:text-gray-950 transition-colors px-3 py-1.5">
                   Log in
                 </Link>
-                <Link href="/signup" className="text-sm text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg transition-colors">
+                <Link href="/signup" className="text-sm text-white bg-gray-950 hover:bg-gray-800 px-3 py-1.5 rounded-lg transition-colors">
                   Sign up
                 </Link>
               </>
@@ -205,7 +205,7 @@ export function Navbar() {
                       <Link href="/login" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">
                         Log in
                       </Link>
-                      <Link href="/signup" onClick={() => setMobileOpen(false)} className="mx-3 mt-1 text-center py-2.5 text-sm text-white bg-emerald-600 rounded-lg">
+                      <Link href="/signup" onClick={() => setMobileOpen(false)} className="mx-3 mt-1 text-center py-2.5 text-sm text-white bg-gray-950 rounded-lg">
                         Sign up
                       </Link>
                     </>
