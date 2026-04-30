@@ -18,7 +18,7 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
 
   const whatsappUrl = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`;
+  const twitterUrl = `https://x.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`;
 
   const copyLink = async () => {
     try {
