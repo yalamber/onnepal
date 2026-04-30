@@ -46,6 +46,13 @@ export default function EventsClient({ initialData, initialCategory }: { initial
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
 
+  useEffect(() => {
+    setItems(initialData.items);
+    setTotal(initialData.total);
+    setTotalPages(Math.ceil(initialData.total / 12));
+    setPage(1);
+  }, [initialCategory]);
+
   // CategorySidebar/MobilePills use slug, but API expects category name
   const categoryNameFromSlug = (slug: string) => EVENT_CATEGORIES.find(c => c.slug === slug)?.name || '';
 

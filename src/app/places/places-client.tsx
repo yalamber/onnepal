@@ -43,6 +43,13 @@ export default function PlacesClient({ initialData, initialCategory }: { initial
   const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 12));
   const [total, setTotal] = useState(initialData.total);
 
+  useEffect(() => {
+    setItems(initialData.items);
+    setTotal(initialData.total);
+    setTotalPages(Math.ceil(initialData.total / 12));
+    setPage(1);
+  }, [initialCategory]);
+
   const categoryNameFromSlug = (slug: string) => PLACE_CATEGORIES.find(c => c.slug === slug)?.name || '';
 
   const fetchItems = useCallback(async () => {
