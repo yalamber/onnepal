@@ -106,7 +106,7 @@ export default function PostPlacePage() {
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <SubmitButton submitting={submitting} label="Add place" disabled={!form.title.trim() || !form.category} />
+          <SubmitButton submitting={submitting} label="Add place" disabled={!form.title.trim() || !form.category} onClick={handleSubmit} />
         </div>
       </div>
     </div>

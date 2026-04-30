@@ -36,12 +36,14 @@ interface SubmitButtonProps {
   submitting: boolean;
   label: string;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
-export function SubmitButton({ submitting, label, disabled }: SubmitButtonProps) {
+export function SubmitButton({ submitting, label, disabled, onClick }: SubmitButtonProps) {
   return (
     <button
-      type="submit"
+      type={onClick ? 'button' : 'submit'}
+      onClick={onClick}
       disabled={submitting || disabled}
       className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 text-sm text-white transition-colors hover:bg-cyan-700 disabled:opacity-50"
     >

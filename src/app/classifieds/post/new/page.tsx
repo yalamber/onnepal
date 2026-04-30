@@ -112,7 +112,7 @@ export default function NewClassifiedPage() {
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <SubmitButton submitting={submitting} label="Post ad" disabled={!form.title.trim() || !form.category} />
+          <SubmitButton submitting={submitting} label="Post ad" disabled={!form.title.trim() || !form.category} onClick={handleSubmit} />
         </div>
       </div>
     </div>

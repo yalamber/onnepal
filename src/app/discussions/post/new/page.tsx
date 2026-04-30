@@ -26,7 +26,7 @@ export default function NewDiscussionPage() {
     try {
       const res = await fetch('/api/discussions', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: form.title.trim(), category: form.category, content: form.content.trim() || null }),
+        body: JSON.stringify({ title: form.title.trim(), category: DISCUSSION_CATEGORIES.find(c => c.slug === form.category)?.name || form.category, content: form.content.trim() || null }),
       });
       if (!res.ok) { const d = await res.json().catch(() => null) as { error?: string } | null; setError(d?.error || 'Failed'); toast.error(d?.error || 'Failed to post'); return; }
       const data = await res.json() as { id: string };
@@ -63,7 +63,7 @@ export default function NewDiscussionPage() {
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <SubmitButton submitting={submitting} label="Post discussion" disabled={!form.title.trim() || !form.category} />
+          <SubmitButton submitting={submitting} label="Post discussion" disabled={!form.title.trim() || !form.category} onClick={handleSubmit} />
         </div>
       </div>
     </div>

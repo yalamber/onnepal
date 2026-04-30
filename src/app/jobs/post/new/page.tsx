@@ -118,7 +118,7 @@ export default function PostJobPage() {
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <SubmitButton submitting={submitting} label="Post job" disabled={!form.title.trim() || !form.company.trim() || !form.category} />
+          <SubmitButton submitting={submitting} label="Post job" disabled={!form.title.trim() || !form.company.trim() || !form.category} onClick={handleSubmit} />
         </div>
       </div>
     </div>

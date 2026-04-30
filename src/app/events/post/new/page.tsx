@@ -130,7 +130,7 @@ export default function PostEventPage() {
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <SubmitButton submitting={submitting} label="Post event" disabled={!form.title.trim() || !form.category || !form.startDate} />
+          <SubmitButton submitting={submitting} label="Post event" disabled={!form.title.trim() || !form.category || !form.startDate} onClick={handleSubmit} />
         </div>
       </div>
     </div>
