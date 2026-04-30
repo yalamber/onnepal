@@ -16,7 +16,7 @@ export function PillSelector({ options, value, onChange }: PillSelectorProps) {
           onClick={() => onChange(option.slug)}
           className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
             value === option.slug
-              ? 'bg-cyan-600 text-white'
+              ? 'bg-emerald-600 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >

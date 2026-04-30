@@ -70,7 +70,7 @@ export function CommentSection({ targetType, targetId }: CommentSectionProps) {
           className="flex-1 h-9 px-3 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
         />
         <button onClick={handleSubmit} disabled={submitting || !content.trim()}
-          className="h-9 px-3 bg-cyan-600 text-white rounded-md disabled:opacity-30 cursor-pointer transition-colors hover:bg-cyan-700">
+          className="h-9 px-3 bg-emerald-600 text-white rounded-md disabled:opacity-30 cursor-pointer transition-colors hover:bg-emerald-700">
           {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
         </button>
       </div>

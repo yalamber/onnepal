@@ -99,7 +99,7 @@ export default function HomePage() {
           <h1 className="animate-fade-up text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-950 tracking-tight leading-[1.08]">
             Everything local.
             <br />
-            <span className="text-cyan-500">One place.</span>
+            <span className="text-emerald-500">One place.</span>
           </h1>
           <p className="animate-fade-up-delay-1 mt-6 text-lg sm:text-xl text-gray-500 max-w-lg leading-relaxed">
             Businesses, classifieds, jobs, events, and more &mdash; Nepal&apos;s platform for your neighborhood.
@@ -114,8 +114,8 @@ export default function HomePage() {
             <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {FEATURES.map(({ href, icon: Icon, label, desc }, i) => (
                 <li key={href} className={STAGGER[i]}>
-                  <Link href={href} className="group h-full flex flex-col items-center justify-center text-center p-4 sm:p-5 rounded-lg border border-gray-100 hover:border-cyan-200 hover:bg-gray-50 transition-all duration-200">
-                    <Icon className="h-5 w-5 text-gray-400 group-hover:text-cyan-600 transition-colors mb-2.5" aria-hidden="true" />
+                  <Link href={href} className="group h-full flex flex-col items-center justify-center text-center p-4 sm:p-5 rounded-lg border border-gray-100 hover:border-emerald-200 hover:bg-gray-50 transition-all duration-200">
+                    <Icon className="h-5 w-5 text-gray-400 group-hover:text-emerald-600 transition-colors mb-2.5" aria-hidden="true" />
                     <span className="text-sm font-medium text-gray-950">{label}</span>
                     <span className="text-xs text-gray-400 mt-0.5 leading-snug">{desc}</span>
                   </Link>
@@ -210,7 +210,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-6">
-            <Link href="/classifieds/post/new" className="inline-flex items-center gap-1.5 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded-full hover:bg-cyan-700 transition-colors">
+            <Link href="/classifieds/post/new" className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-full hover:bg-emerald-700 transition-colors">
               Post a free ad <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           </div>

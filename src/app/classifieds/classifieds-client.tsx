@@ -111,7 +111,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-950 tracking-tight">Classifieds</h1>
               <p className="mt-2 text-gray-400">Buy, sell, and find services across Nepal.</p>
             </div>
-            <Link href="/classifieds/post/new" className="hidden sm:block px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 transition-colors">
+            <Link href="/classifieds/post/new" className="hidden sm:block px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
               Post ad
             </Link>
           </div>
@@ -187,12 +187,12 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
             <div className="lg:hidden w-full mb-4 -mt-2 flex flex-col gap-3">
               <div className="flex gap-1 overflow-x-auto scrollbar-none pb-1">
                 <Link href="/classifieds"
-                  className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors ${!activeCategory ? 'bg-cyan-600 text-white' : 'text-gray-500'}`}>
+                  className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors ${!activeCategory ? 'bg-emerald-600 text-white' : 'text-gray-500'}`}>
                   All
                 </Link>
                 {CLASSIFIED_CATEGORIES.flatMap((p) => p.subcategories).map((sub) => (
                   <Link key={sub.slug} href={`/classifieds/${sub.slug}`}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors whitespace-nowrap ${activeCategory === sub.name ? 'bg-cyan-600 text-white' : 'text-gray-500'}`}>
+                    className={`flex-shrink-0 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors whitespace-nowrap ${activeCategory === sub.name ? 'bg-emerald-600 text-white' : 'text-gray-500'}`}>
                     {sub.name}
                   </Link>
                 ))}
