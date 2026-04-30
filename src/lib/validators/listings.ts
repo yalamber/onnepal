@@ -74,6 +74,12 @@ export const createPlaceSchema = z.object({
   imageUrls: z.array(z.string().max(500)).max(5).optional(),
 });
 
+export const createDiscussionSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters').max(200),
+  content: z.string().max(5000).nullish(),
+  category: z.string().min(1, 'Category is required'),
+});
+
 export const createCommentSchema = z.object({
   targetType: z.enum(['classified', 'job', 'event', 'lost-found', 'place']),
   targetId: z.string().min(1),

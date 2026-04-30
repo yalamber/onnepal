@@ -64,6 +64,7 @@ export function Navbar() {
     { href: '/events', label: 'Events' },
     { href: '/places', label: 'Places' },
     { href: '/lost-found', label: 'Lost & Found' },
+    { href: '/discussions', label: 'Discussions' },
   ];
 
   return (

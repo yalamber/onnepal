@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store, ArrowRight, Compass } from 'lucide-react';
+import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store, ArrowRight, Compass, MessageSquare } from 'lucide-react';
 import { SubdomainChecker } from '@/components/subdomain-checker';
 import { AnimateIn } from '@/components/animate-in';
 import { CATEGORIES } from '@/lib/categories';
@@ -8,8 +8,9 @@ import { JOB_CATEGORIES } from '@/lib/job-categories';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
 import { PLACE_CATEGORIES } from '@/lib/place-categories';
+import { DISCUSSION_CATEGORIES } from '@/lib/discussion-categories';
 
-const STAGGER = ['animate-fade-up', 'animate-fade-up-delay-1', 'animate-fade-up-delay-2', 'animate-fade-up-delay-3', 'animate-fade-up-delay-4', 'animate-fade-up-delay-5', 'animate-fade-up-delay-5'] as const;
+const STAGGER = ['animate-fade-up', 'animate-fade-up-delay-1', 'animate-fade-up-delay-2', 'animate-fade-up-delay-3', 'animate-fade-up-delay-4', 'animate-fade-up-delay-5', 'animate-fade-up-delay-5', 'animate-fade-up-delay-5'] as const;
 
 const FEATURES = [
   { href: '/directory', icon: Search, label: 'Directory', desc: 'Find local businesses' },
@@ -18,6 +19,7 @@ const FEATURES = [
   { href: '/events', icon: CalendarDays, label: 'Events', desc: "What's happening" },
   { href: '/places', icon: Compass, label: 'Places', desc: 'Explore hidden gems' },
   { href: '/lost-found', icon: HelpCircle, label: 'Lost & Found', desc: 'Help your community' },
+  { href: '/discussions', icon: MessageSquare, label: 'Discussions', desc: 'Community forum' },
   { href: '/create-business', icon: Store, label: 'Business page', desc: 'Get yourname.onnepal.com' },
 ] as const;
 
@@ -70,6 +72,18 @@ const SECTIONS = [
     categoryParam: 'category',
     basePath: '/lost-found',
   },
+  {
+    key: 'discussions',
+    icon: MessageSquare,
+    title: 'Discussions',
+    desc: 'Ask questions, share tips, and connect with the Nepal community',
+    href: '/discussions',
+    postHref: '/discussions/post/new',
+    postLabel: 'Start a discussion',
+    categories: DISCUSSION_CATEGORIES,
+    categoryParam: 'category',
+    basePath: '/discussions',
+  },
 ] as const;
 
 export default function HomePage() {
@@ -97,7 +111,7 @@ export default function HomePage() {
       <section className="pb-16 sm:pb-20" aria-label="Explore">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav aria-label="Main features">
-            <ul className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+            <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {FEATURES.map(({ href, icon: Icon, label, desc }, i) => (
                 <li key={href} className={STAGGER[i]}>
                   <Link href={href} className="group h-full flex flex-col items-center justify-center text-center p-4 sm:p-5 rounded-lg border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200">
@@ -265,6 +279,7 @@ export default function HomePage() {
                 <li><Link href="/events" className="hover:text-gray-950 transition-colors">Events</Link></li>
                 <li><Link href="/places" className="hover:text-gray-950 transition-colors">Places</Link></li>
                 <li><Link href="/lost-found" className="hover:text-gray-950 transition-colors">Lost &amp; Found</Link></li>
+                <li><Link href="/discussions" className="hover:text-gray-950 transition-colors">Discussions</Link></li>
                 <li><Link href="/signup" className="hover:text-gray-950 transition-colors">Sign up</Link></li>
               </ul>
             </nav>

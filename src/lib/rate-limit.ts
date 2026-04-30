@@ -7,6 +7,7 @@ const RATE_CONFIGS: Record<string, { table: string; column: string }> = {
   'lost-found:create': { table: 'lost_found', column: 'user_id' },
   'comment:create': { table: 'comments', column: 'user_id' },
   'place:create': { table: 'places', column: 'user_id' },
+  'discussion:create': { table: 'discussions', column: 'user_id' },
   'message:send': { table: 'messages', column: 'sender_id' },
   'review:create': { table: 'reviews', column: 'business_id' },
 };

@@ -242,6 +242,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   businesses: many(businesses),
   classifieds: many(classifieds),
   places: many(places),
+  discussions: many(discussions),
+  discussionReplies: many(discussionReplies),
 }));
 
 export const businessesRelations = relations(businesses, ({ one, many }) => ({
@@ -486,6 +488,45 @@ export const bookmarks = sqliteTable('bookmarks', {
 
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, { fields: [bookmarks.userId], references: [users.id] }),
+}));
+
+// Discussions
+export const discussions = sqliteTable('discussions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  content: text('content'),
+  category: text('category').notNull(),
+  isPinned: integer('is_pinned', { mode: 'boolean' }).notNull().default(false),
+  replyCount: integer('reply_count').notNull().default(0),
+  lastActivityAt: integer('last_activity_at', { mode: 'timestamp' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('discussions_category_idx').on(table.category),
+  index('discussions_user_idx').on(table.userId),
+  index('discussions_last_activity_idx').on(table.lastActivityAt),
+]));
+
+export const discussionReplies = sqliteTable('discussion_replies', {
+  id: text('id').primaryKey(),
+  discussionId: text('discussion_id').notNull().references(() => discussions.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('discussion_replies_discussion_idx').on(table.discussionId),
+  index('discussion_replies_user_idx').on(table.userId),
+]));
+
+export const discussionsRelations = relations(discussions, ({ one, many }) => ({
+  user: one(users, { fields: [discussions.userId], references: [users.id] }),
+  replies: many(discussionReplies),
+}));
+
+export const discussionRepliesRelations = relations(discussionReplies, ({ one }) => ({
+  discussion: one(discussions, { fields: [discussionReplies.discussionId], references: [discussions.id] }),
+  user: one(users, { fields: [discussionReplies.userId], references: [users.id] }),
 }));
 
 // Reports

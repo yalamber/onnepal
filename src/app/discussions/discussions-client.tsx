@@ -1,0 +1,125 @@
+'use client';
+
+import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
+import { Plus, MessageSquare, Loader2 } from 'lucide-react';
+import { DISCUSSION_CATEGORIES } from '@/lib/discussion-categories';
+import { timeAgo } from '@/lib/time-ago';
+import { SearchInput } from '@/components/search-input';
+import { Pagination } from '@/components/pagination';
+import { EmptyState } from '@/components/empty-state';
+import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
+
+interface Discussion {
+  id: string; title: string; category: string; replyCount: number;
+  lastActivityAt: string; createdAt: string; userName: string | null; userId: string;
+}
+
+export interface DiscussionsInitialData { items: Discussion[]; total: number; }
+
+export default function DiscussionsClient({ initialData, initialCategory }: { initialData: DiscussionsInitialData; initialCategory?: string }) {
+  const [items, setItems] = useState<Discussion[]>(initialData.items);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
+  const categorySlug = initialCategory || '';
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(Math.ceil(initialData.total / 20));
+  const [total, setTotal] = useState(initialData.total);
+
+  useEffect(() => {
+    setItems(initialData.items);
+    setTotal(initialData.total);
+    setTotalPages(Math.ceil(initialData.total / 20));
+    setPage(1);
+  }, [initialCategory]);
+
+  const categoryNameFromSlug = (slug: string) => DISCUSSION_CATEGORIES.find(c => c.slug === slug)?.name || '';
+
+  const fetchItems = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      const catName = categoryNameFromSlug(categorySlug);
+      if (catName) params.set('category', catName);
+      if (search) params.set('search', search);
+      params.set('page', String(page));
+      params.set('limit', '20');
+      const res = await fetch(`/api/discussions?${params}`);
+      if (res.ok) {
+        const data = await res.json() as { items: Discussion[]; total: number; totalPages: number };
+        setItems(data.items || []);
+        setTotal(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+      }
+    } catch {} finally { setLoading(false); }
+  }, [search, page]);
+
+  useEffect(() => { fetchItems(); }, [page]);
+  useEffect(() => { const t = setTimeout(() => { if (search) { setPage(1); fetchItems(); } }, 350); return () => clearTimeout(t); }, [search]);
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-950 tracking-tight">Discussions</h1>
+            <p className="text-sm text-gray-500 mt-0.5">Join the conversation</p>
+          </div>
+          <Link href="/discussions/post/new"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-950 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
+            <Plus className="h-4 w-4" /> Start discussion
+          </Link>
+        </div>
+
+        <div className="mb-6">
+          <SearchInput value={search} onChange={setSearch} placeholder="Search discussions..." />
+        </div>
+
+        <div className="mb-6">
+          <CategoryMobilePills categories={DISCUSSION_CATEGORIES} activeCategory={categorySlug} basePath="/discussions" allLabel="All" />
+        </div>
+
+        <div className="flex gap-10">
+          <aside className="w-48 flex-shrink-0">
+            <CategorySidebar categories={DISCUSSION_CATEGORIES} activeCategory={categorySlug} basePath="/discussions" allLabel="All topics" />
+          </aside>
+
+          <div className="flex-1 min-w-0">
+            {loading ? (
+              <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
+            ) : items.length === 0 ? (
+              <EmptyState icon={MessageSquare} title="No discussions yet" subtitle="Be the first to start a conversation" />
+            ) : (
+              <>
+                <p className="text-xs text-gray-400 mb-3">{total} {total === 1 ? 'discussion' : 'discussions'}</p>
+                <div className="space-y-1">
+                  {items.map((item) => (
+                    <Link key={item.id} href={`/discussions/${item.id}`}
+                      className="flex items-center gap-4 p-3 hover:bg-gray-50 transition-colors group rounded-md">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-gray-950 group-hover:text-gray-700 truncate">{item.title}</h3>
+                        <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                          <span className="px-1.5 py-0.5 bg-gray-100 rounded text-[11px] font-medium text-gray-600">{item.category}</span>
+                          <span>{item.userName || 'Anonymous'}</span>
+                          <span>&middot;</span>
+                          <span>{timeAgo(item.lastActivityAt)}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-gray-400 flex-shrink-0">
+                        <MessageSquare className="h-3.5 w-3.5" />
+                        <span>{item.replyCount}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-8">
+                  <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

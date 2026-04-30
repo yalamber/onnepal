@@ -12,6 +12,7 @@ export default async function sitemap() {
     { url: 'https://onnepal.com/events', lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.8 },
     { url: 'https://onnepal.com/lost-found', lastModified: new Date(), changeFrequency: 'hourly' as const, priority: 0.7 },
     { url: 'https://onnepal.com/places', lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.8 },
+    { url: 'https://onnepal.com/discussions', lastModified: new Date(), changeFrequency: 'hourly' as const, priority: 0.7 },
     { url: 'https://onnepal.com/login', changeFrequency: 'monthly' as const, priority: 0.3 },
     { url: 'https://onnepal.com/signup', changeFrequency: 'monthly' as const, priority: 0.3 },
   ];
