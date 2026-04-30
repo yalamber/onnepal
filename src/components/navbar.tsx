@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield, Mail, Search, User } from 'lucide-react';
+import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield, Mail, Search, User, Bookmark } from 'lucide-react';
 
 interface UserData {
   id: string;
@@ -115,6 +115,10 @@ export function Navbar() {
                     <User className="h-4 w-4 mr-2" />
                     My profile
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push('/saved')} className="cursor-pointer rounded-md px-3 py-2 text-sm">
+                    <Bookmark className="h-4 w-4 mr-2" />
+                    Saved items
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push('/dashboard')} className="cursor-pointer rounded-md px-3 py-2 text-sm">
                     <LayoutDashboard className="h-4 w-4 mr-2" />
                     Dashboard
@@ -184,6 +188,9 @@ export function Navbar() {
                       <p className="px-3 text-sm font-medium text-gray-950">{user.displayName || user.email}</p>
                       <Link href={`/user/${user.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">
                         My profile
+                      </Link>
+                      <Link href="/saved" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">
+                        Saved items
                       </Link>
                       <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">
                         Dashboard
