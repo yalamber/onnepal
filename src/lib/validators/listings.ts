@@ -81,7 +81,7 @@ export const createDiscussionSchema = z.object({
 });
 
 export const createCommentSchema = z.object({
-  targetType: z.enum(['classified', 'job', 'event', 'lost-found', 'place', 'discussion']),
+  targetType: z.enum(['classified', 'job', 'event', 'lost-found', 'place']),
   targetId: z.string().min(1),
   content: z.string().min(1).max(1000),
 });

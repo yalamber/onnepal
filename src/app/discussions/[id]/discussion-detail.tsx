@@ -7,7 +7,6 @@ import { ArrowLeft, Loader2, MessageSquare, Send, Trash2 } from 'lucide-react';
 import { timeAgo } from '@/lib/time-ago';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { SafeMarkdown } from '@/components/safe-markdown';
-import { CommentSection } from '@/components/comment-section';
 import { toast } from 'sonner';
 
 interface Discussion {
@@ -136,8 +135,6 @@ export default function DiscussionDetail({ initialData, initialReplies }: { init
             </div>
           )}
         </div>
-
-        <CommentSection targetType="discussion" targetId={discussion.id} />
       </div>
     </div>
   );
