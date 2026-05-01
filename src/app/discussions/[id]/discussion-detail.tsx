@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2, MessageSquare, Send, Trash2 } from 'lucide-react';
 import { timeAgo } from '@/lib/time-ago';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { SafeMarkdown } from '@/components/safe-markdown';
 import { toast } from 'sonner';
 
 interface Discussion {
@@ -93,7 +92,7 @@ export default function DiscussionDetail({ initialData, initialReplies }: { init
             <span>{timeAgo(discussion.createdAt)}</span>
           </div>
           {discussion.content && (
-            <SafeMarkdown content={discussion.content} />
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{discussion.content}</p>
           )}
         </div>
 
@@ -128,7 +127,7 @@ export default function DiscussionDetail({ initialData, initialReplies }: { init
                       <Link href={`/user/${r.userId}`} className="text-xs font-medium text-gray-950 hover:underline">{r.userName || 'Anonymous'}</Link>
                       <span className="text-[11px] text-gray-400">{timeAgo(r.createdAt)}</span>
                     </div>
-                    <div className="mt-0.5"><SafeMarkdown content={r.content} /></div>
+                    <p className="text-sm text-gray-700 mt-0.5 leading-relaxed">{r.content}</p>
                   </div>
                 </div>
               ))}
