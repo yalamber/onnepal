@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   const quickActions = [
     { href: '/classifieds/post/new', label: 'Post ad', desc: 'Sell or buy items', icon: Tag, color: 'bg-blue-50 text-blue-600' },
-    { href: '/jobs/post/new', label: 'Post job', desc: 'Hire talent', icon: Briefcase, color: 'bg-gray-100 text-gray-950' },
+    { href: '/jobs/post/new', label: 'Post job', desc: 'Hire talent', icon: Briefcase, color: 'bg-cyan-50 text-cyan-600' },
     { href: '/events/post/new', label: 'Post event', desc: 'Share happenings', icon: Calendar, color: 'bg-purple-50 text-purple-600' },
     { href: '/places/post/new', label: 'Add place', desc: 'Share a hidden gem', icon: Compass, color: 'bg-teal-50 text-teal-600' },
     { href: '/lost-found/post/new', label: 'Report item', desc: 'Lost or found', icon: AlertTriangle, color: 'bg-amber-50 text-amber-600' },
