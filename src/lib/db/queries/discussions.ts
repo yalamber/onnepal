@@ -181,3 +181,23 @@ export async function deleteReply(db: Database, id: string, userId: string) {
     })
     .where(eq(discussions.id, reply[0].discussionId));
 }
+
+export async function adminDeleteReply(db: Database, id: string) {
+  const reply = await db
+    .select({ discussionId: discussionReplies.discussionId })
+    .from(discussionReplies)
+    .where(eq(discussionReplies.id, id))
+    .limit(1);
+
+  if (reply.length === 0) return;
+
+  await db.delete(discussionReplies).where(eq(discussionReplies.id, id));
+
+  await db
+    .update(discussions)
+    .set({
+      replyCount: sql`MAX(0, ${discussions.replyCount} - 1)`,
+      updatedAt: new Date(),
+    })
+    .where(eq(discussions.id, reply[0].discussionId));
+}
