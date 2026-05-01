@@ -18,6 +18,7 @@ import { Menu, LayoutDashboard, LogOut, ChevronDown, Settings, Loader2, Shield, 
 interface UserData {
   id: string;
   email: string;
+  username?: string;
   displayName: string | null;
   isAdmin?: boolean;
 }
@@ -113,7 +114,7 @@ export function Navbar() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg rounded-lg p-1">
-                  <DropdownMenuItem onClick={() => router.push(`/user/${user.id}`)} className="cursor-pointer rounded-md px-3 py-2 text-sm">
+                  <DropdownMenuItem onClick={() => router.push(`/profile/${user.username || user.id}`)} className="cursor-pointer rounded-md px-3 py-2 text-sm">
                     <User className="h-4 w-4 mr-2" />
                     My profile
                   </DropdownMenuItem>
@@ -188,7 +189,7 @@ export function Navbar() {
                   ) : user ? (
                     <>
                       <p className="px-3 text-sm font-medium text-gray-950">{user.displayName || user.email}</p>
-                      <Link href={`/user/${user.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">
+                      <Link href={`/profile/${user.username || user.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">
                         My profile
                       </Link>
                       <Link href="/saved" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors">

@@ -6,11 +6,30 @@ export async function getUserPublicProfile(db: Database, userId: string) {
   const result = await db
     .select({
       id: users.id,
+      username: users.username,
       displayName: users.displayName,
+      bio: users.bio,
+      avatarUrl: users.avatarUrl,
       createdAt: users.createdAt,
     })
     .from(users)
     .where(eq(users.id, userId))
+    .limit(1);
+  return result[0] || null;
+}
+
+export async function getUserPublicProfileByUsername(db: Database, username: string) {
+  const result = await db
+    .select({
+      id: users.id,
+      username: users.username,
+      displayName: users.displayName,
+      bio: users.bio,
+      avatarUrl: users.avatarUrl,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .where(eq(users.username, username))
     .limit(1);
   return result[0] || null;
 }

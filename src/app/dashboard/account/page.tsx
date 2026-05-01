@@ -2,14 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Input } from '@/components/ui/input';
-import { Loader2, Check } from 'lucide-react';
+import { ImageUpload, imageUrl } from '@/components/image-upload';
+import { Loader2, Check, ExternalLink } from 'lucide-react';
 
 interface UserData {
   id: string;
   email: string;
+  username: string;
   displayName: string | null;
   phone: string | null;
+  bio: string | null;
+  avatarUrl: string | null;
 }
 
 export default function AccountPage() {
@@ -19,6 +24,8 @@ export default function AccountPage() {
 
   const [displayName, setDisplayName] = useState('');
   const [phone, setPhone] = useState('');
+  const [bio, setBio] = useState('');
+  const [avatarUrls, setAvatarUrls] = useState<string[]>([]);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
 
@@ -37,6 +44,8 @@ export default function AccountPage() {
         setUser(data.user);
         setDisplayName(data.user.displayName || '');
         setPhone(data.user.phone || '');
+        setBio(data.user.bio || '');
+        setAvatarUrls(data.user.avatarUrl ? [data.user.avatarUrl] : []);
       } catch { router.push('/login'); }
       finally { setLoading(false); }
     };
@@ -50,7 +59,12 @@ export default function AccountPage() {
       const res = await fetch('/api/auth/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ displayName, phone }),
+        body: JSON.stringify({
+          displayName,
+          phone,
+          bio: bio.trim() || null,
+          avatarUrl: avatarUrls[0] || null,
+        }),
       });
       if (res.ok) setProfileSaved(true);
     } finally { setSavingProfile(false); }
@@ -103,16 +117,42 @@ export default function AccountPage() {
 
       {/* Profile */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-950 mb-4">Profile</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-gray-950">Profile</h2>
+          <Link href={`/profile/${user.username}`} className="text-xs text-gray-400 hover:text-gray-950 transition-colors flex items-center gap-1">
+            View public profile <ExternalLink className="h-3 w-3" />
+          </Link>
+        </div>
         <div className="space-y-4 max-w-md">
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1.5 block">Avatar</label>
+            <ImageUpload value={avatarUrls} onChange={setAvatarUrls} max={1} label="" />
+          </div>
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1.5 block">Email</label>
             <Input value={user.email} disabled className="bg-gray-50 text-gray-500" />
             <p className="text-xs text-gray-300 mt-1">Email cannot be changed.</p>
           </div>
           <div>
+            <label className="text-sm font-medium text-gray-700 mb-1.5 block">Username</label>
+            <Input value={user.username} disabled className="bg-gray-50 text-gray-500" />
+            <p className="text-xs text-gray-300 mt-1">Your profile URL: onnepal.com/profile/{user.username}</p>
+          </div>
+          <div>
             <label className="text-sm font-medium text-gray-700 mb-1.5 block">Display name</label>
             <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your name" />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1.5 block">Bio <span className="text-gray-400 font-normal">(optional)</span></label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Tell people a bit about yourself..."
+              rows={3}
+              maxLength={500}
+              className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none"
+            />
+            <p className="text-xs text-gray-300 mt-1">{bio.length}/500</p>
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1.5 block">Phone <span className="text-gray-400 font-normal">(optional)</span></label>
@@ -120,7 +160,7 @@ export default function AccountPage() {
           </div>
           <div className="flex items-center gap-3">
             <button onClick={saveProfile} disabled={savingProfile}
-              className="h-9 px-4 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-30 transition-colors flex items-center gap-2">
+              className="h-9 px-4 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 disabled:opacity-30 transition-colors cursor-pointer flex items-center gap-2">
               {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
             </button>
             {profileSaved && <span className="text-sm text-green-600 flex items-center gap-1"><Check className="h-3.5 w-3.5" /> Saved</span>}
@@ -150,7 +190,7 @@ export default function AccountPage() {
             <p className={`text-sm ${passwordMessage.type === 'error' ? 'text-red-500' : 'text-green-600'}`}>{passwordMessage.text}</p>
           )}
           <button type="submit" disabled={savingPassword}
-            className="h-9 px-4 bg-gray-950 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-30 transition-colors flex items-center gap-2">
+            className="h-9 px-4 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 disabled:opacity-30 transition-colors cursor-pointer flex items-center gap-2">
             {savingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Change password'}
           </button>
         </form>

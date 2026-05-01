@@ -38,12 +38,19 @@ export async function getUserById(db: Database, id: string) {
   return result[0] || null;
 }
 
+export async function getUserByUsername(db: Database, username: string) {
+  const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
+  return result[0] || null;
+}
+
 export async function updateUser(
   db: Database,
   userId: string,
   data: Partial<{
     displayName: string;
     phone: string;
+    bio: string;
+    avatarUrl: string;
   }>
 ) {
   await db

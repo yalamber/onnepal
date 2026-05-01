@@ -8,6 +8,8 @@ import { z } from 'zod';
 const profilePatchSchema = z.object({
   displayName: z.string().min(1).max(100).nullish(),
   phone: z.string().max(20).nullish(),
+  bio: z.string().max(500).nullish(),
+  avatarUrl: z.string().max(500).nullish(),
 });
 
 export async function PATCH(request: NextRequest) {
@@ -33,6 +35,8 @@ export async function PATCH(request: NextRequest) {
     await updateUser(db, session.userId, {
       displayName: body.displayName,
       phone: body.phone,
+      bio: body.bio,
+      avatarUrl: body.avatarUrl,
     });
 
     return NextResponse.json({ success: true });
