@@ -202,26 +202,28 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-baseline justify-between mb-5">
-                <p className="text-sm text-gray-400">
-                  {loading ? (
-                    <span className="flex items-center gap-2"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Searching...</span>
-                  ) : (
-                    <>
-                      <span className="text-gray-950 font-medium">{total}</span> {total === 1 ? 'listing' : 'listings'}
-                      {activeCategory && <> in {activeCategory}</>}
-                      {activeSearch && <> matching &ldquo;{activeSearch}&rdquo;</>}
-                    </>
-                  )}
-                </p>
-              </div>
+              {(loading || total > 0) && (
+                <div className="flex items-baseline justify-between mb-5">
+                  <p className="text-sm text-gray-400">
+                    {loading ? (
+                      <span className="flex items-center gap-2"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Searching...</span>
+                    ) : (
+                      <>
+                        <span className="text-gray-950 font-medium">{total}</span> {total === 1 ? 'listing' : 'listings'}
+                        {activeCategory && <> in {activeCategory}</>}
+                        {activeSearch && <> matching &ldquo;{activeSearch}&rdquo;</>}
+                      </>
+                    )}
+                  </p>
+                </div>
+              )}
 
               {initialLoad ? (
                 <div className="space-y-3">
                   {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-20 bg-gray-50 rounded-lg animate-pulse" />)}
                 </div>
               ) : listings.length === 0 ? (
-                <div className="text-center py-20">
+                <div className="text-center py-8">
                   <EmptyState
                     icon={Search}
                     title={activeSearch || activeCategory ? 'No listings match your filters.' : 'No listings yet.'}
