@@ -84,12 +84,12 @@ export default function ServicesClient({ initialData, initialCategory }: { initi
         </div>
 
         <div className="mb-6">
-          <CategoryMobilePills categories={SERVICE_CATEGORIES} activeCategory={categorySlug} basePath="/services" allLabel="All" />
+          <CategoryMobilePills categories={SERVICE_CATEGORIES} activeCategory={categorySlug} basePath="/pros" allLabel="All" />
         </div>
 
         <div className="flex lg:gap-10">
           <aside className="hidden lg:block w-48 flex-shrink-0">
-            <CategorySidebar categories={SERVICE_CATEGORIES} activeCategory={categorySlug} basePath="/services" allLabel="All pros" />
+            <CategorySidebar categories={SERVICE_CATEGORIES} activeCategory={categorySlug} basePath="/pros" allLabel="All pros" />
           </aside>
 
           <div className="flex-1 min-w-0">

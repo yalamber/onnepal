@@ -40,7 +40,7 @@ export default function ServiceDetail({ initialData }: { initialData?: Service |
     const res = await fetch(`/api/pros/${id}`, { method: 'DELETE' });
     if (!res.ok) { toast.error('Failed to delete'); return; }
     toast.success('Listing deleted');
-    router.push('/services');
+    router.push('/pros');
   };
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
