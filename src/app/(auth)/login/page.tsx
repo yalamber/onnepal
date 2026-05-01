@@ -41,31 +41,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex">
-      {/* Brand panel — desktop only */}
-      <div className="hidden lg:flex lg:w-[45%] bg-gray-950 flex-col justify-between p-12">
-        <Logo className="h-10 brightness-0 invert" />
-        <div>
-          <h2 className="text-2xl font-bold text-white leading-tight">
-            Everything local.<br />
-            <span className="text-cyan-400">One place.</span>
-          </h2>
-          <p className="mt-4 text-gray-400 text-sm leading-relaxed max-w-sm">
-            Businesses, classifieds, jobs, events, and more — Nepal&apos;s platform for your neighborhood.
-          </p>
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-gray-50/50">
+      <div className="w-full max-w-sm animate-fade-in">
+        <div className="flex justify-center mb-8">
+          <Link href="/"><Logo className="h-10" /></Link>
         </div>
-        <p className="text-xs text-gray-600">onnepal.com</p>
-      </div>
 
-      {/* Form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-16">
-        <div className="w-full max-w-sm animate-fade-in">
-          <div className="lg:hidden flex justify-center mb-8">
-            <Logo className="h-10" />
-          </div>
-
-          <h1 className="text-2xl font-bold text-gray-950 tracking-tight">Welcome back</h1>
-          <p className="text-gray-400 text-sm mt-1.5 mb-8">Log in to your account</p>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+          <h1 className="text-xl font-bold text-gray-950 tracking-tight">Welcome back</h1>
+          <p className="text-gray-400 text-sm mt-1 mb-6">Log in to your account</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -109,21 +93,19 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 disabled:opacity-50 transition-colors cursor-pointer flex items-center justify-center gap-2 mt-2"
+              className="w-full h-11 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 disabled:opacity-50 transition-colors cursor-pointer flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Log in'}
             </button>
           </form>
-
-          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-            <p className="text-sm text-gray-400">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="text-cyan-600 font-medium hover:text-cyan-700 transition-colors">
-                Create one
-              </Link>
-            </p>
-          </div>
         </div>
+
+        <p className="text-center text-sm text-gray-400 mt-6">
+          Don&apos;t have an account?{' '}
+          <Link href="/signup" className="text-cyan-600 font-medium hover:text-cyan-700 transition-colors">
+            Create one
+          </Link>
+        </p>
       </div>
     </div>
   );

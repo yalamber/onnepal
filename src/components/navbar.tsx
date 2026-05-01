@@ -29,9 +29,9 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const isSitePage = pathname.startsWith('/site/');
-
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
   useEffect(() => {
-    if (isSitePage) return;
+    if (isSitePage || isAuthPage) return;
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/auth/me');
@@ -49,7 +49,7 @@ export function Navbar() {
     return () => window.removeEventListener('auth-change', handleAuthChange);
   }, [isSitePage]);
 
-  if (isSitePage) return null;
+  if (isSitePage || isAuthPage) return null;
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
