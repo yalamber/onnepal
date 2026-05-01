@@ -234,7 +234,7 @@ export default function HomePage() {
       {/* Jobs, Events, Lost & Found — card layout */}
       <section className="py-16 sm:py-20" aria-label="More sections">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {SECTIONS.map((section, i) => (
               <AnimateIn key={section.key} delay={i * 0.1}>
                 <div className="h-full flex flex-col rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-gray-300 transition-colors">
