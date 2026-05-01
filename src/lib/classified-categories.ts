@@ -58,18 +58,6 @@ export const CLASSIFIED_CATEGORIES: ClassifiedCategory[] = [
     ],
   },
   {
-    name: 'Services',
-    slug: 'services',
-    subcategories: [
-      { name: 'Home Services', slug: 'home-services' },
-      { name: 'Tutoring', slug: 'tutoring' },
-      { name: 'Moving & Transport', slug: 'moving-transport' },
-      { name: 'Repair & Maintenance', slug: 'repair-maintenance' },
-      { name: 'Event & Catering', slug: 'event-catering' },
-      { name: 'Other Services', slug: 'other-services' },
-    ],
-  },
-  {
     name: 'Furniture & Home',
     slug: 'furniture-home',
     subcategories: [

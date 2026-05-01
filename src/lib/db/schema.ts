@@ -548,3 +548,25 @@ export const reports = sqliteTable('reports', {
 export const reportsRelations = relations(reports, ({ one }) => ({
   user: one(users, { fields: [reports.userId], references: [users.id] }),
 }));
+
+export const services = sqliteTable('services', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  category: text('category').notNull(),
+  location: text('location'),
+  priceType: text('price_type'),
+  price: text('price'),
+  contactPhone: text('contact_phone'),
+  contactWhatsapp: text('contact_whatsapp'),
+  imageUrls: text('image_urls'),
+  status: text('status').notNull().default('active'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('services_category_idx').on(table.category),
+  index('services_user_idx').on(table.userId),
+  index('services_status_idx').on(table.status),
+  index('services_created_idx').on(table.createdAt),
+]));

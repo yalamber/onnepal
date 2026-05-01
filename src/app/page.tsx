@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store, ArrowRight, Compass, MessageSquare } from 'lucide-react';
+import { Search, ShoppingBag, Briefcase, CalendarDays, HelpCircle, Store, ArrowRight, Compass, MessageSquare, Wrench } from 'lucide-react';
 import { SubdomainChecker } from '@/components/subdomain-checker';
 import { Logo } from '@/components/logo';
 import { AnimateIn } from '@/components/animate-in';
@@ -8,6 +8,7 @@ import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 import { JOB_CATEGORIES } from '@/lib/job-categories';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
+import { SERVICE_CATEGORIES } from '@/lib/service-categories';
 import { PLACE_CATEGORIES } from '@/lib/place-categories';
 import { DISCUSSION_CATEGORIES } from '@/lib/discussion-categories';
 
@@ -19,9 +20,9 @@ const FEATURES = [
   { href: '/jobs', icon: Briefcase, label: 'Jobs', desc: 'Find or post jobs' },
   { href: '/events', icon: CalendarDays, label: 'Events', desc: "What's happening" },
   { href: '/places', icon: Compass, label: 'Places', desc: 'Explore hidden gems' },
+  { href: '/services', icon: Wrench, label: 'Services', desc: 'Find local providers' },
   { href: '/lost-found', icon: HelpCircle, label: 'Lost & Found', desc: 'Help your community' },
   { href: '/discussions', icon: MessageSquare, label: 'Discussions', desc: 'Community forum' },
-  { href: '/create-business', icon: Store, label: 'Business page', desc: 'Get yourname.onnepal.com' },
 ] as const;
 
 const SECTIONS = [
@@ -48,6 +49,18 @@ const SECTIONS = [
     categories: EVENT_CATEGORIES,
     categoryParam: 'category',
     basePath: '/events',
+  },
+  {
+    key: 'services',
+    icon: Wrench,
+    title: 'Services',
+    desc: 'Find trusted plumbers, tutors, photographers, and more',
+    href: '/services',
+    postHref: '/services/post/new',
+    postLabel: 'Offer a service',
+    categories: SERVICE_CATEGORIES,
+    categoryParam: 'category',
+    basePath: '/services',
   },
   {
     key: 'places',
@@ -279,6 +292,7 @@ export default function HomePage() {
                 <li><Link href="/jobs" className="hover:text-gray-950 transition-colors">Jobs</Link></li>
                 <li><Link href="/events" className="hover:text-gray-950 transition-colors">Events</Link></li>
                 <li><Link href="/places" className="hover:text-gray-950 transition-colors">Places</Link></li>
+                <li><Link href="/services" className="hover:text-gray-950 transition-colors">Services</Link></li>
                 <li><Link href="/lost-found" className="hover:text-gray-950 transition-colors">Lost &amp; Found</Link></li>
                 <li><Link href="/discussions" className="hover:text-gray-950 transition-colors">Discussions</Link></li>
                 <li><Link href="/signup" className="hover:text-gray-950 transition-colors">Sign up</Link></li>
