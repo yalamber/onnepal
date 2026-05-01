@@ -73,7 +73,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-14">
           <div className="flex items-center gap-8">
             <Link href="/" className="text-sm font-bold text-gray-950 tracking-tight">
-              OnNepal
+              On<span className="logo-dot text-gray-400">.</span>Nepal
             </Link>
             <div className="hidden sm:flex items-center gap-6">
               {navLinks.map((link) => (

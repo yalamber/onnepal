@@ -268,7 +268,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
-              <p className="text-sm font-semibold text-gray-950">OnNepal</p>
+              <p className="text-sm font-semibold text-gray-950">On<span className="logo-dot text-gray-400">.</span>Nepal</p>
               <p className="text-sm text-gray-400 mt-1">Everything local. One place.</p>
             </div>
             <nav aria-label="Footer">
