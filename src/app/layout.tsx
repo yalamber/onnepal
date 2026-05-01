@@ -1,14 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { NavigationProgress } from "@/components/progress-bar";
 import { Toaster } from "sonner";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff2",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -68,8 +67,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} antialiased bg-white`}
-        style={{ fontFamily: 'var(--font-geist-sans), system-ui, -apple-system, sans-serif' }}
+        className={`${inter.variable} antialiased bg-white`}
+        style={{ fontFamily: 'var(--font-inter), system-ui, -apple-system, sans-serif' }}
       >
         <script
           type="application/ld+json"

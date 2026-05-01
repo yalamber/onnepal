@@ -83,10 +83,10 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm transition-colors ${
+                  className={`text-sm font-medium transition-colors ${
                     pathname.startsWith(link.href)
-                      ? 'text-cyan-600 font-medium'
-                      : 'text-gray-400 hover:text-gray-950'
+                      ? 'text-cyan-600'
+                      : 'text-gray-500 hover:text-gray-950'
                   }`}
                 >
                   {link.label}
@@ -172,7 +172,7 @@ export function Navbar() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="px-3 py-2.5 text-sm text-gray-600 hover:text-gray-950 rounded-lg transition-colors"
+                      className="px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-950 rounded-lg transition-colors"
                     >
                       {link.label}
                     </Link>
