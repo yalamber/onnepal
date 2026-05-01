@@ -74,7 +74,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-14">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center">
-              <Logo className="h-8" />
+              <Logo className="h-10" />
             </Link>
             <div className="hidden sm:flex items-center gap-6">
               {navLinks.map((link) => (
