@@ -20,7 +20,7 @@ const FEATURES = [
   { href: '/jobs', icon: Briefcase, label: 'Jobs', desc: 'Find or post jobs' },
   { href: '/events', icon: CalendarDays, label: 'Events', desc: "What's happening" },
   { href: '/places', icon: Compass, label: 'Places', desc: 'Explore hidden gems' },
-  { href: '/services', icon: Wrench, label: 'Services', desc: 'Find local providers' },
+  { href: '/pros', icon: Wrench, label: 'Pros', desc: 'Find local professionals' },
   { href: '/lost-found', icon: HelpCircle, label: 'Lost & Found', desc: 'Help your community' },
   { href: '/discussions', icon: MessageSquare, label: 'Discussions', desc: 'Community forum' },
 ] as const;
@@ -51,16 +51,16 @@ const SECTIONS = [
     basePath: '/events',
   },
   {
-    key: 'services',
+    key: 'pros',
     icon: Wrench,
-    title: 'Services',
+    title: 'Pros',
     desc: 'Find trusted plumbers, tutors, photographers, and more',
-    href: '/services',
-    postHref: '/services/post/new',
-    postLabel: 'Offer a service',
+    href: '/pros',
+    postHref: '/pros/post/new',
+    postLabel: 'List your service',
     categories: SERVICE_CATEGORIES,
     categoryParam: 'category',
-    basePath: '/services',
+    basePath: '/pros',
   },
   {
     key: 'places',
@@ -292,7 +292,7 @@ export default function HomePage() {
                 <li><Link href="/jobs" className="hover:text-gray-950 transition-colors">Jobs</Link></li>
                 <li><Link href="/events" className="hover:text-gray-950 transition-colors">Events</Link></li>
                 <li><Link href="/places" className="hover:text-gray-950 transition-colors">Places</Link></li>
-                <li><Link href="/services" className="hover:text-gray-950 transition-colors">Services</Link></li>
+                <li><Link href="/pros" className="hover:text-gray-950 transition-colors">Pros</Link></li>
                 <li><Link href="/lost-found" className="hover:text-gray-950 transition-colors">Lost &amp; Found</Link></li>
                 <li><Link href="/discussions" className="hover:text-gray-950 transition-colors">Discussions</Link></li>
                 <li><Link href="/signup" className="hover:text-gray-950 transition-colors">Sign up</Link></li>

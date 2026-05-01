@@ -45,8 +45,8 @@ export default function PostServicePage() {
       });
       if (!res.ok) { const d = await res.json().catch(() => null) as { error?: string } | null; setError(d?.error || 'Failed'); toast.error(d?.error || 'Failed to post'); return; }
       const data = await res.json() as { id: string };
-      toast.success('Service posted');
-      router.push(`/services/${data.id}`);
+      toast.success('Listed successfully');
+      router.push(`/pros/${data.id}`);
     } catch { setError('Something went wrong'); toast.error('Something went wrong'); } finally { setSubmitting(false); }
   };
 
@@ -56,9 +56,9 @@ export default function PostServicePage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-        <Link href="/services" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Services</Link>
-        <h1 className="text-xl font-bold text-gray-950 mb-1">Offer a service</h1>
-        <p className="text-sm text-gray-400 mb-6">List your service for people to find</p>
+        <Link href="/pros" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6"><ArrowLeft className="h-4 w-4" /> Services</Link>
+        <h1 className="text-xl font-bold text-gray-950 mb-1">List your service</h1>
+        <p className="text-sm text-gray-400 mb-6">Help people find you for the work you do</p>
 
         <div className="space-y-5">
           <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -116,7 +116,7 @@ export default function PostServicePage() {
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <SubmitButton submitting={submitting} label="Post service" disabled={!form.title.trim() || !form.category} onClick={handleSubmit} />
+          <SubmitButton submitting={submitting} label="List service" disabled={!form.title.trim() || !form.category} onClick={handleSubmit} />
         </div>
       </div>
     </div>

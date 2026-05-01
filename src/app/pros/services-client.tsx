@@ -70,12 +70,12 @@ export default function ServicesClient({ initialData, initialCategory }: { initi
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-950 tracking-tight">Services</h1>
+            <h1 className="text-2xl font-bold text-gray-950 tracking-tight">Pros</h1>
             <p className="text-sm text-gray-500 mt-0.5">Find trusted local service providers</p>
           </div>
-          <Link href="/services/post/new"
+          <Link href="/pros/post/new"
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded-md hover:bg-cyan-700 transition-colors">
-            <Plus className="h-4 w-4" /> Offer a service
+            <Plus className="h-4 w-4" /> List your service
           </Link>
         </div>
 
@@ -89,20 +89,20 @@ export default function ServicesClient({ initialData, initialCategory }: { initi
 
         <div className="flex lg:gap-10">
           <aside className="hidden lg:block w-48 flex-shrink-0">
-            <CategorySidebar categories={SERVICE_CATEGORIES} activeCategory={categorySlug} basePath="/services" allLabel="All services" />
+            <CategorySidebar categories={SERVICE_CATEGORIES} activeCategory={categorySlug} basePath="/services" allLabel="All pros" />
           </aside>
 
           <div className="flex-1 min-w-0">
             {loading ? (
               <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
             ) : items.length === 0 ? (
-              <EmptyState icon={Wrench} title="No services yet" subtitle="Be the first to offer a service" />
+              <EmptyState icon={Wrench} title="No pros yet" subtitle="Be the first to list your service" />
             ) : (
               <>
-                <p className="text-xs text-gray-400 mb-3">{total} {total === 1 ? 'service' : 'services'}</p>
+                <p className="text-xs text-gray-400 mb-3">{total} {total === 1 ? 'pro' : 'pros'}</p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {items.map((item) => (
-                    <Link key={item.id} href={`/services/${item.id}`}
+                    <Link key={item.id} href={`/pros/${item.id}`}
                       className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors group">
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <h3 className="text-sm font-medium text-gray-950 group-hover:text-gray-700 line-clamp-2">{item.title}</h3>

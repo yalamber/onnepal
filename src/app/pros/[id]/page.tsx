@@ -11,10 +11,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const item = await getServiceById(db, id);
     if (!item) return { title: 'Not Found' };
     return {
-      title: `${item.title} — Service on OnNepal`,
-      description: item.description?.slice(0, 160) || `${item.title} — find this service on OnNepal`,
+      title: `${item.title} — Pro on OnNepal`,
+      description: item.description?.slice(0, 160) || `${item.title} — find this pro on OnNepal`,
     };
-  } catch { return { title: 'Service' }; }
+  } catch { return { title: 'Pro' }; }
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ id: string }> }) {

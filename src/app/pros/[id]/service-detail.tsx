@@ -31,23 +31,23 @@ export default function ServiceDetail({ initialData }: { initialData?: Service |
   const [loading, setLoading] = useState(!initialData);
 
   useEffect(() => {
-    fetch(`/api/services/${id}`).then(r => r.ok ? r.json() : null)
+    fetch(`/api/pros/${id}`).then(r => r.ok ? r.json() : null)
       .then((d: { item: Service } | null) => { if (d) setItem(d.item); }).finally(() => setLoading(false));
   }, [id]);
 
   const deleteItem = async () => {
-    if (!confirm('Delete this service?')) return;
-    const res = await fetch(`/api/services/${id}`, { method: 'DELETE' });
+    if (!confirm('Delete this listing?')) return;
+    const res = await fetch(`/api/pros/${id}`, { method: 'DELETE' });
     if (!res.ok) { toast.error('Failed to delete'); return; }
-    toast.success('Service deleted');
+    toast.success('Listing deleted');
     router.push('/services');
   };
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
   if (!item) return (
     <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-      <p className="text-sm text-gray-500 mb-4">Service not found</p>
-      <Link href="/services" className="text-sm text-gray-400 hover:text-gray-950">Back to Services</Link>
+      <p className="text-sm text-gray-500 mb-4">Pro not found</p>
+      <Link href="/pros" className="text-sm text-gray-400 hover:text-gray-950">Back to Pros</Link>
     </div>
   );
 
@@ -65,8 +65,8 @@ export default function ServiceDetail({ initialData }: { initialData?: Service |
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/services" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6">
-          <ArrowLeft className="h-4 w-4" /> Back to Services
+        <Link href="/pros" className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-950 transition-colors mb-6">
+          <ArrowLeft className="h-4 w-4" /> Back to Pros
         </Link>
 
         <div className={images.length > 0 ? 'grid lg:grid-cols-2 gap-6' : ''}>
@@ -94,7 +94,7 @@ export default function ServiceDetail({ initialData }: { initialData?: Service |
             <div className="border-t border-gray-100 pt-4 space-y-2.5">
               <ContactLinks phone={item.contactPhone} whatsapp={item.contactWhatsapp} />
             </div>
-            <ShareButtons url={`https://onnepal.com/services/${id}`} title={item.title} />
+            <ShareButtons url={`https://onnepal.com/pros/${id}`} title={item.title} />
           </div>
         </div>
 

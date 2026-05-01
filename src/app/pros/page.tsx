@@ -5,9 +5,9 @@ import ServicesClient from './services-client';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Services in Nepal — Find Local Service Providers',
-  description: 'Find trusted local service providers in Nepal. Home services, tutoring, repair, photography, IT support, and more.',
-  openGraph: { title: 'Services in Nepal', description: 'Find trusted local service providers across Nepal.' },
+  title: 'Local Pros in Nepal — Find Local Service Providers',
+  description: 'Find trusted local professionals in Nepal for any task. Home services, tutoring, repair, photography, IT support, and more.',
+  openGraph: { title: 'Local Pros in Nepal', description: 'Find trusted local service providers across Nepal.' },
 };
 
 export default async function ServicesPage() {
@@ -25,7 +25,7 @@ export default async function ServicesPage() {
       total,
     };
   } catch (e) {
-    console.error('Services SSR error:', e);
+    console.error('Pros SSR error:', e);
   }
 
   return <ServicesClient initialData={initialData} />;

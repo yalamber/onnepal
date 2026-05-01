@@ -8,10 +8,10 @@ import type { Metadata } from 'next';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const cat = SERVICE_CATEGORIES.find(c => c.slug === slug);
-  if (!cat) return { title: 'Services Nepal' };
+  if (!cat) return { title: 'Pros Nepal' };
   return {
-    title: `${cat.name} Services in Nepal`,
-    description: `Find ${cat.name} service providers in Nepal.`,
+    title: `${cat.name} Local Pros in Nepal`,
+    description: `Find ${cat.name} professionals in Nepal.`,
   };
 }
 
@@ -34,7 +34,7 @@ export default async function ServicesCategoryPage({ params }: { params: Promise
       total,
     };
   } catch (e) {
-    console.error('Services category SSR error:', e);
+    console.error('Pros category SSR error:', e);
   }
 
   return <ServicesClient initialData={initialData} initialCategory={slug} />;
