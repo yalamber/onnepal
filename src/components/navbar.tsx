@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/logo';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,8 +73,8 @@ export function Navbar() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-sm font-bold text-gray-950 tracking-tight">
-              On<span className="logo-dot text-gray-400">.</span>Nepal
+            <Link href="/" className="flex items-center">
+              <Logo className="h-6" />
             </Link>
             <div className="hidden sm:flex items-center gap-6">
               {navLinks.map((link) => (
