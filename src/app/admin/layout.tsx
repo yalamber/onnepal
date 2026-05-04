@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Building2, Tag, Users, LayoutDashboard, Loader2, Shield } from 'lucide-react';
+import { Building2, Tag, Users, LayoutDashboard, Loader2, Shield, Feather } from 'lucide-react';
 
 const NAV = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
   { href: '/admin/businesses', label: 'Businesses', icon: Building2, exact: false },
   { href: '/admin/classifieds', label: 'Classifieds', icon: Tag, exact: false },
+  { href: '/admin/voices', label: 'Voices', icon: Feather, exact: false },
   { href: '/admin/users', label: 'Users', icon: Users, exact: false },
 ];
 
