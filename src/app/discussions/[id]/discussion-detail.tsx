@@ -126,7 +126,7 @@ export default function DiscussionDetail({ initialData, initialReplies }: { init
               className="w-full px-3 py-2.5 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
             <div className="flex justify-end mt-2">
               <button onClick={submitReply} disabled={submitting || !replyContent.trim()}
-                className="h-8 px-3 bg-cyan-600 text-white text-sm rounded-md disabled:opacity-30 cursor-pointer transition-colors hover:bg-cyan-700 flex items-center gap-1.5">
+                className="h-8 px-3 bg-teal-700 text-white text-sm rounded-md disabled:opacity-30 cursor-pointer transition-colors hover:bg-teal-800 flex items-center gap-1.5">
                 {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
                 Reply
               </button>

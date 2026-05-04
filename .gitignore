@@ -44,3 +44,6 @@ next-env.d.ts
 !.dev.vars.example
 !.env.example
 /dist/
+
+# vinext build cache
+/.vinext/

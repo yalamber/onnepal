@@ -55,21 +55,21 @@ export default function DashboardPage() {
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>;
 
   const quickActions = [
-    { href: '/classifieds/post/new', label: 'Post ad', desc: 'Sell or buy items', icon: Tag, color: 'bg-blue-50 text-blue-600' },
-    { href: '/jobs/post/new', label: 'Post job', desc: 'Hire talent', icon: Briefcase, color: 'bg-cyan-50 text-cyan-600' },
-    { href: '/events/post/new', label: 'Post event', desc: 'Share happenings', icon: Calendar, color: 'bg-purple-50 text-purple-600' },
-    { href: '/places/post/new', label: 'Add place', desc: 'Share a hidden gem', icon: Compass, color: 'bg-teal-50 text-teal-600' },
-    { href: '/lost-found/post/new', label: 'Report item', desc: 'Lost or found', icon: AlertTriangle, color: 'bg-amber-50 text-amber-600' },
+    { href: '/classifieds/post/new', label: 'Post ad', desc: 'Sell or buy items', icon: Tag, color: 'bg-[var(--crimson-100)] text-[var(--crimson-700)]' },
+    { href: '/jobs/post/new', label: 'Post job', desc: 'Hire talent', icon: Briefcase, color: 'bg-[var(--evergreen-100)] text-[var(--evergreen-700)]' },
+    { href: '/events/post/new', label: 'Post event', desc: 'Share happenings', icon: Calendar, color: 'bg-[var(--saffron-100)] text-[var(--saffron-600)]' },
+    { href: '/places/post/new', label: 'Add place', desc: 'Share a hidden gem', icon: Compass, color: 'bg-[var(--teal-100)] text-[var(--teal-700)]' },
+    { href: '/lost-found/post/new', label: 'Report item', desc: 'Lost or found', icon: AlertTriangle, color: 'bg-[var(--crimson-100)] text-[var(--crimson-700)]' },
   ];
 
   return (
     <div className="space-y-8">
       {/* Welcome */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-950 tracking-tight">
-          {user?.displayName ? `Hi, ${user.displayName}` : 'Dashboard'}
+        <h1 className="t-display" style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}>
+          {user?.displayName ? <>Hi, <em>{user.displayName}.</em></> : <>Your <em>dashboard.</em></>}
         </h1>
-        <p className="mt-1 text-sm text-gray-400">What would you like to do today?</p>
+        <p className="mt-2 text-[var(--ink-500)]">What would you like to do today?</p>
       </div>
 
       {/* Quick actions */}

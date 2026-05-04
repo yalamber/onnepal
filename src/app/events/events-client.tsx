@@ -84,11 +84,11 @@ export default function EventsClient({ initialData, initialCategory }: { initial
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-950 tracking-tight">Events</h1>
+            <h1 className="page-hero-title">What&apos;s <em>on</em></h1>
             <p className="text-sm text-gray-500 mt-0.5">Discover events happening in Nepal</p>
           </div>
           <Link href="/events/post/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded-md hover:bg-cyan-700 transition-colors">
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-700 text-white text-sm font-medium rounded-md hover:bg-teal-800 transition-colors">
             <Plus className="h-4 w-4" /> Post event
           </Link>
         </div>

@@ -73,7 +73,7 @@ export default function ServiceDetail({ initialData }: { initialData?: Service |
           {images.length > 0 && <ImageGallery images={images} alt={item.title} />}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 text-xs font-medium bg-cyan-50 text-cyan-700 rounded">{item.category}</span>
+              <span className="px-2 py-0.5 text-xs font-medium bg-teal-50 text-teal-700 rounded">{item.category}</span>
             </div>
             <div className="flex items-start justify-between gap-2">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-950">{item.title}</h1>

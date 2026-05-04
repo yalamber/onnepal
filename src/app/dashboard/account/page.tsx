@@ -160,7 +160,7 @@ export default function AccountPage() {
           </div>
           <div className="flex items-center gap-3">
             <button onClick={saveProfile} disabled={savingProfile}
-              className="h-9 px-4 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 disabled:opacity-30 transition-colors cursor-pointer flex items-center gap-2">
+              className="h-9 px-4 bg-teal-700 text-white text-sm font-medium rounded-lg hover:bg-teal-800 disabled:opacity-30 transition-colors cursor-pointer flex items-center gap-2">
               {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
             </button>
             {profileSaved && <span className="text-sm text-green-600 flex items-center gap-1"><Check className="h-3.5 w-3.5" /> Saved</span>}
@@ -190,7 +190,7 @@ export default function AccountPage() {
             <p className={`text-sm ${passwordMessage.type === 'error' ? 'text-red-500' : 'text-green-600'}`}>{passwordMessage.text}</p>
           )}
           <button type="submit" disabled={savingPassword}
-            className="h-9 px-4 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 disabled:opacity-30 transition-colors cursor-pointer flex items-center gap-2">
+            className="h-9 px-4 bg-teal-700 text-white text-sm font-medium rounded-lg hover:bg-teal-800 disabled:opacity-30 transition-colors cursor-pointer flex items-center gap-2">
             {savingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Change password'}
           </button>
         </form>
