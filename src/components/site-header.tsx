@@ -150,9 +150,12 @@ export function SiteHeader() {
       // Persist for SSR queries — 30-day cookie. SameSite=Lax so it travels on top-level
       // GETs but not cross-site iframes.
       document.cookie = `onnepal-city=${encodeURIComponent(name)}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
-      // Refresh the route so server components re-read the cookie and re-filter.
-      router.refresh();
     }
+    // Navigate to the city landing page. From any list page (/classifieds, /jobs, …)
+    // a refresh would re-apply the cookie filter; but the user picking a city in the
+    // global pill is a stronger signal — they want the city as the destination.
+    const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    router.push(`/city/${slug}`);
   };
 
   const handleLogout = async () => {

@@ -23,7 +23,7 @@ export function Neighborhoods() {
       />
       <div className="city-grid">
         {CITIES.map((c) => (
-          <Link key={c.name} href={`/directory?city=${encodeURIComponent(c.name)}`} className="city-card">
+          <Link key={c.name} href={`/city/${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`} className="city-card">
             <div className="city-top">
               <span className="city-name">{c.name}</span>
               <span className="city-arrow"><ArrowRight size={18} /></span>

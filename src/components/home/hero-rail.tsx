@@ -22,14 +22,15 @@ const TYPE_TO_HREF: Record<ActivityType, string> = {
   pros: '/pros',
 };
 
-export function HeroRail({ initial }: { initial: WireItem[] }) {
+export function HeroRail({ initial, city }: { initial: WireItem[]; city?: string }) {
   const [items, setItems] = useState<WireItem[]>(initial);
 
   useEffect(() => {
     let cancelled = false;
+    const url = city ? `/api/activity/recent?city=${encodeURIComponent(city)}` : '/api/activity/recent?city=any';
     const tick = async () => {
       try {
-        const res = await fetch('/api/activity/recent');
+        const res = await fetch(url);
         if (!res.ok) return;
         const data = (await res.json()) as { items: WireItem[] };
         if (!cancelled && Array.isArray(data.items)) setItems(data.items);
@@ -37,7 +38,7 @@ export function HeroRail({ initial }: { initial: WireItem[] }) {
     };
     const id = window.setInterval(tick, 60_000);
     return () => { cancelled = true; window.clearInterval(id); };
-  }, []);
+  }, [city]);
 
   return (
     <aside className="hero-aside">

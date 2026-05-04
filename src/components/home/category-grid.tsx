@@ -29,17 +29,37 @@ const CATS: Cat[] = [
   { id: 'discussions', name: 'Discussions', sub: 'Neighborhood conversations', tone: 'saffron', Icon: MessagesSquare, href: '/discussions', sample: ['Best ISP in 2026?', 'Patan dental?', 'Weekend hike ideas'] },
 ];
 
-export function CategoryGrid({ counts }: { counts: HomepageStats['byCategory'] }) {
+interface CategoryGridProps {
+  counts: HomepageStats['byCategory'];
+  /** Optional city scope: appends ?city=X to each category link. */
+  city?: string;
+  /** Override the section header. Pass null to skip the header entirely. */
+  header?: { eyebrow: string; title: React.ReactNode; sub: string } | null;
+}
+
+export function CategoryGrid({ counts, city, header }: CategoryGridProps) {
+  const headerContent =
+    header === null
+      ? null
+      : header ?? {
+          eyebrow: '01 · Browse',
+          title: <>Eight ways into<br /><em>everyday Nepal.</em></>,
+          sub: 'Each category is a portal — moderated, mapped, and built around how people actually find things in their neighborhood.',
+        };
+  const cityQuery = city ? `?city=${encodeURIComponent(city)}` : '';
+
   return (
     <section className="section">
-      <SectionHead
-        eyebrow="01 · Browse"
-        title={<>Eight ways into<br /><em>everyday Nepal.</em></>}
-        sub="Each category is a portal — moderated, mapped, and built around how people actually find things in their neighborhood."
-      />
+      {headerContent && (
+        <SectionHead
+          eyebrow={headerContent.eyebrow}
+          title={headerContent.title}
+          sub={headerContent.sub}
+        />
+      )}
       <div className="cat-grid">
         {CATS.map((c) => (
-          <Link key={c.id} href={c.href} className={`cat-card cat-${c.tone}`}>
+          <Link key={c.id} href={`${c.href}${cityQuery}`} className={`cat-card cat-${c.tone}`}>
             <div className="cat-top">
               <span className={`cat-icon cat-icon-${c.tone}`}><c.Icon size={20} /></span>
               <span className="cat-count">{counts[c.id].toLocaleString('en-US')}</span>
