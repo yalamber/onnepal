@@ -28,6 +28,7 @@ const NAV_LINKS = [
   { href: '/events', label: 'Events' },
   { href: '/places', label: 'Places' },
   { href: '/pros', label: 'Pros' },
+  { href: '/voices', label: 'Voices' },
   { href: '/lost-found', label: 'Lost & Found' },
   { href: '/discussions', label: 'Discussions' },
 ];
@@ -144,7 +145,14 @@ export function SiteHeader() {
     setCity(name);
     setCityOpen(false);
     setCityQuery('');
-    if (typeof window !== 'undefined') localStorage.setItem('onnepal-city', name);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('onnepal-city', name);
+      // Persist for SSR queries — 30-day cookie. SameSite=Lax so it travels on top-level
+      // GETs but not cross-site iframes.
+      document.cookie = `onnepal-city=${encodeURIComponent(name)}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+      // Refresh the route so server components re-read the cookie and re-filter.
+      router.refresh();
+    }
   };
 
   const handleLogout = async () => {

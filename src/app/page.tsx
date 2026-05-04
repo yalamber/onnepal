@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getHomepageStats, getRecentActivity, type HomepageStats, type ActivityItem } from '@/lib/db/queries/homepage';
+import { getPublishedVoices, type VoiceListItem } from '@/lib/db/queries/voices';
 import { Hero } from '@/components/home/hero';
 import { CategoryGrid } from '@/components/home/category-grid';
 import { Featured } from '@/components/home/featured';
@@ -20,10 +21,18 @@ const EMPTY_STATS: HomepageStats = {
 
 export default async function HomePage() {
   const db = getDb(getD1Database());
-  const [stats, activity] = await Promise.all([
+  const [stats, activity, featuredVoices] = await Promise.all([
     getHomepageStats(db).catch((e) => { console.error('[home] getHomepageStats failed', e); return EMPTY_STATS; }),
     getRecentActivity(db, 5).catch((e) => { console.error('[home] getRecentActivity failed', e); return [] as ActivityItem[]; }),
+    getPublishedVoices(db, { featuredOnly: true, limit: 4 })
+      .then((items) => items.length >= 4 ? items : getPublishedVoices(db, { limit: 4 }))
+      .catch((e) => { console.error('[home] getPublishedVoices(featured) failed', e); return [] as VoiceListItem[]; }),
   ]);
+
+  const recentVoices = await getPublishedVoices(db, {
+    excludeIds: featuredVoices.map((v) => v.id),
+    limit: 3,
+  }).catch((e) => { console.error('[home] getPublishedVoices(recent) failed', e); return [] as VoiceListItem[]; });
 
   return (
     <main>
@@ -36,10 +45,10 @@ export default async function HomePage() {
       <div id="main-content">
         <Hero stats={stats} activity={activity} />
         <CategoryGrid counts={stats.byCategory} />
-        <Featured />
+        <Featured voices={featuredVoices} />
         <Neighborhoods />
         <BusinessPitch />
-        <Community />
+        <Community voices={recentVoices} />
       </div>
     </main>
   );

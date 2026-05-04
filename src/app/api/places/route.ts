@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { resolveCity } from '@/lib/helpers/city';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getPlaces, getPlacesCount, createPlace } from '@/lib/db/queries/places';
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
     const category = sp.get('category') || undefined;
     const search = sp.get('search') || undefined;
     const location = sp.get('location') || undefined;
-    const city = sp.get('city') || undefined;
+    const city = await resolveCity(request, sp.get('city'));
     const page = Math.max(1, parseInt(sp.get('page') || '1', 10));
     const limit = Math.min(48, Math.max(1, parseInt(sp.get('limit') || '12', 10)));
 

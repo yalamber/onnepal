@@ -1,33 +1,40 @@
+import Link from 'next/link';
 import { SectionHead } from '@/components/section-head';
+import type { VoiceListItem } from '@/lib/db/queries/voices';
 
-const QUOTES = [
-  { name: 'Anjali Shrestha', role: 'Cafe owner · Jhamsikhel', body: 'Half my weekend traffic now finds us through OnNepal. The map is the most accurate thing on the internet for Patan.' },
-  { name: 'Bibek Karki', role: 'Engineer · Kathmandu', body: 'Found my flat, my mechanic, and weekly badminton games here. It replaced four group chats.' },
-  { name: 'Sushma Lama', role: 'Trek guide · Pokhara', body: 'Bookings tripled after I got verified. The reviews actually mean something because they’re from neighbors.' },
-];
+export function Community({ voices }: { voices: VoiceListItem[] }) {
+  if (voices.length === 0) return null;
 
-export function Community() {
   return (
     <section className="section-ink">
       <div className="section-inner">
         <SectionHead
-          eyebrow="04 · Voices"
-          title={<>From the<br /><em>neighborhood.</em></>}
-          sub="A platform is only as good as the people on it."
+          eyebrow="04 · From the neighborhood"
+          title={<>Latest<br /><em>voices.</em></>}
+          sub={<>Fresh writing from across the valley. <Link href="/voices" className="text-[var(--accent-soft)] underline underline-offset-4">All voices →</Link></>}
           invert
         />
         <div className="quote-grid">
-          {QUOTES.map((q) => (
-            <figure key={q.name} className="quote-card">
-              <blockquote>&ldquo;{q.body}&rdquo;</blockquote>
+          {voices.slice(0, 3).map((v) => (
+            <Link key={v.id} href={`/voices/${v.slug}`} className="quote-card group" style={{ display: 'block' }}>
+              {v.category && <span className="pill pill-saffron mb-3" style={{ display: 'inline-flex' }}>{v.category}</span>}
+              <blockquote style={{ marginBottom: 16 }}>{v.title}</blockquote>
+              {v.excerpt && (
+                <p className="text-sm" style={{ color: 'var(--ink-300)', lineHeight: 1.5, marginBottom: 16 }}>
+                  {v.excerpt}
+                </p>
+              )}
               <figcaption>
                 <div className="q-avatar" />
                 <div>
-                  <div className="q-name">{q.name}</div>
-                  <div className="t-meta q-role">{q.role}</div>
+                  <div className="q-name">{v.authorName || v.authorUsername || 'Anonymous'}</div>
+                  <div className="t-meta q-role">
+                    {v.city ? `${v.city}` : 'Nepal'}
+                    {v.publishedAt ? ` · ${new Date(v.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}
+                  </div>
                 </div>
               </figcaption>
-            </figure>
+            </Link>
           ))}
         </div>
       </div>

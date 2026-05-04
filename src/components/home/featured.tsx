@@ -1,60 +1,89 @@
 import Link from 'next/link';
 import { SectionHead } from '@/components/section-head';
+import type { VoiceListItem } from '@/lib/db/queries/voices';
+import { imageUrl } from '@/components/image-upload';
 
-export function Featured() {
+const TONE_BG = ['#d8b88a', '#c97a4f', '#9aafa3', '#6a8a9c'];
+const TONE_PILL = ['saffron', 'crimson', 'evergreen', 'teal'] as const;
+
+export function Featured({ voices }: { voices: VoiceListItem[] }) {
+  // Always render the section. If no voices, show editorial placeholders so the homepage
+  // doesn't have a hole and the user knows the feature exists.
+  const hasContent = voices.length > 0;
+
   return (
     <section className="section-paper">
       <div className="section-inner">
         <SectionHead
           eyebrow="02 · This week"
-          title={<>Featured in<br /><em>your valley.</em></>}
-          sub="Hand-picked by our local editors. New every Monday."
+          title={<>Voices from<br /><em>the valley.</em></>}
+          sub={
+            hasContent
+              ? <>Hand-picked by our local editors. <Link href="/voices" className="text-[var(--accent)] underline underline-offset-4">Browse all voices →</Link></>
+              : <>Articles, essays, and guides from neighbors. <Link href="/voices/post/new" className="text-[var(--accent)] underline underline-offset-4">Be the first to publish →</Link></>
+          }
         />
-        <div className="featured-grid">
-          <Link href="/events" className="feat-card feat-lg">
-            <div className="feat-img feat-img-1">
-              <span className="feat-img-label">/ patan durbar at dusk</span>
-            </div>
-            <div className="feat-body">
-              <span className="pill pill-saffron">Events · Editor’s pick</span>
-              <h3 className="feat-title">Indra Jatra after-hours, mapped — the chariots, the pole-raising, the hidden chowks</h3>
-              <div className="feat-meta">
-                <span>By <strong>OnNepal Editors</strong></span>
-                <span>·</span>
-                <span>8 min read</span>
-                <span>·</span>
-                <span>Patan, Kathmandu</span>
-              </div>
-            </div>
-          </Link>
 
-          <Link href="/directory" className="feat-card">
-            <div className="feat-img feat-img-2"><span className="feat-img-label">/ momo dumplings</span></div>
-            <div className="feat-body">
-              <span className="pill pill-teal">Directory</span>
-              <h3 className="feat-title">12 momo joints worth a detour</h3>
-              <div className="feat-meta"><span>Updated weekly</span></div>
-            </div>
-          </Link>
-
-          <Link href="/classifieds" className="feat-card">
-            <div className="feat-img feat-img-3"><span className="feat-img-label">/ flat in jhamsikhel</span></div>
-            <div className="feat-body">
-              <span className="pill pill-crimson">Classifieds</span>
-              <h3 className="feat-title">5 light-filled flats under Rs 30k</h3>
-              <div className="feat-meta"><span>3 new this week</span></div>
-            </div>
-          </Link>
-
-          <Link href="/places" className="feat-card">
-            <div className="feat-img feat-img-4"><span className="feat-img-label">/ trail · champadevi</span></div>
-            <div className="feat-body">
-              <span className="pill pill-evergreen">Places</span>
-              <h3 className="feat-title">A guide to half-day hikes from the city</h3>
-              <div className="feat-meta"><span>By Pratik R. · 14 stops</span></div>
-            </div>
-          </Link>
-        </div>
+        {hasContent ? (
+          <div className="featured-grid">
+            {voices.slice(0, 4).map((v, i) => {
+              const isLg = i === 0;
+              const cover = imageUrl(v.coverImageUrl);
+              const tone = TONE_PILL[i % TONE_PILL.length];
+              return (
+                <Link
+                  key={v.id}
+                  href={`/voices/${v.slug}`}
+                  className={`feat-card ${isLg ? 'feat-lg' : ''}`}
+                >
+                  <div
+                    className="feat-img"
+                    style={{
+                      backgroundColor: cover ? undefined : TONE_BG[i % TONE_BG.length],
+                      backgroundImage: cover ? `url(${cover})` : undefined,
+                      backgroundSize: cover ? 'cover' : undefined,
+                      backgroundPosition: 'center',
+                    }}
+                  >
+                    {!cover && (
+                      <span className="feat-img-label">/ {(v.category || 'voice').toLowerCase()}{v.city ? ` · ${v.city.toLowerCase()}` : ''}</span>
+                    )}
+                  </div>
+                  <div className="feat-body">
+                    <span className={`pill pill-${tone}`}>
+                      Voice{v.category ? ` · ${v.category}` : ''}
+                    </span>
+                    <h3 className="feat-title">{v.title}</h3>
+                    <div className="feat-meta">
+                      <span>By <strong>{v.authorName || v.authorUsername || 'Anonymous'}</strong></span>
+                      {v.city && <><span>·</span><span>{v.city}</span></>}
+                      {v.publishedAt && (
+                        <><span>·</span><span>{new Date(v.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span></>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div
+            className="rounded-[var(--r-lg)] border-2 border-dashed border-[var(--ink-200)] py-16 px-8 text-center"
+            style={{ background: 'rgba(255,255,255,0.4)' }}
+          >
+            <div className="t-eyebrow justify-center mb-4">No voices published yet</div>
+            <p className="t-display" style={{ fontSize: 32 }}>
+              The first <em>voice</em> goes here.
+            </p>
+            <p className="text-[var(--ink-500)] mt-3 max-w-md mx-auto">
+              Write about your neighborhood, your favorite momo joint, a hike, an opinion &mdash; we
+              feature the best of the week.
+            </p>
+            <Link href="/voices/post/new" className="btn btn-primary mt-6 inline-flex">
+              Write the first voice →
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

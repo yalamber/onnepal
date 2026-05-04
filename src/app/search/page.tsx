@@ -9,18 +9,18 @@ export const metadata: Metadata = {
   description: 'Search across classifieds, jobs, events, lost & found, places, and businesses on OnNepal.',
 };
 
-export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { q } = await searchParams;
+export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string; loc?: string }> }) {
+  const { q, loc } = await searchParams;
   let initialResults: SearchResults | undefined;
 
   if (q && q.trim().length >= 2) {
     try {
       const db = getDb(getD1Database());
-      initialResults = await searchAll(db, q.trim());
+      initialResults = await searchAll(db, q.trim(), loc?.trim());
     } catch (e) {
       console.error('Search SSR error:', e);
     }
   }
 
-  return <SearchClient initialQuery={q} initialResults={initialResults} />;
+  return <SearchClient initialQuery={q} initialLocation={loc} initialResults={initialResults} />;
 }

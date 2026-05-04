@@ -42,8 +42,9 @@ const TYPE_BADGES: Record<string, string> = {
   directory: 'Business',
 };
 
-export default function SearchClient({ initialQuery, initialResults }: { initialQuery?: string; initialResults?: SearchResults }) {
+export default function SearchClient({ initialQuery, initialLocation, initialResults }: { initialQuery?: string; initialLocation?: string; initialResults?: SearchResults }) {
   const [query, setQuery] = useState(initialQuery || '');
+  const [location, setLocation] = useState(initialLocation || '');
   const [results, setResults] = useState<SearchResults | null>(initialResults || null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(!!initialResults);
@@ -54,7 +55,7 @@ export default function SearchClient({ initialQuery, initialResults }: { initial
     inputRef.current?.focus();
   }, []);
 
-  const fetchResults = useCallback(async (q: string) => {
+  const fetchResults = useCallback(async (q: string, loc: string) => {
     if (q.trim().length < 2) {
       setResults(null);
       setSearched(false);
@@ -62,7 +63,8 @@ export default function SearchClient({ initialQuery, initialResults }: { initial
     }
     setLoading(true);
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
+      const url = `/api/search?q=${encodeURIComponent(q.trim())}${loc.trim() ? `&loc=${encodeURIComponent(loc.trim())}` : ''}`;
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json() as SearchResults;
         setResults(data);
@@ -73,27 +75,36 @@ export default function SearchClient({ initialQuery, initialResults }: { initial
   }, []);
 
   useEffect(() => {
-    if (initialResults && query === initialQuery) return;
+    if (initialResults && query === initialQuery && location === initialLocation) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => fetchResults(query), 350);
+    debounceRef.current = setTimeout(() => fetchResults(query, location), 350);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [query]);
+  }, [query, location]);
 
   const hasResults = results && SECTION_CONFIG.some((s) => results[s.key].length > 0);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+        <div className="mb-8 flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--ink-400)]" />
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search classifieds, jobs, events, businesses..."
-              className="h-12 w-full rounded-lg border border-gray-200 bg-white pl-12 pr-4 text-base text-gray-950 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-950/10"
+              className="h-12 w-full rounded-[var(--r-pill)] border border-[var(--ink-200)] bg-[var(--paper)] pl-12 pr-4 text-base text-[var(--ink-900)] placeholder:text-[var(--ink-400)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
+            />
+          </div>
+          <div className="relative sm:w-56">
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="City or area"
+              className="h-12 w-full rounded-[var(--r-pill)] border border-[var(--ink-200)] bg-[var(--paper)] px-4 text-base text-[var(--ink-900)] placeholder:text-[var(--ink-400)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
             />
           </div>
         </div>

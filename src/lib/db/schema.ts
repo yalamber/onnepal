@@ -570,3 +570,34 @@ export const services = sqliteTable('services', {
   index('services_status_idx').on(table.status),
   index('services_created_idx').on(table.createdAt),
 ]));
+
+// Voices — user-submitted articles / personal essays / community pieces.
+// Editors mark `isFeatured` true for the homepage mosaic; remaining recent
+// published items show under "From the neighborhood".
+export const voices = sqliteTable('voices', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  slug: text('slug').notNull().unique(),
+  title: text('title').notNull(),
+  excerpt: text('excerpt'),
+  content: text('content').notNull(), // markdown
+  coverImageUrl: text('cover_image_url'),
+  city: text('city'),
+  category: text('category'), // e.g. food, neighborhood, opinion, guide
+  status: text('status', { enum: ['draft', 'pending', 'published', 'rejected'] }).notNull().default('pending'),
+  isFeatured: integer('is_featured', { mode: 'boolean' }).notNull().default(false),
+  publishedAt: integer('published_at', { mode: 'timestamp' }),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('voices_user_idx').on(table.userId),
+  index('voices_slug_idx').on(table.slug),
+  index('voices_status_idx').on(table.status),
+  index('voices_featured_idx').on(table.isFeatured),
+  index('voices_published_idx').on(table.publishedAt),
+  index('voices_city_idx').on(table.city),
+]));
+
+export const voicesRelations = relations(voices, ({ one }) => ({
+  user: one(users, { fields: [voices.userId], references: [users.id] }),
+}));

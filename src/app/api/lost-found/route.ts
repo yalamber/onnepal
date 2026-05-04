@@ -5,6 +5,7 @@ import { getLostFoundItems, getLostFoundCount, createLostFoundItem } from '@/lib
 import { getSession } from '@/lib/auth/session';
 import { createLostFoundSchema } from '@/lib/validators/listings';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
+import { resolveCity } from '@/lib/helpers/city';
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category') || undefined;
     const search = searchParams.get('search') || undefined;
     const location = searchParams.get('location') || undefined;
-    const city = searchParams.get('city') || undefined;
+    const city = await resolveCity(request, searchParams.get('city'));
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(48, Math.max(1, parseInt(searchParams.get('limit') || '12', 10)));
 

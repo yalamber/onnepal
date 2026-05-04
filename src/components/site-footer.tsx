@@ -14,6 +14,7 @@ const COLS = [
       { label: 'Events', href: '/events' },
       { label: 'Places', href: '/places' },
       { label: 'Pros', href: '/pros' },
+      { label: 'Voices', href: '/voices' },
       { label: 'Lost & Found', href: '/lost-found' },
       { label: 'Discussions', href: '/discussions' },
     ],
@@ -62,9 +63,9 @@ export function SiteFooter() {
         <div>
           <Logo className="h-10" />
           <p className="footer-tag t-display">
-            <em>Tapaainko aaphno bazaar.</em>
+            <em>Everything in one place.</em>
             <br />
-            <span className="t-deva" style={{ fontSize: 18 }}>तपाईंको आफ्नो बजार।</span>
+            <span className="t-deva" style={{ fontSize: 18 }}>सबै थोक, एकै ठाउँ।</span>
           </p>
           <p className="footer-blurb">
             OnNepal is built in Kathmandu, run by neighbors, for neighbors. We don&rsquo;t sell your data and we don&rsquo;t inflate listings.

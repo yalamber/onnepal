@@ -6,12 +6,13 @@ import { searchAll } from '@/lib/db/queries/search';
 export async function GET(request: NextRequest) {
   try {
     const q = request.nextUrl.searchParams.get('q');
+    const loc = request.nextUrl.searchParams.get('loc') || undefined;
     if (!q || q.trim().length < 2) {
       return NextResponse.json({ error: 'Query must be at least 2 characters' }, { status: 400 });
     }
 
     const db = getDb(getD1Database());
-    const results = await searchAll(db, q.trim());
+    const results = await searchAll(db, q.trim(), loc?.trim());
 
     const res = NextResponse.json(results);
     res.headers.set('Cache-Control', 'public, s-maxage=60');

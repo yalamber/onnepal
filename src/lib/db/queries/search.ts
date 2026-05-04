@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { classifieds, jobs, events, lostFound, places, businesses, users } from '../schema';
+import { classifieds, jobs, events, lostFound, places, businesses } from '../schema';
 import type { Database } from '../index';
 
 export interface SearchResult {
@@ -31,8 +31,9 @@ function parseFirstImage(imageUrlsJson: string | null): string | null {
   }
 }
 
-export async function searchAll(db: Database, query: string): Promise<SearchResults> {
+export async function searchAll(db: Database, query: string, location?: string): Promise<SearchResults> {
   const pattern = `%${query}%`;
+  const locPattern = location && location.trim().length > 0 ? `%${location.trim()}%` : null;
 
   const [
     classifiedRows,
@@ -51,7 +52,9 @@ export async function searchAll(db: Database, query: string): Promise<SearchResu
       })
       .from(classifieds)
       .where(
-        sql`${classifieds.status} = 'active' AND (${classifieds.title} LIKE ${pattern} COLLATE NOCASE OR ${classifieds.description} LIKE ${pattern} COLLATE NOCASE)`
+        locPattern
+          ? sql`${classifieds.status} = 'active' AND (${classifieds.title} LIKE ${pattern} COLLATE NOCASE OR ${classifieds.description} LIKE ${pattern} COLLATE NOCASE) AND (${classifieds.city} LIKE ${locPattern} COLLATE NOCASE OR ${classifieds.location} LIKE ${locPattern} COLLATE NOCASE)`
+          : sql`${classifieds.status} = 'active' AND (${classifieds.title} LIKE ${pattern} COLLATE NOCASE OR ${classifieds.description} LIKE ${pattern} COLLATE NOCASE)`
       )
       .limit(5),
 
@@ -64,7 +67,9 @@ export async function searchAll(db: Database, query: string): Promise<SearchResu
       })
       .from(jobs)
       .where(
-        sql`${jobs.status} = 'open' AND (${jobs.title} LIKE ${pattern} COLLATE NOCASE OR ${jobs.description} LIKE ${pattern} COLLATE NOCASE)`
+        locPattern
+          ? sql`${jobs.status} = 'open' AND (${jobs.title} LIKE ${pattern} COLLATE NOCASE OR ${jobs.description} LIKE ${pattern} COLLATE NOCASE) AND (${jobs.city} LIKE ${locPattern} COLLATE NOCASE OR ${jobs.location} LIKE ${locPattern} COLLATE NOCASE)`
+          : sql`${jobs.status} = 'open' AND (${jobs.title} LIKE ${pattern} COLLATE NOCASE OR ${jobs.description} LIKE ${pattern} COLLATE NOCASE)`
       )
       .limit(5),
 
@@ -77,7 +82,9 @@ export async function searchAll(db: Database, query: string): Promise<SearchResu
       })
       .from(events)
       .where(
-        sql`${events.status} IN ('upcoming', 'ongoing') AND (${events.title} LIKE ${pattern} COLLATE NOCASE OR ${events.description} LIKE ${pattern} COLLATE NOCASE)`
+        locPattern
+          ? sql`${events.status} IN ('upcoming', 'ongoing') AND (${events.title} LIKE ${pattern} COLLATE NOCASE OR ${events.description} LIKE ${pattern} COLLATE NOCASE) AND (${events.city} LIKE ${locPattern} COLLATE NOCASE OR ${events.location} LIKE ${locPattern} COLLATE NOCASE OR ${events.venue} LIKE ${locPattern} COLLATE NOCASE)`
+          : sql`${events.status} IN ('upcoming', 'ongoing') AND (${events.title} LIKE ${pattern} COLLATE NOCASE OR ${events.description} LIKE ${pattern} COLLATE NOCASE)`
       )
       .limit(5),
 
@@ -90,7 +97,9 @@ export async function searchAll(db: Database, query: string): Promise<SearchResu
       })
       .from(lostFound)
       .where(
-        sql`${lostFound.status} = 'open' AND (${lostFound.title} LIKE ${pattern} COLLATE NOCASE OR ${lostFound.description} LIKE ${pattern} COLLATE NOCASE)`
+        locPattern
+          ? sql`${lostFound.status} = 'open' AND (${lostFound.title} LIKE ${pattern} COLLATE NOCASE OR ${lostFound.description} LIKE ${pattern} COLLATE NOCASE) AND (${lostFound.city} LIKE ${locPattern} COLLATE NOCASE OR ${lostFound.location} LIKE ${locPattern} COLLATE NOCASE)`
+          : sql`${lostFound.status} = 'open' AND (${lostFound.title} LIKE ${pattern} COLLATE NOCASE OR ${lostFound.description} LIKE ${pattern} COLLATE NOCASE)`
       )
       .limit(5),
 
@@ -103,7 +112,9 @@ export async function searchAll(db: Database, query: string): Promise<SearchResu
       })
       .from(places)
       .where(
-        sql`${places.status} = 'active' AND (${places.title} LIKE ${pattern} COLLATE NOCASE OR ${places.description} LIKE ${pattern} COLLATE NOCASE)`
+        locPattern
+          ? sql`${places.status} = 'active' AND (${places.title} LIKE ${pattern} COLLATE NOCASE OR ${places.description} LIKE ${pattern} COLLATE NOCASE) AND (${places.city} LIKE ${locPattern} COLLATE NOCASE OR ${places.location} LIKE ${locPattern} COLLATE NOCASE)`
+          : sql`${places.status} = 'active' AND (${places.title} LIKE ${pattern} COLLATE NOCASE OR ${places.description} LIKE ${pattern} COLLATE NOCASE)`
       )
       .limit(5),
 
@@ -117,7 +128,9 @@ export async function searchAll(db: Database, query: string): Promise<SearchResu
       })
       .from(businesses)
       .where(
-        sql`${businesses.isPublished} = 1 AND (${businesses.businessName} LIKE ${pattern} COLLATE NOCASE OR ${businesses.description} LIKE ${pattern} COLLATE NOCASE)`
+        locPattern
+          ? sql`${businesses.isPublished} = 1 AND (${businesses.businessName} LIKE ${pattern} COLLATE NOCASE OR ${businesses.description} LIKE ${pattern} COLLATE NOCASE) AND (${businesses.address} LIKE ${locPattern} COLLATE NOCASE)`
+          : sql`${businesses.isPublished} = 1 AND (${businesses.businessName} LIKE ${pattern} COLLATE NOCASE OR ${businesses.description} LIKE ${pattern} COLLATE NOCASE)`
       )
       .limit(5),
   ]);
