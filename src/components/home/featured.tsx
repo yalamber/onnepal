@@ -16,7 +16,7 @@ export function Featured({ voices }: { voices: VoiceListItem[] }) {
       <div className="section-inner">
         <SectionHead
           eyebrow="02 · This week"
-          title={<>Voices from<br /><em>the valley.</em></>}
+          title={<>Voices from<br /><em>Nepal.</em></>}
           sub={
             hasContent
               ? <>Hand-picked by our local editors. <Link href="/voices" className="text-[var(--accent)] underline underline-offset-4">Browse all voices →</Link></>
