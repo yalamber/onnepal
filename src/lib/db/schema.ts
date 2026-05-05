@@ -608,6 +608,43 @@ export const voicesRelations = relations(voices, ({ one }) => ({
   user: one(users, { fields: [voices.userId], references: [users.id] }),
 }));
 
+// In-app notifications. One row per user per event. Bell badge counts WHERE
+// is_read = 0; popover and /notifications page paginate by created_at desc.
+//
+// `type` is one of:
+//   message_received, review_received, booking_received, comment_received,
+//   voice_approved, voice_rejected, voice_pending (admin-only),
+//   report_received (admin-only).
+//
+// Inserts are gated by notification_preferences — if the user has disabled
+// `in_app` for a given type, the createNotification helper short-circuits.
+export const notifications = sqliteTable('notifications', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  title: text('title').notNull(),
+  body: text('body'),
+  linkHref: text('link_href'),
+  isRead: integer('is_read', { mode: 'boolean' }).notNull().default(false),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('notifications_user_idx').on(table.userId),
+  index('notifications_unread_idx').on(table.userId, table.isRead),
+  index('notifications_created_idx').on(table.createdAt),
+]));
+
+// Per-user, per-type opt-out for in-app notifications. Default behaviour (when
+// no row exists) is "enabled" — users who never visit the prefs page still get
+// every notification type. Inserting `in_app = 0` opts them out of that type.
+export const notificationPreferences = sqliteTable('notification_preferences', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  inApp: integer('in_app', { mode: 'boolean' }).notNull().default(true),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+});
+
 // Password reset tokens. We email the raw token (32 random bytes hex-encoded)
 // and store its SHA-256 hash so DB compromise doesn't yield active reset links.
 // Single-use (consumedAt set) + 1-hour TTL.

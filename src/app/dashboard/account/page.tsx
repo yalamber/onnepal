@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { ImageUpload, imageUrl } from '@/components/image-upload';
+import { NotificationPreferencesPane } from '@/components/notification-preferences-pane';
 import { Loader2, Check, ExternalLink } from 'lucide-react';
 
 interface UserData {
@@ -194,6 +195,15 @@ export default function AccountPage() {
             {savingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Change password'}
           </button>
         </form>
+      </div>
+
+      <div className="h-px bg-gray-100" />
+
+      {/* Notification preferences */}
+      <div>
+        <h2 className="text-sm font-semibold text-gray-950 mb-1">Notifications</h2>
+        <p className="text-sm text-[var(--ink-500)] mb-4">Choose which events show up in your notification bell.</p>
+        <NotificationPreferencesPane />
       </div>
     </div>
   );

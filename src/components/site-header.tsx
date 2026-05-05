@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
-  Search, Mail, Bell, Plus, Menu, X, MapPin, ChevronDown, Check,
+  Search, Mail, Plus, Menu, X, MapPin, ChevronDown, Check,
   ArrowRight, LayoutDashboard, LogOut, Settings, Shield, User, Bookmark, Loader2, Globe,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NEPAL_CITIES } from '@/lib/nepal-cities';
+import { NotificationsBell } from '@/components/notifications-bell';
 
 interface UserData {
   id: string;
@@ -428,9 +429,7 @@ export function SiteHeader() {
               <Mail size={20} />
             </Link>
           )}
-          <button className="icon-btn" aria-label="Notifications" type="button">
-            <Bell size={20} />
-          </button>
+          <NotificationsBell enabled={!authLoading && !!user} />
           <div className="header-divider" />
 
           {authLoading ? (

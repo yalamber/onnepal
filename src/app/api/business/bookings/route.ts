@@ -3,8 +3,9 @@ import { getBookings, createBooking } from '@/lib/db/queries/bookings';
 import { getAuthenticatedBusiness } from '@/lib/helpers/business-auth';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
-import { bookings } from '@/lib/db/schema';
+import { bookings, businesses } from '@/lib/db/schema';
 import { eq, and, gte, count } from 'drizzle-orm';
+import { createNotification } from '@/lib/db/queries/notifications';
 
 export async function GET(request: Request) {
   try {
@@ -72,6 +73,22 @@ export async function POST(request: Request) {
       service: body.service || undefined,
       message: body.message || undefined,
     });
+
+    // Notify business owner.
+    const biz = await db
+      .select({ userId: businesses.userId, name: businesses.businessName })
+      .from(businesses)
+      .where(eq(businesses.id, businessId))
+      .limit(1);
+    if (biz[0]) {
+      await createNotification(db, {
+        userId: biz[0].userId,
+        type: 'booking_received',
+        title: `New booking inquiry on ${biz[0].name}`,
+        body: `${body.customerName} requested ${body.date}${body.time ? ` at ${body.time}` : ''}${body.service ? ` for ${body.service}` : ''}`,
+        linkHref: '/dashboard/bookings',
+      });
+    }
 
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });
   } catch (error) {
