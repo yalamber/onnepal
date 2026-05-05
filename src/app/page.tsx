@@ -8,6 +8,7 @@ import { Featured } from '@/components/home/featured';
 import { Neighborhoods } from '@/components/home/neighborhoods';
 import { BusinessPitch } from '@/components/home/business-pitch';
 import { Community } from '@/components/home/community';
+import { CityDetectPrompt } from '@/components/city-detect-prompt';
 
 export const revalidate = 60;
 
@@ -43,6 +44,7 @@ export default async function HomePage() {
         Skip to content
       </a>
       <div id="main-content">
+        <CityDetectPrompt />
         <Hero stats={stats} activity={activity} />
         <CategoryGrid counts={stats.byCategory} />
         <Featured voices={featuredVoices} />

@@ -8,6 +8,7 @@ import { timeAgo } from '@/lib/time-ago';
 import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
+import { CityScopeBanner } from '@/components/city-scope-banner';
 import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
 
 interface Service {
@@ -79,6 +80,7 @@ export default function ServicesClient({ initialData, initialCategory }: { initi
           </Link>
         </div>
 
+        <CityScopeBanner />
         <div className="mb-6">
           <SearchInput value={search} onChange={setSearch} placeholder="Search services..." />
         </div>

@@ -9,6 +9,7 @@ import { firstImageUrl } from '@/lib/image-utils';
 import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
+import { CityScopeBanner } from '@/components/city-scope-banner';
 import { Search } from 'lucide-react';
 import { CitySelector } from '@/components/city-selector';
 
@@ -131,6 +132,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
       {/* Sidebar + Content */}
       <section className="py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <CityScopeBanner />
           <div className="flex gap-10">
             {/* Sidebar — classifieds has subcategories so we keep custom UI */}
             <aside className="hidden lg:block w-52 flex-shrink-0">

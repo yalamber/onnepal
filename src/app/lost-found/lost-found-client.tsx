@@ -9,6 +9,7 @@ import { firstImageUrl } from '@/lib/image-utils';
 import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
+import { CityScopeBanner } from '@/components/city-scope-banner';
 import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
 import { CitySelector } from '@/components/city-selector';
 
@@ -119,6 +120,7 @@ export default function LostFoundClient({ initialData, initialCategory }: { init
         </div>
 
         {/* Category pills — mobile only */}
+        <CityScopeBanner />
         <div className="mb-6">
           <CategoryMobilePills
             categories={categoryNavItems}

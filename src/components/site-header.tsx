@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Search, Mail, Bell, Plus, Menu, X, MapPin, ChevronDown, Check,
-  ArrowRight, LayoutDashboard, LogOut, Settings, Shield, User, Bookmark, Loader2,
+  ArrowRight, LayoutDashboard, LogOut, Settings, Shield, User, Bookmark, Loader2, Globe,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import {
@@ -50,6 +50,7 @@ const POPULAR_CITIES: Array<{ name: string; sub: string }> = [
 export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isSitePage = pathname.startsWith('/site/');
   const isAuthPage = pathname === '/login' || pathname === '/signup';
 
@@ -92,6 +93,21 @@ export function SiteHeader() {
     const stored = typeof window !== 'undefined' ? localStorage.getItem('onnepal-city') : null;
     if (stored) setCity(stored);
   }, []);
+
+  // Populate the "popular cities" empty-state from real content counts.
+  // Falls through to the editorial POPULAR_CITIES if the API is unavailable.
+  const [popularLive, setPopularLive] = useState<Array<{ name: string; slug: string; count: number }>>([]);
+  useEffect(() => {
+    if (!cityOpen || popularLive.length > 0) return;
+    let cancelled = false;
+    fetch('/api/cities?limit=8')
+      .then((r) => r.ok ? r.json() : null)
+      .then((d: { cities?: Array<{ name: string; slug: string; count: number }> } | null) => {
+        if (!cancelled && d?.cities) setPopularLive(d.cities);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [cityOpen, popularLive.length]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
@@ -144,21 +160,74 @@ export function SiteHeader() {
     router.push(href);
   };
 
+  // Routes where we should stay-and-refilter rather than navigating to /city/<slug>.
+  // Detail pages (e.g. /classifieds/<id>) and the city page itself are excluded —
+  // the former because the user is reading something specific, the latter because
+  // it has its own city in the URL.
+  const LIST_PREFIXES = ['/directory', '/classifieds', '/jobs', '/events', '/places', '/pros', '/lost-found', '/discussions', '/voices', '/search'];
+  const isListPage = (p: string) =>
+    LIST_PREFIXES.some((pref) => p === pref || p === `${pref}/`);
+
+  const slugify = (name: string) =>
+    name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  const setCityCookie = (value: string) => {
+    if (typeof window === 'undefined') return;
+    if (value) {
+      localStorage.setItem('onnepal-city', value);
+      document.cookie = `onnepal-city=${encodeURIComponent(value)}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+    } else {
+      localStorage.removeItem('onnepal-city');
+      // Negative max-age expires the cookie immediately.
+      document.cookie = `onnepal-city=; path=/; max-age=0; SameSite=Lax`;
+    }
+  };
+
   const handleCityPick = (name: string) => {
     setCity(name);
     setCityOpen(false);
     setCityQuery('');
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('onnepal-city', name);
-      // Persist for SSR queries — 30-day cookie. SameSite=Lax so it travels on top-level
-      // GETs but not cross-site iframes.
-      document.cookie = `onnepal-city=${encodeURIComponent(name)}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+    setCityCookie(name);
+    const slug = slugify(name);
+
+    // Context-aware navigation:
+    //  - From a list page → keep the user where they are; just push ?city=<slug>
+    //    into the URL and refresh server data.
+    //  - From the homepage or a /city page → navigate to /city/<slug>.
+    //  - From anywhere else (detail pages, dashboard, admin, auth) → don't yank
+    //    them away. Cookie is set; refresh in place so any city-aware widgets
+    //    (e.g. the live activity rail) re-render.
+    if (isListPage(pathname)) {
+      const sp = new URLSearchParams(searchParams?.toString() ?? '');
+      sp.set('city', name);
+      router.push(`${pathname}?${sp.toString()}`);
+      return;
     }
-    // Navigate to the city landing page. From any list page (/classifieds, /jobs, …)
-    // a refresh would re-apply the cookie filter; but the user picking a city in the
-    // global pill is a stronger signal — they want the city as the destination.
-    const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    router.push(`/city/${slug}`);
+    if (pathname === '/' || pathname.startsWith('/city/')) {
+      router.push(`/city/${slug}`);
+      return;
+    }
+    router.refresh();
+  };
+
+  const handleCityClear = () => {
+    setCity('');
+    setCityOpen(false);
+    setCityQuery('');
+    setCityCookie('');
+
+    // Strip any explicit ?city= from the URL too, otherwise the page would
+    // re-apply it on the next render.
+    if (isListPage(pathname) || pathname === '/' || pathname.startsWith('/city/')) {
+      const sp = new URLSearchParams(searchParams?.toString() ?? '');
+      sp.delete('city');
+      const qs = sp.toString();
+      // /city/<slug> doesn't make sense without a city — bounce to homepage.
+      const target = pathname.startsWith('/city/') ? '/' : pathname;
+      router.push(qs ? `${target}?${qs}` : target);
+      return;
+    }
+    router.refresh();
   };
 
   const handleLogout = async () => {
@@ -175,12 +244,20 @@ export function SiteHeader() {
   // Non-empty query → search the full NEPAL_CITIES (65+ cities), capped at 12 hits.
   const trimmedQuery = cityQuery.trim().toLowerCase();
   const isSearching = trimmedQuery.length > 0;
-  const filteredCities = isSearching
+  // Empty state: prefer real content counts (popularLive) over editorial copy.
+  // Fall back to editorial POPULAR_CITIES if /api/cities hasn't responded yet
+  // or returned nothing (e.g. brand-new install with no listings).
+  const filteredCities: Array<{ name: string; sub: string }> = isSearching
     ? NEPAL_CITIES
         .filter((c) => c.name.toLowerCase().includes(trimmedQuery))
         .slice(0, 12)
         .map((c) => ({ name: c.name, sub: '' }))
-    : POPULAR_CITIES;
+    : popularLive.length > 0
+      ? popularLive.map((c) => ({
+          name: c.name,
+          sub: c.count > 0 ? `${c.count.toLocaleString('en-US')} live` : '',
+        }))
+      : POPULAR_CITIES;
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
 
   return (
@@ -196,12 +273,15 @@ export function SiteHeader() {
               onClick={() => setCityOpen((o) => !o)}
               aria-expanded={cityOpen}
               aria-haspopup="listbox"
+              aria-label={city ? `Currently browsing ${city}. Switch city.` : 'Browsing all of Nepal. Pick a city.'}
               type="button"
             >
-              <MapPin />
-              <span className="loc-pill-name">{city}</span>
-              <span className="loc-sep">·</span>
-              <span className="loc-sub">Nepal</span>
+              {city ? <MapPin /> : <Globe />}
+              <span className="loc-pill-name">{city || 'All of Nepal'}</span>
+              {city && <>
+                <span className="loc-sep">·</span>
+                <span className="loc-sub">Nepal</span>
+              </>}
               <ChevronDown
                 size={12}
                 style={{
@@ -224,6 +304,29 @@ export function SiteHeader() {
                   />
                 </div>
                 <div className="city-menu-list">
+                  {/* "All of Nepal" — always at the top, only shown when not searching
+                      and a city is currently set. Gives the user an explicit escape
+                      from the city filter without having to clear cookies. */}
+                  {!isSearching && city && (
+                    <>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={false}
+                        className="city-menu-item"
+                        onClick={handleCityClear}
+                      >
+                        <div className="cmi-text-row">
+                          <Globe size={16} className="cmi-leading" />
+                          <div>
+                            <div className="cmi-name">All of Nepal</div>
+                            <div className="t-meta">Browse without a city filter</div>
+                          </div>
+                        </div>
+                      </button>
+                      <div className="city-menu-divider" />
+                    </>
+                  )}
                   <div className="city-menu-label t-eyebrow">
                     {isSearching ? `${filteredCities.length} match${filteredCities.length === 1 ? '' : 'es'}` : 'Popular cities'}
                   </div>

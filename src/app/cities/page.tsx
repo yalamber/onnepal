@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { sql } from 'drizzle-orm';
 import { ArrowRight } from 'lucide-react';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
-import { classifieds, jobs, events, places, lostFound } from '@/lib/db/schema';
-import { NEPAL_CITIES } from '@/lib/nepal-cities';
+import { getCitiesWithCounts, getTopCitiesByContent, type CityCount } from '@/lib/db/queries/cities';
 
 export const revalidate = 300;
 
@@ -14,60 +12,19 @@ export const metadata: Metadata = {
   description: 'Browse OnNepal by city. Every Nepal city we cover, with current listings, jobs, events, and businesses.',
 };
 
-const POPULAR = ['Kathmandu', 'Lalitpur', 'Bhaktapur', 'Pokhara', 'Chitwan', 'Biratnagar', 'Butwal', 'Janakpur'];
-
-interface CityRow {
-  name: string;
-  slug: string;
-  count: number;
-  popular: boolean;
-}
-
-async function getCityCounts(): Promise<Map<string, number>> {
-  // Single GROUP BY per table → cheap. We tally totals across types so the
-  // count reflects "how much is happening here" without distinguishing kind.
-  const counts = new Map<string, number>();
-  const accept = (rows: Array<{ city: string | null; c: number }>) => {
-    for (const r of rows) {
-      if (!r.city) continue;
-      const k = r.city.trim().toLowerCase();
-      if (!k) continue;
-      counts.set(k, (counts.get(k) ?? 0) + Number(r.c));
-    }
-  };
-
-  try {
-    const db = getDb(getD1Database());
-    const [c, j, e, p, l] = await Promise.all([
-      db.select({ city: classifieds.city, c: sql<number>`count(*)` }).from(classifieds).where(sql`${classifieds.status} = 'active'`).groupBy(classifieds.city),
-      db.select({ city: jobs.city, c: sql<number>`count(*)` }).from(jobs).where(sql`${jobs.status} = 'open'`).groupBy(jobs.city),
-      db.select({ city: events.city, c: sql<number>`count(*)` }).from(events).where(sql`${events.status} IN ('upcoming','ongoing')`).groupBy(events.city),
-      db.select({ city: places.city, c: sql<number>`count(*)` }).from(places).where(sql`${places.status} = 'active'`).groupBy(places.city),
-      db.select({ city: lostFound.city, c: sql<number>`count(*)` }).from(lostFound).where(sql`${lostFound.status} = 'open'`).groupBy(lostFound.city),
-    ]);
-    accept(c); accept(j); accept(e); accept(p); accept(l);
-  } catch (err) {
-    console.error('[/cities] count query failed', err);
-  }
-
-  return counts;
-}
+interface CityRow extends CityCount { popular: boolean }
 
 export default async function CitiesPage() {
-  const counts = await getCityCounts();
-  const popularSet = new Set(POPULAR.map((s) => s.toLowerCase()));
+  const db = getDb(getD1Database());
+  const [allCities, popularByContent] = await Promise.all([
+    getCitiesWithCounts(db).catch((e) => { console.error('[/cities] failed', e); return [] as CityCount[]; }),
+    getTopCitiesByContent(db, 8).catch((e) => { console.error('[/cities] popular failed', e); return [] as CityCount[]; }),
+  ]);
 
-  const rows: CityRow[] = NEPAL_CITIES.map((c) => ({
-    name: c.name,
-    slug: c.slug,
-    count: counts.get(c.name.toLowerCase()) ?? 0,
-    popular: popularSet.has(c.name.toLowerCase()),
-  }));
+  const popularSlugs = new Set(popularByContent.map((c) => c.slug));
+  const rows: CityRow[] = allCities.map((c) => ({ ...c, popular: popularSlugs.has(c.slug) }));
 
-  // Show popular block in fixed order, then everything else alphabetical.
-  const popularRows = POPULAR
-    .map((name) => rows.find((r) => r.name === name))
-    .filter((r): r is CityRow => Boolean(r));
+  const popularRows = popularByContent;
   const otherRows = rows
     .filter((r) => !r.popular)
     .sort((a, b) => a.name.localeCompare(b.name));

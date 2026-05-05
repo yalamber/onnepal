@@ -8,6 +8,7 @@ import { timeAgo } from '@/lib/time-ago';
 import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
+import { CityScopeBanner } from '@/components/city-scope-banner';
 import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
 import { CitySelector } from '@/components/city-selector';
 
@@ -81,6 +82,7 @@ export default function JobsClient({ initialData, initialCategory }: { initialDa
           </Link>
         </div>
 
+        <CityScopeBanner />
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <div className="flex-1">
             <SearchInput value={search} onChange={setSearch} placeholder="Search jobs, companies..." />

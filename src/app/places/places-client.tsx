@@ -8,6 +8,7 @@ import { firstImageUrl } from '@/lib/image-utils';
 import { SearchInput } from '@/components/search-input';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/empty-state';
+import { CityScopeBanner } from '@/components/city-scope-banner';
 import { CategorySidebar, CategoryMobilePills } from '@/components/category-nav';
 import { CitySelector } from '@/components/city-selector';
 
@@ -98,6 +99,7 @@ export default function PlacesClient({ initialData, initialCategory }: { initial
           </div>
         </div>
 
+        <CityScopeBanner />
         <div className="mb-6">
           <CategoryMobilePills categories={PLACE_CATEGORIES} activeCategory={categorySlug} basePath="/places" allLabel="All" />
         </div>

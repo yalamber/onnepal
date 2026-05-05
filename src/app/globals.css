@@ -257,6 +257,9 @@ html { scroll-behavior: smooth; }
 }
 .city-menu-item:hover { background: var(--ink-100); }
 .city-menu-item.is-selected { background: var(--accent-soft); }
+.cmi-text-row { display: flex; align-items: center; gap: 10px; }
+.cmi-text-row .cmi-leading { color: var(--ink-500); flex-shrink: 0; }
+.city-menu-divider { height: 1px; background: var(--ink-200); margin: 6px 0; }
 .cmi-name { font-size: 14px; font-weight: 500; color: var(--ink-900); }
 .cmi-check { color: var(--accent); display: inline-flex; }
 .city-menu-empty { padding: 16px; text-align: center; }
@@ -627,7 +630,14 @@ html { scroll-behavior: smooth; }
   .header-right .btn-ghost { display: none; }
 }
 @media (max-width: 1040px) {
-  .city-selector { display: none; }
+  /* Drop the "· Nepal" subtitle to keep the pill compact, but keep the pill itself. */
+  .loc-pill .loc-sep, .loc-pill .loc-sub { display: none; }
+}
+@media (max-width: 520px) {
+  /* On phones, drop the "All of Nepal" label down to just a globe icon — the
+     popover is reachable via tap, no need to spell it out next to the logo. */
+  .loc-pill { padding: 5px 8px; max-width: 140px; }
+  .loc-pill .loc-pill-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 @media (max-width: 900px) {
   .header-nav { display: none; }
