@@ -29,7 +29,7 @@ export default async function VoicesPage({ searchParams }: { searchParams: Promi
     <main>
       <div className="page-hero">
         <div className="t-eyebrow"><span className="dot" /> Voices · written from the gully</div>
-        <h1 className="page-hero-title">Voices from <em>the valley.</em></h1>
+        <h1 className="page-hero-title">Voices from <em>Nepal.</em></h1>
         <p className="page-hero-sub">
           Essays, guides, and neighborhood reports written by people who live here. Submit yours
           and we&rsquo;ll feature the best of the week on the homepage.

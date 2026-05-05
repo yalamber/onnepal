@@ -11,7 +11,7 @@ export function Community({ voices }: { voices: VoiceListItem[] }) {
         <SectionHead
           eyebrow="04 · From the neighborhood"
           title={<>Latest<br /><em>voices.</em></>}
-          sub={<>Fresh writing from across the valley. <Link href="/voices" className="text-[var(--accent-soft)] underline underline-offset-4">All voices →</Link></>}
+          sub={<>Fresh writing from across Nepal. <Link href="/voices" className="text-[var(--accent-soft)] underline underline-offset-4">All voices →</Link></>}
           invert
         />
         <div className="quote-grid">
