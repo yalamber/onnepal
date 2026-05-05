@@ -30,13 +30,19 @@ const COLS = [
   },
   {
     h: 'Cities',
+    // Links go to /city/<slug> (the dedicated city landing page) rather than
+    // /directory?city= so users land on a hub showing all content for the city,
+    // not just the business directory.
     items: [
-      { label: 'Kathmandu', href: '/directory?city=Kathmandu' },
-      { label: 'Lalitpur', href: '/directory?city=Lalitpur' },
-      { label: 'Bhaktapur', href: '/directory?city=Bhaktapur' },
-      { label: 'Pokhara', href: '/directory?city=Pokhara' },
-      { label: 'Chitwan', href: '/directory?city=Chitwan' },
-      { label: 'See all 118', href: '/directory' },
+      { label: 'Kathmandu', href: '/city/kathmandu' },
+      { label: 'Lalitpur', href: '/city/lalitpur' },
+      { label: 'Bhaktapur', href: '/city/bhaktapur' },
+      { label: 'Pokhara', href: '/city/pokhara' },
+      { label: 'Chitwan', href: '/city/chitwan' },
+      { label: 'Biratnagar', href: '/city/biratnagar' },
+      { label: 'Butwal', href: '/city/butwal' },
+      { label: 'Janakpur', href: '/city/janakpur' },
+      { label: 'See all cities →', href: '/cities' },
     ],
   },
   {
