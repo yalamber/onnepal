@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { JOB_CATEGORIES, JOB_TYPES } from '@/lib/job-categories';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { PillSelector } from '@/components/pill-selector';
+import { CityField } from '@/components/city-field';
 import { ExpandableSection } from '@/components/expandable-section';
 import { SubmitButton } from '@/components/form-buttons';
 import { toast } from 'sonner';
@@ -18,7 +19,7 @@ export default function PostJobPage() {
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     title: '', company: '', category: '', type: 'full-time', description: '',
-    location: '', isRemote: false, salary: '', experience: '', applyUrl: '',
+    location: '', city: '', isRemote: false, salary: '', experience: '', applyUrl: '',
     contactEmail: '', contactPhone: '',
   });
 
@@ -31,7 +32,7 @@ export default function PostJobPage() {
     try {
       const res = await fetch('/api/jobs', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, description: form.description || null, location: form.location || null,
+        body: JSON.stringify({ ...form, description: form.description || null, location: form.location || null, city: form.city || null,
           salary: form.salary || null, experience: form.experience || null, applyUrl: form.applyUrl || null,
           contactEmail: form.contactEmail || null, contactPhone: form.contactPhone || null }),
       });
@@ -79,7 +80,10 @@ export default function PostJobPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
+                  <div className="mb-4">
+              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+            </div>
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
                   <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
                 </div>
                 <div className="flex items-end pb-1">

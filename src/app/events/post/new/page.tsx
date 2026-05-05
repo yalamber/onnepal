@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { ImageUpload } from '@/components/image-upload';
+import { CityField } from '@/components/city-field';
 import { DatePicker } from '@/components/date-picker';
 import { TimePicker } from '@/components/time-picker';
 import { useRequireAuth } from '@/hooks/use-require-auth';
@@ -21,7 +22,7 @@ export default function PostEventPage() {
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     title: '', category: '', description: '', startDate: '', endDate: '', startTime: '', endTime: '',
-    venue: '', location: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '',
+    venue: '', location: '', city: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '',
     imageUrls: [] as string[],
   });
 
@@ -36,7 +37,7 @@ export default function PostEventPage() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, description: form.description || null, endDate: form.endDate || null,
           startTime: form.startTime || null, endTime: form.endTime || null, venue: form.venue || null,
-          location: form.location || null, ticketPrice: form.ticketPrice || null, ticketUrl: form.ticketUrl || null,
+          location: form.location || null, city: form.city || null, ticketPrice: form.ticketPrice || null, ticketUrl: form.ticketUrl || null,
           contactPhone: form.contactPhone || null, contactWhatsapp: form.contactWhatsapp || null,
           imageUrls: form.imageUrls.length > 0 ? form.imageUrls : undefined }),
       });
@@ -90,7 +91,10 @@ export default function PostEventPage() {
                   <input type="text" value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} placeholder="Venue name" className={inputClass} />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
+                  <div className="mb-4">
+              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+            </div>
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
                   <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
                 </div>
               </div>

@@ -1,5 +1,13 @@
 import { z } from 'zod';
 import { subdomainSchema } from './subdomain';
+import { NEPAL_CITIES } from '@/lib/nepal-cities';
+
+const KNOWN_CITY_NAMES = new Set(NEPAL_CITIES.map((c) => c.name));
+const optionalCity = z
+  .string()
+  .max(100)
+  .refine((v) => v === '' || KNOWN_CITY_NAMES.has(v), { message: 'Pick a city from the list' })
+  .nullish();
 
 export const signupSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -22,6 +30,7 @@ export const updateProfileSchema = z.object({
   coverPosition: z.string().max(20).nullish(),
   phone: z.string().max(20).nullish(),
   address: z.string().max(200).nullish(),
+  city: optionalCity,
   businessHours: z.string().max(500).nullish(),
   primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullish(),
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullish(),

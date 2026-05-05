@@ -27,6 +27,7 @@ export const businesses = sqliteTable('businesses', {
   coverPosition: text('cover_position').default('50 50'),
   phone: text('phone'),
   address: text('address'),
+  city: text('city'),
   businessHours: text('business_hours'), // JSON: {"mon":"9:00-17:00","tue":"9:00-17:00",...}
   whatsappNumber: text('whatsapp_number'),
   mapAddress: text('map_address'), // for map embed
@@ -43,6 +44,7 @@ export const businesses = sqliteTable('businesses', {
   index('businesses_subdomain_idx').on(table.subdomain),
   index('businesses_published_idx').on(table.isPublished),
   index('businesses_category_idx').on(table.businessCategory),
+  index('businesses_city_idx').on(table.city),
 ]));
 
 export const socialLinks = sqliteTable('social_links', {
@@ -499,6 +501,7 @@ export const discussions = sqliteTable('discussions', {
   title: text('title').notNull(),
   content: text('content'),
   category: text('category').notNull(),
+  city: text('city'), // optional — local threads can be tagged to a city
   isPinned: integer('is_pinned', { mode: 'boolean' }).notNull().default(false),
   replyCount: integer('reply_count').notNull().default(0),
   lastActivityAt: integer('last_activity_at', { mode: 'timestamp' }).notNull(),
@@ -508,6 +511,7 @@ export const discussions = sqliteTable('discussions', {
   index('discussions_category_idx').on(table.category),
   index('discussions_user_idx').on(table.userId),
   index('discussions_last_activity_idx').on(table.lastActivityAt),
+  index('discussions_city_idx').on(table.city),
 ]));
 
 export const discussionReplies = sqliteTable('discussion_replies', {
@@ -556,6 +560,7 @@ export const services = sqliteTable('services', {
   description: text('description'),
   category: text('category').notNull(),
   location: text('location'),
+  city: text('city'),
   priceType: text('price_type'),
   price: text('price'),
   contactPhone: text('contact_phone'),
@@ -569,6 +574,7 @@ export const services = sqliteTable('services', {
   index('services_user_idx').on(table.userId),
   index('services_status_idx').on(table.status),
   index('services_created_idx').on(table.createdAt),
+  index('services_city_idx').on(table.city),
 ]));
 
 // Voices — user-submitted articles / personal essays / community pieces.

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { MarkdownEditor } from '@/components/markdown-editor';
+import { CityField } from '@/components/city-field';
 
 const CATEGORIES = ['Food', 'Neighborhood', 'Opinion', 'Guide', 'Festival', 'Trail', 'Family', 'Other'];
 
@@ -122,17 +123,12 @@ export default function NewVoicePage() {
               {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          <div>
-            <label htmlFor="city" className="t-meta block mb-2">City</label>
-            <input
-              id="city"
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Kathmandu"
-              className="w-full h-12 px-4 rounded-[var(--r-sm)] border border-[var(--ink-200)] bg-[var(--paper)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
-            />
-          </div>
+          <CityField
+            value={city}
+            onChange={setCity}
+            label="City (optional)"
+            hint="Tag this voice to a city if it's specific to one. Leave blank for national pieces."
+          />
         </div>
 
         <div>

@@ -90,7 +90,7 @@ export async function getDiscussionById(db: Database, id: string) {
 export async function createDiscussion(
   db: Database,
   userId: string,
-  data: { title: string; content?: string | null; category: string }
+  data: { title: string; content?: string | null; category: string; city?: string | null }
 ) {
   const id = generateId();
   const now = new Date();
@@ -101,6 +101,7 @@ export async function createDiscussion(
     title: data.title,
     content: data.content || null,
     category: data.category,
+    city: data.city || null,
     isPinned: false,
     replyCount: 0,
     lastActivityAt: now,

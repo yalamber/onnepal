@@ -8,6 +8,7 @@ import { DISCUSSION_CATEGORIES } from '@/lib/discussion-categories';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { PillSelector } from '@/components/pill-selector';
 import { SubmitButton } from '@/components/form-buttons';
+import { CityField } from '@/components/city-field';
 import { toast } from 'sonner';
 
 export default function NewDiscussionPage() {
@@ -15,7 +16,7 @@ export default function NewDiscussionPage() {
   const { ready } = useRequireAuth();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ title: '', category: '', content: '' });
+  const [form, setForm] = useState({ title: '', category: '', content: '', city: '' });
 
   const handleSubmit = async () => {
     if (!form.title.trim() || form.title.length < 3) { setError('Title must be at least 3 characters'); return; }
@@ -25,7 +26,7 @@ export default function NewDiscussionPage() {
     try {
       const res = await fetch('/api/discussions', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: form.title.trim(), category: DISCUSSION_CATEGORIES.find(c => c.slug === form.category)?.name || form.category, content: form.content.trim() || null }),
+        body: JSON.stringify({ title: form.title.trim(), category: DISCUSSION_CATEGORIES.find(c => c.slug === form.category)?.name || form.category, content: form.content.trim() || null, city: form.city || null }),
       });
       if (!res.ok) { const d = await res.json().catch(() => null) as { error?: string } | null; setError(d?.error || 'Failed'); toast.error(d?.error || 'Failed to post'); return; }
       const data = await res.json() as { id: string };
@@ -52,6 +53,14 @@ export default function NewDiscussionPage() {
             <p className="text-xs font-medium text-gray-500 mb-2">Topic *</p>
             <PillSelector options={DISCUSSION_CATEGORIES} value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
           </div>
+
+          <CityField
+            value={form.city}
+            onChange={(v) => setForm({ ...form, city: v })}
+            label="City (optional)"
+            hint="Tag this thread to a city if it's local. Skip for national topics."
+            autofillFromCookie={false}
+          />
 
           <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })}
             placeholder="Add more details (optional)..."

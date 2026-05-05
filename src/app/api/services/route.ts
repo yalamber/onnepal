@@ -5,19 +5,7 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getServices, getServicesCount, createService } from '@/lib/db/queries/services';
 import { getSession } from '@/lib/auth/session';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
-import { z } from 'zod';
-
-const createServiceSchema = z.object({
-  title: z.string().min(3).max(200),
-  description: z.string().max(2000).nullish(),
-  category: z.string().min(1),
-  location: z.string().max(100).nullish(),
-  priceType: z.enum(['fixed', 'hourly', 'negotiable', 'free']).nullish(),
-  price: z.string().max(50).nullish(),
-  contactPhone: z.string().max(20).nullish(),
-  contactWhatsapp: z.string().max(20).nullish(),
-  imageUrls: z.array(z.string().max(500)).max(5).optional(),
-});
+import { createServiceSchema } from '@/lib/validators/listings';
 
 export async function GET(request: NextRequest) {
   try {

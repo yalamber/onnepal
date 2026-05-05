@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useActiveBusiness } from '../layout';
 import { Input } from '@/components/ui/input';
+import { CityField } from '@/components/city-field';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Save, Check, Palette, Phone, MapPin, Clock } from 'lucide-react';
 import { THEME_PALETTES, findPalette, type ThemePalette } from '@/lib/themes';
@@ -19,6 +20,7 @@ interface Profile {
   coverPosition: string | null;
   phone: string | null;
   address: string | null;
+  city: string | null;
   businessHours: string | null;
   primaryColor: string | null;
   accentColor: string | null;
@@ -80,6 +82,7 @@ export default function SettingsPage() {
           coverPosition: profile.coverPosition,
           phone: profile.phone,
           address: profile.address,
+          city: profile.city,
           businessHours: profile.businessHours,
           primaryColor: profile.primaryColor,
           accentColor: profile.accentColor,
@@ -208,14 +211,21 @@ export default function SettingsPage() {
               />
             </div>
           </div>
-          <div>
-            <label className="text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-1.5">
-              <MapPin className="h-3 w-3 text-gray-400" /> Address
-            </label>
-            <Input
-              value={profile.address || ''}
-              onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-              placeholder="Kathmandu, Nepal"
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-1.5">
+                <MapPin className="h-3 w-3 text-gray-400" /> Address
+              </label>
+              <Input
+                value={profile.address || ''}
+                onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+                placeholder="Street, ward, neighborhood"
+              />
+            </div>
+            <CityField
+              value={profile.city || ''}
+              onChange={(v) => setProfile({ ...profile, city: v })}
+              required
             />
           </div>
           <div className="grid sm:grid-cols-2 gap-4">

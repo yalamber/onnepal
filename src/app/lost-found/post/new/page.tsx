@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { LOST_FOUND_CATEGORIES } from '@/lib/lost-found-categories';
 import { ImageUpload } from '@/components/image-upload';
+import { CityField } from '@/components/city-field';
 import { DatePicker } from '@/components/date-picker';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { PillSelector } from '@/components/pill-selector';
@@ -20,7 +21,7 @@ export default function PostLostFoundPage() {
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     type: 'lost' as 'lost' | 'found',
-    title: '', category: '', description: '', location: '', itemDate: '',
+    title: '', category: '', description: '', location: '', city: '', itemDate: '',
     reward: '', contactPhone: '', contactWhatsapp: '', imageUrls: [] as string[],
   });
 
@@ -32,7 +33,7 @@ export default function PostLostFoundPage() {
     try {
       const res = await fetch('/api/lost-found', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, description: form.description || null, location: form.location || null,
+        body: JSON.stringify({ ...form, description: form.description || null, location: form.location || null, city: form.city || null,
           itemDate: form.itemDate || null, reward: form.reward || null, contactPhone: form.contactPhone || null,
           contactWhatsapp: form.contactWhatsapp || null, imageUrls: form.imageUrls.length > 0 ? form.imageUrls : undefined }),
       });
@@ -79,7 +80,10 @@ export default function PostLostFoundPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
+              <div className="mb-4">
+              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+            </div>
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
               <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
                 placeholder="Kathmandu, Thamel" className={inputClass} />
             </div>
