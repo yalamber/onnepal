@@ -5,6 +5,7 @@ import { getSession } from '@/lib/auth/session';
 import { reports } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { generateId } from '@/lib/utils';
+import { notifyAllAdmins } from '@/lib/db/queries/notifications';
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,6 +54,13 @@ export async function POST(request: NextRequest) {
       targetId,
       reason,
       createdAt: new Date(),
+    });
+
+    await notifyAllAdmins(db, {
+      type: 'report_received',
+      title: 'New report to review',
+      body: `${targetType} reported: "${reason.slice(0, 120)}${reason.length > 120 ? '…' : ''}"`,
+      linkHref: '/admin',
     });
 
     return NextResponse.json({ success: true }, { status: 201 });

@@ -4,6 +4,7 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getSession } from '@/lib/auth/session';
 import { getPublishedVoices, getPublishedVoicesCount, createVoice } from '@/lib/db/queries/voices';
+import { notifyAllAdmins } from '@/lib/db/queries/notifications';
 
 const createSchema = z.object({
   title: z.string().min(4).max(200),
@@ -66,6 +67,15 @@ export async function POST(request: NextRequest) {
       city: data.city ?? undefined,
       category: data.category ?? undefined,
     });
+
+    // Fan-out admin alert: every is_admin user gets a notification to moderate.
+    await notifyAllAdmins(db, {
+      type: 'voice_pending',
+      title: 'New voice pending review',
+      body: data.title,
+      linkHref: '/admin/voices?status=pending',
+    });
+
     return NextResponse.json({ id, slug }, { status: 201 });
   } catch (error) {
     console.error('[api/voices] POST failed', error);

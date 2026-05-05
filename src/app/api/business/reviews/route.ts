@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import { getApprovedReviews, createReview, getAverageRating } from '@/lib/db/queries/reviews';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
-import { reviews } from '@/lib/db/schema';
+import { reviews, businesses } from '@/lib/db/schema';
 import { eq, and, gte, count } from 'drizzle-orm';
+import { createNotification } from '@/lib/db/queries/notifications';
 
 // Public route — returns approved reviews only
 export async function GET(request: Request) {
@@ -75,6 +76,23 @@ export async function POST(request: Request) {
       rating: body.rating,
       content: body.content || undefined,
     });
+
+    // Notify the business owner.
+    const biz = await db
+      .select({ userId: businesses.userId, name: businesses.businessName })
+      .from(businesses)
+      .where(eq(businesses.id, businessId))
+      .limit(1);
+    if (biz[0]) {
+      const stars = '★'.repeat(body.rating) + '☆'.repeat(5 - body.rating);
+      await createNotification(db, {
+        userId: biz[0].userId,
+        type: 'review_received',
+        title: `New ${body.rating}-star review on ${biz[0].name}`,
+        body: `${stars} from ${body.reviewerName}${body.content ? `: "${body.content.slice(0, 100)}${body.content.length > 100 ? '…' : ''}"` : ''}`,
+        linkHref: '/dashboard/reviews',
+      });
+    }
 
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });
   } catch (error) {
