@@ -15,7 +15,7 @@ export async function getServices(db: Database, { category, search, city, page, 
   const conditions: ReturnType<typeof eq>[] = [eq(services.status, 'active')];
 
   if (category) conditions.push(eq(services.category, category));
-  if (city) conditions.push(eq(services.location, city));
+  if (city) conditions.push(eq(services.city, city));
   if (search) {
     const pattern = `%${search}%`;
     conditions.push(
@@ -51,7 +51,7 @@ export async function getServices(db: Database, { category, search, city, page, 
 export async function getServicesCount(db: Database, { category, search, city }: { category?: string; search?: string; city?: string }) {
   const conditions: ReturnType<typeof eq>[] = [eq(services.status, 'active')];
   if (category) conditions.push(eq(services.category, category));
-  if (city) conditions.push(eq(services.location, city));
+  if (city) conditions.push(eq(services.city, city));
   if (search) {
     const pattern = `%${search}%`;
     conditions.push(
@@ -95,6 +95,7 @@ export async function createService(
     description?: string | null;
     category: string;
     location?: string | null;
+    city?: string | null;
     priceType?: string | null;
     price?: string | null;
     contactPhone?: string | null;
@@ -111,6 +112,7 @@ export async function createService(
     description: data.description || null,
     category: data.category,
     location: data.location || null,
+    city: data.city || null,
     priceType: data.priceType || null,
     price: data.price || null,
     contactPhone: data.contactPhone || null,

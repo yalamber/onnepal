@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 import { ImageUpload } from '@/components/image-upload';
+import { CityField } from '@/components/city-field';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { ExpandableSection } from '@/components/expandable-section';
 import { SubmitButton } from '@/components/form-buttons';
@@ -17,7 +18,7 @@ export default function NewClassifiedPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    title: '', category: '', description: '', price: '', location: '',
+    title: '', category: '', description: '', price: '', location: '', city: '',
     contactPhone: '', contactWhatsapp: '',
   });
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -33,7 +34,7 @@ export default function NewClassifiedPage() {
         body: JSON.stringify({
           title: form.title.trim(), category: form.category,
           description: form.description.trim() || null, price: form.price.trim() || null,
-          location: form.location.trim() || null, contactPhone: form.contactPhone.trim() || null,
+          location: form.location.trim() || null, city: form.city || null, contactPhone: form.contactPhone.trim() || null,
           contactWhatsapp: form.contactWhatsapp.trim() || null,
           imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
         }),
@@ -82,7 +83,10 @@ export default function NewClassifiedPage() {
                 placeholder="Rs. 15,000" className={inputClass} />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
+              <div className="mb-4">
+              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+            </div>
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
               <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
                 placeholder="Kathmandu" className={inputClass} />
             </div>

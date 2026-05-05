@@ -10,7 +10,7 @@ import { useRequireAuth } from '@/hooks/use-require-auth';
 import { PillSelector } from '@/components/pill-selector';
 import { ExpandableSection } from '@/components/expandable-section';
 import { SubmitButton } from '@/components/form-buttons';
-import { CitySelector } from '@/components/city-selector';
+import { CityField } from '@/components/city-field';
 import { toast } from 'sonner';
 
 export default function PostPlacePage() {
@@ -74,10 +74,7 @@ export default function PostPlacePage() {
               <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
               <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
             </div>
-            <div>
-              <label className="text-xs font-medium text-gray-500 mb-1.5 block">City</label>
-              <CitySelector value={form.city} onChange={(v) => setForm({ ...form, city: v })} />
-            </div>
+            <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
           </div>
 
           <ExpandableSection label="Add address, photos, website & contact">

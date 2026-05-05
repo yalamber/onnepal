@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       title: validation.data.title,
       content: validation.data.content ?? undefined,
       category: validation.data.category,
+      city: validation.data.city ?? undefined,
     });
 
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });

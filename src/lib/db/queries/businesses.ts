@@ -89,6 +89,7 @@ export async function updateBusinessProfile(
     coverPosition: string;
     phone: string;
     address: string;
+    city: string | null;
     businessHours: string;
     primaryColor: string;
     accentColor: string;

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { SERVICE_CATEGORIES } from '@/lib/service-categories';
 import { ImageUpload } from '@/components/image-upload';
+import { CityField } from '@/components/city-field';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { PillSelector } from '@/components/pill-selector';
 import { ExpandableSection } from '@/components/expandable-section';
@@ -18,7 +19,7 @@ export default function PostServicePage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    title: '', category: '', description: '', location: '',
+    title: '', category: '', description: '', location: '', city: '',
     priceType: '', price: '', contactPhone: '', contactWhatsapp: '',
     imageUrls: [] as string[],
   });
@@ -35,7 +36,7 @@ export default function PostServicePage() {
           title: form.title.trim(),
           category: SERVICE_CATEGORIES.find(c => c.slug === form.category)?.name || form.category,
           description: form.description.trim() || null,
-          location: form.location || null,
+          location: form.location || null, city: form.city || null,
           priceType: form.priceType || null,
           price: form.price || null,
           contactPhone: form.contactPhone || null,
@@ -94,6 +95,9 @@ export default function PostServicePage() {
           </div>
 
           <div>
+            <div className="mb-4">
+              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+            </div>
             <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location / Service area</label>
             <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
           </div>

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
+import { CityField } from '@/components/city-field';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, ArrowRight, ArrowLeft, Check, Plus, Trash2 } from 'lucide-react';
 
@@ -47,6 +48,7 @@ function CreateBusinessForm() {
   const [description, setDescription] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
 
   const [links, setLinks] = useState<Array<{ platform: string; url: string }>>([
     { platform: 'facebook', url: '' },
@@ -101,7 +103,7 @@ function CreateBusinessForm() {
       await fetch(`/api/business/profile?businessId=${businessId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessCategory: category, description, phone, address }),
+        body: JSON.stringify({ businessCategory: category, description, phone, address, city: city || null }),
       });
       setStep(3);
     } finally { setSaving(false); }
@@ -222,8 +224,9 @@ function CreateBusinessForm() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1.5 block">Address <span className="text-gray-400 font-normal">(optional)</span></label>
-                  <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Kathmandu" />
+                  <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street, ward, neighborhood" />
                 </div>
+                <CityField value={city} onChange={setCity} required />
               </div>
 
               <div className="flex gap-3 pt-2">
