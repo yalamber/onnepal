@@ -146,6 +146,54 @@ The platform can be extended to send email notifications using:
 - Check that password hash was generated correctly with bcrypt
 - Ensure JWT_SECRET is set
 
+## 📧 Email Sending (Cloudflare Email Service)
+
+OnNepal uses Cloudflare's **Email Sending** Workers binding (public beta as of
+April 2026) for transactional email — currently the password-reset flow.
+
+### Prerequisites
+
+1. **Workers Paid plan.** Email Sending is not on the free tier.
+2. **A verified sender domain.** Without verification, every send call fails
+   with `E_SENDER_NOT_VERIFIED` and the calling flow falls back to a no-op
+   (the user just doesn't receive the email).
+
+### One-time setup
+
+1. **Verify `onnepal.com` for Email Sending:**
+   - Cloudflare Dashboard → **Email** → **Email Sending** → **Domains** → **Add domain**.
+   - Enter `onnepal.com`. The wizard prints SPF, DKIM (CNAME), and DMARC records.
+2. **Add the DNS records** in your zone (Cloudflare DNS, since the zone is
+   already on Cloudflare). Typical records:
+   - `TXT @ "v=spf1 include:_spf.mx.cloudflare.net ~all"`
+   - `CNAME cf-2024-***._domainkey  cf-2024-***._domainkey.cf-mail.net`
+   - `TXT _dmarc "v=DMARC1; p=none; rua=mailto:dmarc@onnepal.com"`
+3. Click **Verify** in the dashboard. Status flips to "Verified" within minutes.
+4. **Allowed senders.** `wrangler.jsonc` restricts the binding to
+   `noreply@onnepal.com`. To add more (e.g. `hello@onnepal.com`), edit
+   `allowed_sender_addresses` and redeploy.
+
+### Verify on production
+
+```bash
+curl -X POST https://onnepal.com/api/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"yalamber@mundhum.com"}'
+```
+
+Then check the inbox. Tail logs to see the underlying call:
+
+```bash
+npx wrangler tail onnepal
+# look for "[email] sent" (success) or "[email] send failed" with cause.
+```
+
+### Local dev
+
+`wrangler dev --local` does not actually deliver email; the binding may be
+stubbed. The helper logs `[email] No EMAIL binding; skipping send.` instead
+of throwing, so flows that depend on email don't crash in dev.
+
 ## 📚 Next Steps
 
 1. **Create Content**: Log in and start submitting posts

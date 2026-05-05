@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Search, MapPin } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { HeroRail } from './hero-rail';
 import type { HomepageStats, ActivityItem } from '@/lib/db/queries/homepage';
 import { relativeTime } from '@/lib/db/queries/homepage';
@@ -44,10 +44,6 @@ export function Hero({ stats, activity }: Props) {
             <div className="hs-field">
               <span className="hs-icon"><Search size={18} /></span>
               <input name="q" placeholder="Search plumbers, flats, tutors, momo…" />
-            </div>
-            <div className="hs-field hs-loc">
-              <span className="hs-icon"><MapPin size={18} /></span>
-              <input name="loc" defaultValue="Kathmandu" />
             </div>
             <button type="submit" className="btn btn-primary btn-lg">Search</button>
           </form>

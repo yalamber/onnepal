@@ -58,6 +58,26 @@
 			"binding": "VINEXT_CACHE",
 			"id": "2e0c78ac97fa45bea13a4a475a370bd3"
 		}
+	],
+	/**
+	 * Cloudflare Email Sending (public beta as of 2026-04).
+	 * Workers Paid plan + verified sender domain required.
+	 *
+	 * Allowed senders: any address on a verified domain. We restrict to noreply@
+	 * here so a misconfigured caller can't impersonate hello@ etc.
+	 *
+	 * Setup:
+	 * 1. Verify onnepal.com in Cloudflare dashboard → Email → Email Sending → Domains.
+	 * 2. Add the SPF / DKIM / DMARC DNS records the wizard prints.
+	 * 3. (Optional) Add additional senders to allowed_sender_addresses.
+	 */
+	"send_email": [
+		{
+			"name": "EMAIL",
+			"allowed_sender_addresses": [
+				"noreply@onnepal.com"
+			]
+		}
 	]
 	/**
 	 * Note: Use secrets for sensitive data like JWT_SECRET

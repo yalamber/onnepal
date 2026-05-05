@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Search, MapPin, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import {
@@ -94,10 +94,8 @@ export default async function CityPage({ params }: Props) {
                 <span className="hs-icon"><Search size={18} /></span>
                 <input name="q" placeholder={`Search in ${city}…`} />
               </div>
-              <div className="hs-field hs-loc">
-                <span className="hs-icon"><MapPin size={18} /></span>
-                <input name="loc" defaultValue={city} />
-              </div>
+              {/* Implicit location: the city page sets the city cookie which /search reads. */}
+              <input type="hidden" name="loc" value={city} />
               <button type="submit" className="btn btn-primary btn-lg">Search</button>
             </form>
           </div>

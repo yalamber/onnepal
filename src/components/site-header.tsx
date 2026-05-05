@@ -12,6 +12,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { NEPAL_CITIES } from '@/lib/nepal-cities';
 
 interface UserData {
   id: string;
@@ -33,7 +34,9 @@ const NAV_LINKS = [
   { href: '/discussions', label: 'Discussions' },
 ];
 
-const CITIES = [
+// Top picks shown when the picker opens cold — "popular" is editorial, not data-driven.
+// The full NEPAL_CITIES list (65+ entries) is searchable from the same input below.
+const POPULAR_CITIES: Array<{ name: string; sub: string }> = [
   { name: 'Kathmandu', sub: 'Capital · 1.4M' },
   { name: 'Lalitpur', sub: 'Patan · 230k' },
   { name: 'Bhaktapur', sub: 'Heritage · 110k' },
@@ -167,9 +170,17 @@ export function SiteHeader() {
 
   const visible = NAV_LINKS.slice(0, visibleCount);
   const overflow = NAV_LINKS.slice(visibleCount);
-  const filteredCities = CITIES.filter((c) =>
-    c.name.toLowerCase().includes(cityQuery.toLowerCase()),
-  );
+
+  // Empty query → editorial popular list (with the "Capital · 1.4M" sub copy).
+  // Non-empty query → search the full NEPAL_CITIES (65+ cities), capped at 12 hits.
+  const trimmedQuery = cityQuery.trim().toLowerCase();
+  const isSearching = trimmedQuery.length > 0;
+  const filteredCities = isSearching
+    ? NEPAL_CITIES
+        .filter((c) => c.name.toLowerCase().includes(trimmedQuery))
+        .slice(0, 12)
+        .map((c) => ({ name: c.name, sub: '' }))
+    : POPULAR_CITIES;
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
 
   return (
@@ -213,7 +224,9 @@ export function SiteHeader() {
                   />
                 </div>
                 <div className="city-menu-list">
-                  <div className="city-menu-label t-eyebrow">Popular cities</div>
+                  <div className="city-menu-label t-eyebrow">
+                    {isSearching ? `${filteredCities.length} match${filteredCities.length === 1 ? '' : 'es'}` : 'Popular cities'}
+                  </div>
                   {filteredCities.map((c) => (
                     <button
                       key={c.name}
@@ -225,7 +238,7 @@ export function SiteHeader() {
                     >
                       <div>
                         <div className="cmi-name">{c.name}</div>
-                        <div className="t-meta">{c.sub}</div>
+                        {c.sub && <div className="t-meta">{c.sub}</div>}
                       </div>
                       {city === c.name && <span className="cmi-check"><Check size={14} /></span>}
                     </button>
@@ -235,7 +248,13 @@ export function SiteHeader() {
                   )}
                 </div>
                 <div className="city-menu-foot">
-                  <span className="city-menu-link">See all 118 cities →</span>
+                  <Link
+                    href="/cities"
+                    className="city-menu-link"
+                    onClick={() => setCityOpen(false)}
+                  >
+                    Browse all {NEPAL_CITIES.length} cities →
+                  </Link>
                 </div>
               </div>
             )}

@@ -601,3 +601,19 @@ export const voices = sqliteTable('voices', {
 export const voicesRelations = relations(voices, ({ one }) => ({
   user: one(users, { fields: [voices.userId], references: [users.id] }),
 }));
+
+// Password reset tokens. We email the raw token (32 random bytes hex-encoded)
+// and store its SHA-256 hash so DB compromise doesn't yield active reset links.
+// Single-use (consumedAt set) + 1-hour TTL.
+export const passwordResetTokens = sqliteTable('password_reset_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+  consumedAt: integer('consumed_at', { mode: 'timestamp' }),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('prt_user_idx').on(table.userId),
+  index('prt_token_hash_idx').on(table.tokenHash),
+  index('prt_expires_idx').on(table.expiresAt),
+]));
