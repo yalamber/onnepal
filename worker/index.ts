@@ -85,6 +85,23 @@ export default {
     }
 
     // Everything else: SSR pages, auth API, POST endpoints, etc.
-    return handler.fetch(request, env, ctx);
+    // Wrap in try/catch so any thrown error (RSC render failures, DB errors,
+    // etc.) is logged with full message + stack to Workers Logs *before*
+    // React's RSC layer redacts it. Without this wrapper the actual cause
+    // never reaches `wrangler tail` / observability — only the redacted
+    // "An error occurred in the Server Components render" placeholder does.
+    try {
+      return await handler.fetch(request, env, ctx);
+    } catch (err) {
+      console.error('[worker] unhandled error', {
+        url: url.toString(),
+        method: request.method,
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        digest: (err as { digest?: string })?.digest,
+        name: err instanceof Error ? err.name : undefined,
+      });
+      throw err;
+    }
   },
 };
