@@ -79,14 +79,7 @@ export default function PostLostFoundPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <div className="mb-4">
-              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
-            </div>
-            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Neighborhood / area <span className="text-gray-400 font-normal">(optional)</span></label>
-              <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
-                placeholder="Boudha, Thamel, Patan Durbar…" className={inputClass} />
-            </div>
+            <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
             <div>
               <label className="text-xs font-medium text-gray-500 mb-1.5 block">Date {form.type === 'lost' ? 'lost' : 'found'}</label>
               <DatePicker value={form.itemDate} onChange={(v) => setForm({ ...form, itemDate: v })} />
@@ -97,8 +90,13 @@ export default function PostLostFoundPage() {
             placeholder="Describe the item, identifying features, circumstances..."
             rows={3} className="w-full px-3 py-2.5 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
 
-          <ExpandableSection label="Add photos, reward & contact info">
+          <ExpandableSection label="Add neighborhood, photos, reward & contact info">
             <div className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">Neighborhood / area <span className="text-gray-400 font-normal">(optional)</span></label>
+                <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  placeholder="Boudha, Thamel, Patan Durbar…" className={inputClass} />
+              </div>
               {form.type === 'lost' && (
                 <div>
                   <label className="text-xs font-medium text-gray-500 mb-1.5 block">Reward</label>
