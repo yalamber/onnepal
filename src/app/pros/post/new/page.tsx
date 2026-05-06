@@ -98,8 +98,8 @@ export default function PostServicePage() {
             <div className="mb-4">
               <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
             </div>
-            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location / Service area</label>
-            <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Service area <span className="text-gray-400 font-normal">(optional)</span></label>
+            <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu valley, Pokhara, remote…" className={inputClass} />
           </div>
 
           <ExpandableSection label="Add photos & contact info">

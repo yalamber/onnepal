@@ -22,7 +22,7 @@ export default function PostEventPage() {
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     title: '', category: '', description: '', startDate: '', endDate: '', startTime: '', endTime: '',
-    venue: '', location: '', city: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '',
+    venue: '', city: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '',
     imageUrls: [] as string[],
   });
 
@@ -37,7 +37,7 @@ export default function PostEventPage() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, description: form.description || null, endDate: form.endDate || null,
           startTime: form.startTime || null, endTime: form.endTime || null, venue: form.venue || null,
-          location: form.location || null, city: form.city || null, ticketPrice: form.ticketPrice || null, ticketUrl: form.ticketUrl || null,
+          city: form.city || null, ticketPrice: form.ticketPrice || null, ticketUrl: form.ticketUrl || null,
           contactPhone: form.contactPhone || null, contactWhatsapp: form.contactWhatsapp || null,
           imageUrls: form.imageUrls.length > 0 ? form.imageUrls : undefined }),
       });
@@ -88,15 +88,9 @@ export default function PostEventPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-gray-500 mb-1.5 block">Venue</label>
-                  <input type="text" value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} placeholder="Venue name" className={inputClass} />
+                  <input type="text" value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} placeholder="e.g. Hanuman Dhoka, Patan Cafe" className={inputClass} />
                 </div>
-                <div>
-                  <div className="mb-4">
-              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
-            </div>
-            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
-                  <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
-                </div>
+                <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>

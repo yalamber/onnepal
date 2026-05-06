@@ -13,7 +13,7 @@ import { OwnerActions } from '@/components/owner-actions';
 import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
-import { CitySelector } from '@/components/city-selector';
+import { CityField } from '@/components/city-field';
 import { BookmarkButton } from '@/components/bookmark-button';
 import { ReportButton } from '@/components/report-button';
 import { toast } from 'sonner';
@@ -112,8 +112,8 @@ export default function PlaceDetailPage({ initialData }: { initialData?: Place |
                   className={`w-full ${inputClass}`} />
                 <div className="grid grid-cols-2 gap-3">
                   <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                    placeholder="Location" className={inputClass} />
-                  <CitySelector value={editForm.city} onChange={(v) => setEditForm({ ...editForm, city: v })} className={inputClass} />
+                    placeholder="Neighborhood / area" className={inputClass} />
+                  <CityField value={editForm.city} onChange={(v) => setEditForm({ ...editForm, city: v })} required autofillFromCookie={false} />
                 </div>
                 <input type="text" value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
                   placeholder="Address" className={`w-full ${inputClass}`} />
