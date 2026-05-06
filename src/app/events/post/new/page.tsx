@@ -83,15 +83,18 @@ export default function PostEventPage() {
             placeholder="Tell people about this event..." rows={3}
             className="w-full px-3 py-2.5 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
 
-          <ExpandableSection label="Add venue, photos, tickets & contact">
+          {/* City + Venue are primary fields — stay out of the collapsible so users can
+              fill them in one pass without having to expand for the required city pick. */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-gray-500 mb-1.5 block">Venue <span className="text-gray-400 font-normal">(optional)</span></label>
+              <input type="text" value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} placeholder="e.g. Hanuman Dhoka, Patan Cafe" className={inputClass} />
+            </div>
+            <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+          </div>
+
+          <ExpandableSection label="Add end date, photos, tickets & contact">
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Venue</label>
-                  <input type="text" value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} placeholder="e.g. Hanuman Dhoka, Patan Cafe" className={inputClass} />
-                </div>
-                <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
-              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-gray-500 mb-1.5 block">End date</label>

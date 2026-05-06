@@ -76,22 +76,22 @@ export default function PostJobPage() {
             placeholder="Describe the role, requirements, and benefits..." rows={4}
             className="w-full px-3 py-2.5 rounded-md border border-gray-200 text-sm placeholder:text-gray-300 focus:outline-none focus:border-gray-400 transition-colors resize-none" />
 
-          <ExpandableSection label="Add salary, location, apply link & contact">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <div className="mb-4">
-              <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+          {/* City is required and primary — stays out of the collapsible. */}
+          <div className="grid grid-cols-2 gap-3">
+            <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
+            <div className="flex items-end pb-1">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={form.isRemote} onChange={(e) => setForm({ ...form, isRemote: e.target.checked })} className="rounded" />
+                <span className="text-sm text-gray-600">Remote OK</span>
+              </label>
             </div>
-            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Neighborhood / area <span className="text-gray-400 font-normal">(optional)</span></label>
-                  <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Pulchowk, Naxal, Jawalakhel…" className={inputClass} />
-                </div>
-                <div className="flex items-end pb-1">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" checked={form.isRemote} onChange={(e) => setForm({ ...form, isRemote: e.target.checked })} className="rounded" />
-                    <span className="text-sm text-gray-600">Remote OK</span>
-                  </label>
-                </div>
+          </div>
+
+          <ExpandableSection label="Add neighborhood, salary, apply link & contact">
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">Neighborhood / area <span className="text-gray-400 font-normal">(optional)</span></label>
+                <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Pulchowk, Naxal, Jawalakhel…" className={inputClass} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>

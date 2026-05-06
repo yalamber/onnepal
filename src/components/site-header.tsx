@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
-  Search, Mail, Plus, Menu, X, MapPin, ChevronDown, Check,
+  Search, Plus, Menu, X, MapPin, ChevronDown, Check,
   ArrowRight, LayoutDashboard, LogOut, Settings, Shield, User, Bookmark, Loader2, Globe,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NEPAL_CITIES } from '@/lib/nepal-cities';
 import { NotificationsBell } from '@/components/notifications-bell';
+import { MessagesBell } from '@/components/messages-bell';
 
 interface UserData {
   id: string;
@@ -424,11 +425,7 @@ export function SiteHeader() {
           <Link href="/search" className="icon-btn" aria-label="Search">
             <Search size={20} />
           </Link>
-          {!authLoading && user && (
-            <Link href="/dashboard/messages" className="icon-btn" aria-label="Messages">
-              <Mail size={20} />
-            </Link>
-          )}
+          <MessagesBell enabled={!authLoading && !!user} />
           <NotificationsBell enabled={!authLoading && !!user} />
           <div className="header-divider" />
 

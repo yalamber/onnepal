@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Bell, MessageSquare, Star, Calendar, MessageCircle,
+  Bell, Star, Calendar, MessageCircle,
   Feather, AlertTriangle, Check, Loader2,
 } from 'lucide-react';
 import type { NotificationType } from '@/lib/db/queries/notifications';
@@ -20,7 +20,6 @@ interface Notification {
 }
 
 const ICON_FOR_TYPE: Record<NotificationType, React.ComponentType<{ size?: number }>> = {
-  message_received: MessageSquare,
   review_received: Star,
   booking_received: Calendar,
   comment_received: MessageCircle,
@@ -31,7 +30,6 @@ const ICON_FOR_TYPE: Record<NotificationType, React.ComponentType<{ size?: numbe
 };
 
 const TONE_FOR_TYPE: Record<NotificationType, string> = {
-  message_received: 'text-[var(--teal-700)] bg-[var(--teal-100)]',
   review_received: 'text-[var(--saffron-600)] bg-[var(--saffron-100)]',
   booking_received: 'text-[var(--evergreen-700)] bg-[var(--evergreen-100)]',
   comment_received: 'text-[var(--ink-700)] bg-[var(--ink-100)]',

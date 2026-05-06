@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Loader2, Mail, Send, ArrowLeft, ChevronRight } from 'lucide-react';
 import { useActiveBusiness } from '../layout';
 import { timeAgo } from '@/lib/time-ago';
@@ -26,6 +27,7 @@ interface Message {
 
 export default function MessagesPage() {
   const { user } = useActiveBusiness();
+  const searchParams = useSearchParams();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [thread, setThread] = useState<Message[]>([]);
   const [activeConv, setActiveConv] = useState<Conversation | null>(null);
@@ -41,6 +43,23 @@ export default function MessagesPage() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  // Deep-link: when arriving with ?otherUserId=&listingType=&listingId=, auto-
+  // open that thread once the conversations list loads. Used by the messages
+  // bell popover so clicking a thread there lands you straight in the chat.
+  useEffect(() => {
+    if (loading) return;
+    const otherUserId = searchParams?.get('otherUserId');
+    const listingType = searchParams?.get('listingType');
+    const listingId = searchParams?.get('listingId');
+    if (!otherUserId || !listingType || !listingId) return;
+    if (activeConv && activeConv.otherUserId === otherUserId && activeConv.listingId === listingId) return;
+    const match = conversations.find(
+      (c) => c.otherUserId === otherUserId && c.listingType === listingType && c.listingId === listingId,
+    );
+    if (match) openThread(match);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, conversations, searchParams]);
 
   const openThread = async (conv: Conversation) => {
     setActiveConv(conv);
