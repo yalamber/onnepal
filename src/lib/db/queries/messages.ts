@@ -93,6 +93,27 @@ export async function getThread(db: Database, userId: string, otherUserId: strin
     .limit(200);
 }
 
+/**
+ * Count of distinct conversation threads with at least one unread message
+ * addressed to me. "Thread" matches getConversations' definition:
+ * (otherUser, listingType, listingId). Used by the mail bell badge.
+ */
+export async function getUnreadThreadCount(db: Database, userId: string): Promise<number> {
+  const rows = await db
+    .select({
+      senderId: messages.senderId,
+      listingType: messages.listingType,
+      listingId: messages.listingId,
+    })
+    .from(messages)
+    .where(and(eq(messages.recipientId, userId), eq(messages.isRead, false)));
+  // De-duplicate on (sender, listing). Cheaper than a SELECT DISTINCT
+  // round-trip because the unread set is typically small.
+  const seen = new Set<string>();
+  for (const r of rows) seen.add(`${r.senderId}:${r.listingType}:${r.listingId}`);
+  return seen.size;
+}
+
 export async function markAsRead(db: Database, userId: string, senderId: string, listingType: string, listingId: string) {
   await db.update(messages)
     .set({ isRead: true })

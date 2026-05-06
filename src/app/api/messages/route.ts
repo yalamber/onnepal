@@ -6,7 +6,9 @@ import { getUserById } from '@/lib/db/queries/users';
 import { getSession } from '@/lib/auth/session';
 import { z } from 'zod';
 import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
-import { createNotification } from '@/lib/db/queries/notifications';
+// Note: messages no longer fire a `message_received` notification — the
+// MessagesBell owns the unread-thread badge for messages directly. Keeping
+// this comment so the next person doesn't re-add the trigger by reflex.
 
 const sendSchema = z.object({
   recipientId: z.string().min(1),
@@ -68,19 +70,6 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await sendMessage(db, { senderId: session.userId, ...validation.data });
-
-    // Fire-and-forget notification to the recipient. createNotification
-    // swallows its own errors so a failed insert can't 500 the message POST.
-    const sender = await getUserById(db, session.userId);
-    const senderName = sender?.displayName || sender?.email?.split('@')[0] || 'Someone';
-    await createNotification(db, {
-      userId: validation.data.recipientId,
-      type: 'message_received',
-      title: `${senderName} messaged you`,
-      body: `About "${validation.data.listingTitle}": ${validation.data.content.slice(0, 120)}${validation.data.content.length > 120 ? '…' : ''}`,
-      linkHref: '/dashboard/messages',
-    });
-
     return NextResponse.json({ success: true, id: result.id }, { status: 201 });
   } catch (error) {
     console.error('Send message error:', error);

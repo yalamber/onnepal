@@ -3,8 +3,11 @@ import { notifications, notificationPreferences, users } from '../schema';
 import type { Database } from '../index';
 import { generateId } from '@/lib/utils';
 
+// `message_received` was removed in favour of the dedicated MessagesBell which
+// owns the unread-thread badge for messages. Existing rows in the DB with
+// type='message_received' keep working (they'll render with the fallback
+// icon/tone in the UI). New events of that kind no longer flow into the bell.
 export type NotificationType =
-  | 'message_received'
   | 'review_received'
   | 'booking_received'
   | 'comment_received'
@@ -14,7 +17,6 @@ export type NotificationType =
   | 'report_received'; // admin-only
 
 export const ALL_NOTIFICATION_TYPES: NotificationType[] = [
-  'message_received',
   'review_received',
   'booking_received',
   'comment_received',
@@ -27,7 +29,6 @@ export const ALL_NOTIFICATION_TYPES: NotificationType[] = [
 // Human-readable labels used in the prefs UI and the popover empty-state
 // fallback when a notification has a type we somehow forgot to label.
 export const NOTIFICATION_LABELS: Record<NotificationType, string> = {
-  message_received: 'New messages',
   review_received: 'New reviews on my businesses',
   booking_received: 'New booking inquiries',
   comment_received: 'Replies and comments',
