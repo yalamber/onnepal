@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getVoiceBySlug } from '@/lib/db/queries/voices';
-import { imageUrl } from '@/components/image-upload';
+import { imageUrl } from '@/lib/image-utils';
 import { SafeMarkdown } from '@/components/safe-markdown';
 
 interface Props { params: Promise<{ slug: string }> }

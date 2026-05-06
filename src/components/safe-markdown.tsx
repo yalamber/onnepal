@@ -16,10 +16,11 @@ const schema = {
 };
 
 export function SafeMarkdown({ content, className }: { content: string; className?: string }) {
+  // react-markdown 10.x removed the `className` prop — wrap in a div instead.
   return (
+    <div className={className || 'prose-sm'}>
     <ReactMarkdown
       rehypePlugins={[[rehypeSanitize, schema]]}
-      className={className || 'prose-sm'}
       components={{
         a: ({ href, children, ...props }) => (
           <a
@@ -47,6 +48,7 @@ export function SafeMarkdown({ content, className }: { content: string; classNam
         hr: () => <hr className="border-gray-100 my-4" />,
         img: () => null,
       }}
-    />
+    >{content}</ReactMarkdown>
+    </div>
   );
 }
