@@ -71,8 +71,8 @@ export default function PostPlacePage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
-              <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
+              <label className="text-xs font-medium text-gray-500 mb-1.5 block">Neighborhood / area <span className="text-gray-400 font-normal">(optional)</span></label>
+              <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Patan, Boudha, Pharping…" className={inputClass} />
             </div>
             <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
           </div>

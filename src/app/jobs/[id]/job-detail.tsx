@@ -10,6 +10,7 @@ import { CommentSection } from '@/components/comment-section';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { OwnerActions } from '@/components/owner-actions';
 import { SaveCancelButtons } from '@/components/form-buttons';
+import { CityField } from '@/components/city-field';
 import { ContactLinks } from '@/components/contact-links';
 import { BookmarkButton } from '@/components/bookmark-button';
 import { ReportButton } from '@/components/report-button';
@@ -17,7 +18,7 @@ import { toast } from 'sonner';
 
 interface Job {
   id: string; userId: string; title: string; company: string; description: string | null; category: string;
-  type: string; location: string | null; isRemote: boolean; salary: string | null;
+  type: string; location: string | null; city: string | null; isRemote: boolean; salary: string | null;
   experience: string | null; applyUrl: string | null; contactEmail: string | null;
   contactPhone: string | null; status: string; createdAt: string; userName: string | null;
 }
@@ -36,7 +37,7 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editForm, setEditForm] = useState({ title: '', company: '', description: '', location: '', salary: '', experience: '', applyUrl: '', contactEmail: '', contactPhone: '' });
+  const [editForm, setEditForm] = useState({ title: '', company: '', description: '', location: '', city: '', salary: '', experience: '', applyUrl: '', contactEmail: '', contactPhone: '' });
 
   const deleteItem = async () => {
     if (!confirm('Delete this job posting?')) return;
@@ -49,7 +50,7 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
     if (!item) return;
     setEditForm({
       title: item.title, company: item.company, description: item.description || '',
-      location: item.location || '', salary: item.salary || '', experience: item.experience || '',
+      location: item.location || '', city: item.city || '', salary: item.salary || '', experience: item.experience || '',
       applyUrl: item.applyUrl || '', contactEmail: item.contactEmail || '', contactPhone: item.contactPhone || '',
     });
     setEditing(true);
@@ -62,7 +63,8 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: editForm.title, company: editForm.company, description: editForm.description || null,
-          location: editForm.location || null, salary: editForm.salary || null, experience: editForm.experience || null,
+          location: editForm.location || null, city: editForm.city || null,
+          salary: editForm.salary || null, experience: editForm.experience || null,
           applyUrl: editForm.applyUrl || null, contactEmail: editForm.contactEmail || null, contactPhone: editForm.contactPhone || null,
         }),
       });
@@ -97,8 +99,9 @@ export default function JobDetailPage({ initialData }: { initialData?: Job | nul
                   <input type="text" value={editForm.salary} onChange={(e) => setEditForm({ ...editForm, salary: e.target.value })}
                     placeholder="Salary" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
                   <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                    placeholder="Location" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
+                    placeholder="Neighborhood / area" className="h-10 px-3 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400" />
                 </div>
+                <CityField value={editForm.city} onChange={(v) => setEditForm({ ...editForm, city: v })} required autofillFromCookie={false} />
                 <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                   placeholder="Description" rows={4}
                   className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400 resize-none" />

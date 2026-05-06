@@ -83,8 +83,8 @@ export default function PostJobPage() {
                   <div className="mb-4">
               <CityField value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
             </div>
-            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
-                  <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kathmandu" className={inputClass} />
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block">Neighborhood / area <span className="text-gray-400 font-normal">(optional)</span></label>
+                  <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Pulchowk, Naxal, Jawalakhel…" className={inputClass} />
                 </div>
                 <div className="flex items-end pb-1">
                   <label className="flex items-center gap-2 cursor-pointer">

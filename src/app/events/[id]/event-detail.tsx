@@ -10,6 +10,7 @@ import { parseImageUrls } from '@/lib/image-utils';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { ImageGallery } from '@/components/image-gallery';
 import { OwnerActions } from '@/components/owner-actions';
+import { CityField } from '@/components/city-field';
 import { ContactLinks } from '@/components/contact-links';
 import { SaveCancelButtons } from '@/components/form-buttons';
 import { CommentSection } from '@/components/comment-section';
@@ -20,7 +21,7 @@ import { toast } from 'sonner';
 interface Event {
   id: string; userId: string; title: string; description: string | null; category: string;
   startDate: string; endDate: string | null; startTime: string | null; endTime: string | null;
-  venue: string | null; location: string | null; ticketPrice: string | null; ticketUrl: string | null;
+  venue: string | null; location: string | null; city: string | null; ticketPrice: string | null; ticketUrl: string | null;
   contactPhone: string | null; contactWhatsapp: string | null; imageUrls: string | null;
   status: string; createdAt: string; userName: string | null;
 }
@@ -48,7 +49,7 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editForm, setEditForm] = useState({ title: '', description: '', category: '', startDate: '', endDate: '', startTime: '', endTime: '', venue: '', location: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '' });
+  const [editForm, setEditForm] = useState({ title: '', description: '', category: '', startDate: '', endDate: '', startTime: '', endTime: '', venue: '', city: '', ticketPrice: '', ticketUrl: '', contactPhone: '', contactWhatsapp: '' });
   const [editImages, setEditImages] = useState<string[]>([]);
 
   const startEdit = () => {
@@ -56,7 +57,7 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
     setEditForm({
       title: item.title, description: item.description || '', category: item.category,
       startDate: item.startDate, endDate: item.endDate || '', startTime: item.startTime || '',
-      endTime: item.endTime || '', venue: item.venue || '', location: item.location || '',
+      endTime: item.endTime || '', venue: item.venue || '', city: item.city || '',
       ticketPrice: item.ticketPrice || '', ticketUrl: item.ticketUrl || '',
       contactPhone: item.contactPhone || '', contactWhatsapp: item.contactWhatsapp || '',
     });
@@ -73,7 +74,7 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
         body: JSON.stringify({
           title: editForm.title, description: editForm.description || null, category: editForm.category,
           startDate: editForm.startDate, endDate: editForm.endDate || null, startTime: editForm.startTime || null,
-          endTime: editForm.endTime || null, venue: editForm.venue || null, location: editForm.location || null,
+          endTime: editForm.endTime || null, venue: editForm.venue || null, city: editForm.city || null,
           ticketPrice: editForm.ticketPrice || null, ticketUrl: editForm.ticketUrl || null,
           contactPhone: editForm.contactPhone || null, contactWhatsapp: editForm.contactWhatsapp || null,
           imageUrls: editImages.length > 0 ? editImages : null,
@@ -119,8 +120,7 @@ export default function EventDetailPage({ initialData }: { initialData?: Event |
                   <input type="text" value={editForm.venue} onChange={(e) => setEditForm({ ...editForm, venue: e.target.value })}
                     placeholder="Venue" className={inputClass} />
                 </div>
-                <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                  placeholder="Location" className={`w-full ${inputClass}`} />
+                <CityField value={editForm.city} onChange={(v) => setEditForm({ ...editForm, city: v })} required autofillFromCookie={false} />
                 <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                   placeholder="Description" rows={3}
                   className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-gray-400 resize-none" />

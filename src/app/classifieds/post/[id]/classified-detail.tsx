@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, MapPin, Tag, Clock, User, ImageOff } from 'lucide-react';
 import { ShareButtons } from '@/components/share-buttons';
+import { CityField } from '@/components/city-field';
 import { Button } from '@/components/ui/button';
 import { getClassifiedCategoryBySlug, CLASSIFIED_CATEGORIES } from '@/lib/classified-categories';
 import { ImageUpload, imageUrl } from '@/components/image-upload';
@@ -29,6 +30,7 @@ interface ClassifiedListing {
   price: string | null;
   category: string;
   location: string | null;
+  city: string | null;
   contactPhone: string | null;
   contactWhatsapp: string | null;
   imageUrls: string | null;
@@ -49,7 +51,7 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
   const [activeTab, setActiveTab] = useState<'details' | 'comments'>('details');
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editForm, setEditForm] = useState({ title: '', description: '', price: '', category: '', location: '', contactPhone: '', contactWhatsapp: '' });
+  const [editForm, setEditForm] = useState({ title: '', description: '', price: '', category: '', location: '', city: '', contactPhone: '', contactWhatsapp: '' });
   const [editImages, setEditImages] = useState<string[]>([]);
 
   const fetchListing = async () => {
@@ -68,7 +70,7 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
     if (!listing) return;
     setEditForm({
       title: listing.title, description: listing.description || '', price: listing.price || '',
-      category: listing.category, location: listing.location || '',
+      category: listing.category, location: listing.location || '', city: listing.city || '',
       contactPhone: listing.contactPhone || '', contactWhatsapp: listing.contactWhatsapp || '',
     });
     setEditImages(parseImageUrls(listing.imageUrls));
@@ -84,7 +86,8 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
         body: JSON.stringify({
           title: editForm.title.trim(), description: editForm.description.trim() || null,
           price: editForm.price.trim() || null, category: editForm.category,
-          location: editForm.location.trim() || null, contactPhone: editForm.contactPhone.trim() || null,
+          location: editForm.location.trim() || null, city: editForm.city || null,
+          contactPhone: editForm.contactPhone.trim() || null,
           contactWhatsapp: editForm.contactWhatsapp.trim() || null,
           imageUrls: editImages.length > 0 ? editImages : null,
         }),
@@ -156,8 +159,9 @@ export default function ClassifiedDetailPage({ initialData }: { initialData?: Cl
                 <input type="text" value={editForm.price} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
                   placeholder="Price" className={inputClass} />
                 <input type="text" value={editForm.location} onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                  placeholder="Location" className={inputClass} />
+                  placeholder="Neighborhood / area" className={inputClass} />
               </div>
+              <CityField value={editForm.city} onChange={(v) => setEditForm({ ...editForm, city: v })} required autofillFromCookie={false} />
               <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className={inputClass}>
                 {CLASSIFIED_CATEGORIES.map((parent) => (
                   <optgroup key={parent.slug} label={parent.name}>
