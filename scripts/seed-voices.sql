@@ -179,3 +179,22 @@ I went in November. The fare was under Rs 100. The seats were padded. The conduc
 Janakpur deserves more visitors anyway. The Janaki Mandir. The kunds. Mithila painting in the streets. Go see it. And take the train at least once while you are there.',
  'Janakpur', 'Guide', 'published', 0,
  strftime('%s', 'now', '-18 days'), strftime('%s', 'now', '-18 days'), strftime('%s', 'now', '-18 days'));
+
+-- Cover images live in R2 under `seed/voices/<slug>.jpg`. We store just the
+-- key — the `imageUrl(...)` helper prepends `https://images.onnepal.com/`
+-- at render time. Photos sourced from Unsplash, downloaded once and uploaded
+-- to R2 so the site doesn't depend on a third-party CDN at runtime.
+--
+-- (Source: see scripts/upload-voice-covers.sh for the original Unsplash IDs
+-- and the upload command used.)
+--
+-- Separate UPDATE so re-applying the seed refreshes existing rows
+-- (INSERT OR IGNORE alone wouldn't).
+UPDATE voices SET cover_image_url = 'seed/voices/patan-after-the-rain.jpg'     WHERE id = 'seed-v1';
+UPDATE voices SET cover_image_url = 'seed/voices/twelve-momo-joints.jpg'       WHERE id = 'seed-v2';
+UPDATE voices SET cover_image_url = 'seed/voices/champadevi-half-day-hike.jpg' WHERE id = 'seed-v3';
+UPDATE voices SET cover_image_url = 'seed/voices/pokhara-lakeside-mornings.jpg' WHERE id = 'seed-v4';
+UPDATE voices SET cover_image_url = 'seed/voices/indra-jatra-walking-tour.jpg'  WHERE id = 'seed-v5';
+UPDATE voices SET cover_image_url = 'seed/voices/bhaktapur-juju-dhau.jpg'       WHERE id = 'seed-v6';
+UPDATE voices SET cover_image_url = 'seed/voices/why-i-stayed.jpg'              WHERE id = 'seed-v7';
+UPDATE voices SET cover_image_url = 'seed/voices/janakpur-by-train.jpg'         WHERE id = 'seed-v8';
