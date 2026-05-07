@@ -25,6 +25,8 @@ export interface Voice {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  coverCreditName: string | null;
+  coverCreditUrl: string | null;
   city: string | null;
   category: string | null;
   status: 'draft' | 'pending' | 'published' | 'rejected';
@@ -118,6 +120,8 @@ export async function getVoiceBySlug(db: Database, slug: string): Promise<Voice 
       excerpt: voices.excerpt,
       content: voices.content,
       coverImageUrl: voices.coverImageUrl,
+      coverCreditName: voices.coverCreditName,
+      coverCreditUrl: voices.coverCreditUrl,
       city: voices.city,
       category: voices.category,
       status: voices.status,

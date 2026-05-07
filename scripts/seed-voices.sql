@@ -190,11 +190,50 @@ Janakpur deserves more visitors anyway. The Janaki Mandir. The kunds. Mithila pa
 --
 -- Separate UPDATE so re-applying the seed refreshes existing rows
 -- (INSERT OR IGNORE alone wouldn't).
-UPDATE voices SET cover_image_url = 'seed/voices/patan-after-the-rain.jpg'     WHERE id = 'seed-v1';
-UPDATE voices SET cover_image_url = 'seed/voices/twelve-momo-joints.jpg'       WHERE id = 'seed-v2';
-UPDATE voices SET cover_image_url = 'seed/voices/champadevi-half-day-hike.jpg' WHERE id = 'seed-v3';
-UPDATE voices SET cover_image_url = 'seed/voices/pokhara-lakeside-mornings.jpg' WHERE id = 'seed-v4';
-UPDATE voices SET cover_image_url = 'seed/voices/indra-jatra-walking-tour.jpg'  WHERE id = 'seed-v5';
-UPDATE voices SET cover_image_url = 'seed/voices/bhaktapur-juju-dhau.jpg'       WHERE id = 'seed-v6';
-UPDATE voices SET cover_image_url = 'seed/voices/why-i-stayed.jpg'              WHERE id = 'seed-v7';
-UPDATE voices SET cover_image_url = 'seed/voices/janakpur-by-train.jpg'         WHERE id = 'seed-v8';
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/patan-after-the-rain.jpg',
+  cover_credit_name = 'Jochen van Wylick',
+  cover_credit_url  = 'https://unsplash.com/@jochenvw?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v1';
+
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/twelve-momo-joints.jpg',
+  cover_credit_name = 'Abhishek Sanwa Limbu',
+  cover_credit_url  = 'https://unsplash.com/@abhishek_sanwa?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v2';
+
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/champadevi-half-day-hike.jpg',
+  cover_credit_name = 'Ajmal K P',
+  cover_credit_url  = 'https://unsplash.com/@ajmalkp?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v3';
+
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/pokhara-lakeside-mornings.jpg',
+  cover_credit_name = 'Shreyashka Maharjan',
+  cover_credit_url  = 'https://unsplash.com/@shreyashka?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v4';
+
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/indra-jatra-walking-tour.jpg',
+  cover_credit_name = 'BLOG REGION',
+  cover_credit_url  = 'https://unsplash.com/@blog_region?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v5';
+
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/bhaktapur-juju-dhau.jpg',
+  cover_credit_name = 'Pravin Suthar',
+  cover_credit_url  = 'https://unsplash.com/@iampravinn?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v6';
+
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/why-i-stayed.jpg',
+  cover_credit_name = 'Avel Chuklanov',
+  cover_credit_url  = 'https://unsplash.com/@chuklanov?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v7';
+
+UPDATE voices SET
+  cover_image_url   = 'seed/voices/janakpur-by-train.jpg',
+  cover_credit_name = 'Arun Prakash',
+  cover_credit_url  = 'https://unsplash.com/@its_arunprakash?utm_source=onnepal&utm_medium=referral'
+WHERE id = 'seed-v8';
