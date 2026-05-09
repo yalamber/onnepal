@@ -74,7 +74,7 @@ export default function DirectoryPage() {
   return (
     <main className="min-h-screen">
       <section className="pt-12 sm:pt-16 pb-6">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="page-hero-title">Business <em>directory</em></h1>
           <p className="mt-2 text-gray-400">Find and connect with businesses across Nepal.</p>
           <div className="mt-6 max-w-md relative">
@@ -91,10 +91,10 @@ export default function DirectoryPage() {
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
+      <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
       <section className="py-8">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-10">
             {/* Sidebar */}
             <aside className="hidden lg:block w-52 flex-shrink-0">
