@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getVoiceBySlug } from '@/lib/db/queries/voices';
-import { imageUrl } from '@/components/image-upload';
+import { imageUrl } from '@/lib/image-utils';
 import { SafeMarkdown } from '@/components/safe-markdown';
 
 interface Props { params: Promise<{ slug: string }> }
@@ -56,7 +56,38 @@ export default async function VoicePage({ params }: Props) {
       {cover && (
         <div className="max-w-4xl mx-auto px-4 sm:px-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={cover} alt="" className="w-full rounded-[var(--r-lg)] mb-12" />
+          <img src={cover} alt="" className="w-full rounded-[var(--r-lg)]" />
+          {voice.coverCreditName && (
+            <p className="t-meta mt-2 mb-12 text-[var(--ink-500)]">
+              Photo by{' '}
+              {voice.coverCreditUrl ? (
+                <a
+                  href={voice.coverCreditUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 hover:text-[var(--ink-900)] transition-colors"
+                >
+                  {voice.coverCreditName}
+                </a>
+              ) : (
+                <span>{voice.coverCreditName}</span>
+              )}
+              {voice.coverCreditUrl?.includes('unsplash.com') && (
+                <>
+                  {' '}on{' '}
+                  <a
+                    href="https://unsplash.com/?utm_source=onnepal&utm_medium=referral"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-4 hover:text-[var(--ink-900)] transition-colors"
+                  >
+                    Unsplash
+                  </a>
+                </>
+              )}
+            </p>
+          )}
+          {!voice.coverCreditName && <div className="mb-12" />}
         </div>
       )}
 

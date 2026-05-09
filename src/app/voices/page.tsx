@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getPublishedVoices } from '@/lib/db/queries/voices';
-import { imageUrl } from '@/components/image-upload';
+import { imageUrl } from '@/lib/image-utils';
 
 export const metadata: Metadata = {
   title: 'Voices — OnNepal',

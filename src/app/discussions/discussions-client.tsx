@@ -60,7 +60,7 @@ export default function DiscussionsClient({ initialData, initialCategory }: { in
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="page-hero-title">Community <em>chatter</em></h1>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { SectionHead } from '@/components/section-head';
 import type { VoiceListItem } from '@/lib/db/queries/voices';
-import { imageUrl } from '@/components/image-upload';
+import { imageUrl } from '@/lib/image-utils';
 
 const TONE_BG = ['#d8b88a', '#c97a4f', '#9aafa3', '#6a8a9c'];
 const TONE_PILL = ['saffron', 'crimson', 'evergreen', 'teal'] as const;

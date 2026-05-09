@@ -2,12 +2,10 @@
 
 import { useState, useRef } from 'react';
 import { Upload, X, Loader2, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-
-export function imageUrl(key: string | null | undefined): string | null {
-  if (!key) return null;
-  if (key.startsWith('http')) return key;
-  return `https://images.onnepal.com/${key}`;
-}
+// `imageUrl` lives in @/lib/image-utils so it stays a plain (non-client) helper
+// callable from server components. Re-exported here so existing
+// `import { imageUrl } from '@/components/image-upload'` callers keep working.
+export { imageUrl } from '@/lib/image-utils';
 
 interface ImageUploadProps {
   value: string[];

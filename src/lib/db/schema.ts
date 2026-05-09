@@ -588,6 +588,12 @@ export const voices = sqliteTable('voices', {
   excerpt: text('excerpt'),
   content: text('content').notNull(), // markdown
   coverImageUrl: text('cover_image_url'),
+  // Optional photographer credit. We render "Photo by <name> on Unsplash"
+  // (or whatever source) on the voice detail page when both fields are set.
+  // The URL should already include any utm_source / utm_medium params the
+  // source platform requires (Unsplash asks for ?utm_source=<app>&utm_medium=referral).
+  coverCreditName: text('cover_credit_name'),
+  coverCreditUrl: text('cover_credit_url'),
   city: text('city'),
   category: text('category'), // e.g. food, neighborhood, opinion, guide
   status: text('status', { enum: ['draft', 'pending', 'published', 'rejected'] }).notNull().default('pending'),

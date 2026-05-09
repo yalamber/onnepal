@@ -106,7 +106,7 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
     <main className="min-h-screen">
       {/* Header */}
       <section className="pt-12 sm:pt-16 pb-6">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between">
             <div>
               <h1 className="page-hero-title"><em>Classifieds</em></h1>
@@ -127,11 +127,11 @@ export default function ClassifiedsClient({ initialData }: { initialData: Classi
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
+      <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-8"><div className="h-px bg-gray-100" /></div>
 
       {/* Sidebar + Content */}
       <section className="py-8">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-8">
           <CityScopeBanner />
           <div className="flex gap-10">
             {/* Sidebar — classifieds has subcategories so we keep custom UI */}
