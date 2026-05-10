@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, MapPin } from 'lucide-react';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import {
@@ -13,15 +12,11 @@ import {
 } from '@/lib/db/queries/homepage';
 import { getPublishedVoices, type VoiceListItem } from '@/lib/db/queries/voices';
 import { cityFromSlug, slugFromCity } from '@/lib/helpers/city';
+import { NEPAL_CITIES } from '@/lib/nepal-cities';
 import { HeroRail } from '@/components/home/hero-rail';
 import { CategoryGrid } from '@/components/home/category-grid';
 
 interface Props { params: Promise<{ slug: string }> }
-
-const KNOWN_CITIES = [
-  'Kathmandu', 'Lalitpur', 'Bhaktapur', 'Pokhara', 'Chitwan',
-  'Biratnagar', 'Butwal', 'Janakpur', 'Dharan', 'Hetauda',
-];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -44,8 +39,16 @@ function fmt(n: number) { return n.toLocaleString('en-US'); }
 
 export default async function CityPage({ params }: Props) {
   const { slug } = await params;
-  const city = cityFromSlug(slug);
-  if (!city || city.length < 2) notFound();
+  // Resolve slug → canonical city name via NEPAL_CITIES (our authoritative
+  // 80-city list). For unknown slugs we render an inline "city not tracked"
+  // landing page that points users to /cities — we explicitly DON'T call
+  // notFound() here. vinext's translation of Next's NEXT_NOT_FOUND digest
+  // is broken at the moment: a thrown notFound bubbles up to the worker as
+  // a 1101 exception → 500 instead of a graceful 404 page. Returning JSX
+  // from this branch keeps the response a clean 200 with usable copy.
+  const known = NEPAL_CITIES.find((c) => c.slug === slug);
+  if (!known) return <UnknownCity slug={slug} />;
+  const city = known.name;
 
   const db = getDb(getD1Database());
   const [stats, activity, voices] = await Promise.all([
@@ -54,12 +57,9 @@ export default async function CityPage({ params }: Props) {
     getPublishedVoices(db, { city, limit: 3 }).catch((e) => { console.error('[city] voices failed', e); return [] as VoiceListItem[]; }),
   ]);
 
-  // 404 guard: only treat known cities OR cities with any content as valid.
-  const totalContent = stats.listings + stats.byCategory.directory + voices.length;
-  const isKnownCity = KNOWN_CITIES.some((k) => k.toLowerCase() === city.toLowerCase());
-  if (totalContent === 0 && !isKnownCity) {
-    notFound();
-  }
+  // Known cities always render — even with zero content they get an empty
+  // hero + category grid so users can post the first listing. Cities not in
+  // NEPAL_CITIES already 404'd above.
 
   const wire = activity.map((a) => ({ ...a, time: relativeTime(a.createdAt) }));
 
@@ -185,3 +185,34 @@ function Stat({ n, label }: { n: string; label: string }) {
 
 // Suppress lint: slugFromCity is exported for type-check but used at link build sites
 void slugFromCity;
+
+/**
+ * Rendered when someone hits /city/<slug> for a slug we don't recognise.
+ * Returns 200 (not 404) deliberately — the URL was reachable, the city just
+ * isn't in our list yet. Friendlier than a 404 and avoids the vinext
+ * notFound() bug.
+ */
+function UnknownCity({ slug }: { slug: string }) {
+  const guess = cityFromSlug(slug);
+  return (
+    <main className="min-h-[70vh] flex items-center justify-center px-4 py-16">
+      <div className="text-center max-w-lg">
+        <div className="t-eyebrow justify-center mb-4">
+          <MapPin className="h-3.5 w-3.5" />
+          <span>Not in our list yet</span>
+        </div>
+        <h1 className="t-display" style={{ fontSize: 44, lineHeight: 1.05 }}>
+          We don&rsquo;t track <em>{guess || 'that city'}</em> yet.
+        </h1>
+        <p className="text-[var(--ink-500)] mt-4">
+          OnNepal currently covers 80+ cities and towns across Nepal.
+          Pick one from the full list, or browse Nepal-wide.
+        </p>
+        <div className="flex gap-3 justify-center mt-8">
+          <Link href="/cities" className="btn btn-primary">See all cities</Link>
+          <Link href="/" className="btn btn-ghost">Browse all of Nepal</Link>
+        </div>
+      </div>
+    </main>
+  );
+}
