@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getBusinessBySubdomain } from '@/lib/db/queries/businesses';
@@ -53,7 +53,10 @@ export default async function SitePage({
   const db = getDb(d1);
 
   const business = await getBusinessBySubdomain(db, subdomain);
-  if (!business || !business.isPublished) notFound();
+  // Inline empty state instead of notFound() — vinext doesn't unwrap the
+  // NEXT_NOT_FOUND digest cleanly, the throw bubbles up as a Cloudflare 1101
+  // exception → 500. Returning JSX keeps it a clean 200 with helpful copy.
+  if (!business || !business.isPublished) return <SubdomainNotFound subdomain={subdomain} />;
 
   const [links, announcements, products, ctas, gallery, reviews, menuItems, offers, teamMembers, faqs, avgRating] = await Promise.all([
     getSocialLinks(db, business.id),
@@ -123,5 +126,26 @@ export default async function SitePage({
       averageRating={avgRating}
     />
     </>
+  );
+}
+
+function SubdomainNotFound({ subdomain }: { subdomain: string }) {
+  return (
+    <main className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+      <div className="text-center max-w-lg">
+        <p className="t-eyebrow justify-center mb-4"><span className="dot" /> Site not found</p>
+        <h1 className="t-display" style={{ fontSize: 44, lineHeight: 1.05 }}>
+          <em>{subdomain}.onnepal.com</em><br />isn&rsquo;t a business yet.
+        </h1>
+        <p className="text-[var(--ink-500)] mt-4">
+          The page you&rsquo;re looking for hasn&rsquo;t been claimed, or it&rsquo;s been unpublished.
+          Want this subdomain? Sign up and claim it.
+        </p>
+        <div className="flex gap-3 justify-center mt-8">
+          <Link href="https://onnepal.com/signup" className="btn btn-primary">Claim {subdomain}</Link>
+          <Link href="https://onnepal.com/directory" className="btn btn-ghost">Browse directory</Link>
+        </div>
+      </div>
+    </main>
   );
 }

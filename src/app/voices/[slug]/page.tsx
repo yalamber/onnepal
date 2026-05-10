@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
@@ -33,8 +32,10 @@ export default async function VoicePage({ params }: Props) {
   } catch (e) {
     console.error('[/voices/[slug]] failed', e);
   }
-  if (!voice) notFound();
-  if (voice.status !== 'published') notFound();
+  // Inline empty-state instead of notFound() — the latter currently bubbles
+  // up to the worker as a 1101 exception (vinext doesn't unwrap NEXT_NOT_FOUND
+  // cleanly). 200-with-friendly-page is wrong on status code but right on UX.
+  if (!voice || voice.status !== 'published') return <VoiceNotFound />;
 
   const cover = imageUrl(voice.coverImageUrl);
 
@@ -98,6 +99,26 @@ export default async function VoicePage({ params }: Props) {
         />
         <div className="mt-12 pt-8 border-t border-[var(--ink-200)] flex items-center justify-between">
           <Link href="/voices" className="t-meta text-[var(--accent)]">← All voices</Link>
+          <Link href="/voices/post/new" className="btn btn-ghost">Write your own</Link>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function VoiceNotFound() {
+  return (
+    <main className="min-h-[70vh] flex items-center justify-center px-4 py-16">
+      <div className="text-center max-w-lg">
+        <p className="t-eyebrow justify-center mb-4"><span className="dot" /> Voice not found</p>
+        <h1 className="t-display" style={{ fontSize: 44, lineHeight: 1.05 }}>
+          That voice <em>has moved or doesn&rsquo;t exist.</em>
+        </h1>
+        <p className="text-[var(--ink-500)] mt-4">
+          It may have been unpublished, or the link is from an older draft.
+        </p>
+        <div className="flex gap-3 justify-center mt-8">
+          <Link href="/voices" className="btn btn-primary">Browse all voices</Link>
           <Link href="/voices/post/new" className="btn btn-ghost">Write your own</Link>
         </div>
       </div>
