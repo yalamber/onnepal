@@ -70,6 +70,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/*
+         * Favicons are also declared on `metadata.icons` below, but vinext's
+         * Next-metadata translation only emits the first `icon` entry as a
+         * `<link rel="icon">`. Declaring them explicitly here guarantees
+         * every browser sees what it expects:
+         *   - SVG: modern browsers; sharp at any DPI
+         *   - .ico: legacy IE/Edge, Windows pinned-taskbar
+         *   - apple-touch: iOS home-screen icon
+         */}
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
