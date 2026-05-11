@@ -29,7 +29,12 @@ export const metadata: Metadata = {
       { url: '/favicon.ico', sizes: '16x16 32x32 48x48' },
     ],
     shortcut: '/favicon.ico',
-    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    // Must be an array. vinext's metadata processor iterates `apple` with
+    // `for...of` whenever it isn't a string or URL, so a single object form
+    // (which Next.js technically allows) throws "apples is not iterable"
+    // during RSC render and the whole page falls through to error.tsx.
+    // See dist/server/index.js around the `const apples = ...` branch.
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   metadataBase: new URL('https://onnepal.com'),
   openGraph: {
