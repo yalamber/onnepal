@@ -39,8 +39,52 @@ export default async function VoicePage({ params }: Props) {
 
   const cover = imageUrl(voice.coverImageUrl);
 
+  // Article JSON-LD so search engines and AI agents can extract a clean
+  // citation (title, author, date, image, body). Most AI search products
+  // (Perplexity, ChatGPT browsing, Google AI Overviews) prefer Article
+  // schema over scraping the rendered DOM.
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: voice.title,
+    description: voice.excerpt ?? voice.content.slice(0, 200),
+    url: `https://onnepal.com/voices/${voice.slug}`,
+    mainEntityOfPage: `https://onnepal.com/voices/${voice.slug}`,
+    datePublished: voice.publishedAt ? new Date(voice.publishedAt).toISOString() : undefined,
+    dateModified: new Date(voice.updatedAt).toISOString(),
+    author: {
+      '@type': 'Person',
+      name: voice.authorName || voice.authorUsername || 'Anonymous',
+      ...(voice.authorUsername && { url: `https://onnepal.com/profile/${voice.authorUsername}` }),
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'OnNepal',
+      url: 'https://onnepal.com',
+      logo: { '@type': 'ImageObject', url: 'https://onnepal.com/icon.svg' },
+    },
+    ...(cover && {
+      image: {
+        '@type': 'ImageObject',
+        url: cover,
+        ...(voice.coverCreditName && {
+          creditText: voice.coverCreditName,
+          creator: { '@type': 'Person', name: voice.coverCreditName, ...(voice.coverCreditUrl && { url: voice.coverCreditUrl }) },
+        }),
+      },
+    }),
+    ...(voice.category && { articleSection: voice.category }),
+    ...(voice.city && { contentLocation: { '@type': 'Place', name: voice.city, addressCountry: 'NP' } }),
+    inLanguage: 'en',
+    isAccessibleForFree: true,
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <article className="page-hero">
         <div className="t-eyebrow">
           <span className="dot" /> {voice.category ? voice.category : 'Voice'}
