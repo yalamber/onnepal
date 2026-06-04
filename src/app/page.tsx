@@ -2,7 +2,9 @@ import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getHomepageStats, getRecentActivity, type HomepageStats, type ActivityItem } from '@/lib/db/queries/homepage';
 import { getPublishedVoices, type VoiceListItem } from '@/lib/db/queries/voices';
+import { getTodayDigest, type TodayDigest } from '@/lib/db/queries/today';
 import { Hero } from '@/components/home/hero';
+import { TodayCard } from '@/components/home/today-card';
 import { CategoryGrid } from '@/components/home/category-grid';
 import { Featured } from '@/components/home/featured';
 import { Neighborhoods } from '@/components/home/neighborhoods';
@@ -35,6 +37,11 @@ export default async function HomePage() {
     limit: 3,
   }).catch((e) => { console.error('[home] getPublishedVoices(recent) failed', e); return [] as VoiceListItem[]; });
 
+  // "Today in Nepal" daily digest. Global scope (no city) to match the rest
+  // of the homepage, which doesn't read the city cookie server-side.
+  const today: TodayDigest | null = await getTodayDigest(db, { now: new Date() })
+    .catch((e) => { console.error('[home] getTodayDigest failed', e); return null; });
+
   return (
     <main>
       <a
@@ -46,6 +53,7 @@ export default async function HomePage() {
       <div id="main-content">
         <CityDetectPrompt />
         <Hero stats={stats} activity={activity} />
+        {today && <TodayCard digest={today} />}
         <CategoryGrid counts={stats.byCategory} />
         <Featured voices={featuredVoices} />
         <Neighborhoods />
