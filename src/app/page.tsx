@@ -3,8 +3,12 @@ import { getD1Database } from '@/lib/cloudflare';
 import { getHomepageStats, getRecentActivity, type HomepageStats, type ActivityItem } from '@/lib/db/queries/homepage';
 import { getPublishedVoices, type VoiceListItem } from '@/lib/db/queries/voices';
 import { getTodayDigest, type TodayDigest } from '@/lib/db/queries/today';
+import { getNews, getNumbers, type NewsItem, type NumbersSnapshot } from '@/lib/db/queries/daily';
+import { bsToday } from '@/lib/bs-date';
 import { Hero } from '@/components/home/hero';
 import { TodayCard } from '@/components/home/today-card';
+import { NepalNumbers } from '@/components/home/nepal-numbers';
+import { NewsDigest } from '@/components/home/news-digest';
 import { CategoryGrid } from '@/components/home/category-grid';
 import { Featured } from '@/components/home/featured';
 import { Neighborhoods } from '@/components/home/neighborhoods';
@@ -39,8 +43,18 @@ export default async function HomePage() {
 
   // "Today in Nepal" daily digest. Global scope (no city) to match the rest
   // of the homepage, which doesn't read the city cookie server-side.
-  const today: TodayDigest | null = await getTodayDigest(db, { now: new Date() })
-    .catch((e) => { console.error('[home] getTodayDigest failed', e); return null; });
+  const now = new Date();
+  const [today, numbersSnap, newsItems] = await Promise.all([
+    getTodayDigest(db, { now })
+      .catch((e) => { console.error('[home] getTodayDigest failed', e); return null as TodayDigest | null; }),
+    // Cached snapshot only — never block homepage render on upstream APIs.
+    // The cron (and the /api SWR paths) keep these fresh.
+    getNumbers(db)
+      .catch((e) => { console.error('[home] getNumbers failed', e); return null as NumbersSnapshot | null; }),
+    getNews(db, { limit: 12 })
+      .catch((e) => { console.error('[home] getNews failed', e); return [] as NewsItem[]; }),
+  ]);
+  const bs = bsToday(now);
 
   return (
     <main>
@@ -53,7 +67,13 @@ export default async function HomePage() {
       <div id="main-content">
         <CityDetectPrompt />
         <Hero stats={stats} activity={activity} />
-        {today && <TodayCard digest={today} />}
+        {today && (
+          <TodayCard
+            digest={today}
+            numbersSlot={<NepalNumbers snapshot={numbersSnap} bs={bs} />}
+            newsSlot={<NewsDigest items={newsItems} />}
+          />
+        )}
         <CategoryGrid counts={stats.byCategory} />
         <Featured voices={featuredVoices} />
         <Neighborhoods />

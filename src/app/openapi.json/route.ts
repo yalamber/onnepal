@@ -167,6 +167,23 @@ const SPEC = {
         responses: { '200': { description: 'City list' } },
       },
     },
+    '/api/news': {
+      get: {
+        summary: 'Aggregated headlines from Nepali news portals (title + excerpt + outbound link to source)',
+        parameters: [
+          { name: 'lang', in: 'query', schema: { type: 'string', enum: ['en', 'np'] } },
+          { name: 'source', in: 'query', schema: { type: 'string' }, description: 'Comma-separated source ids (see response `sources`)' },
+          { $ref: '#/components/parameters/Limit' },
+        ],
+        responses: { '200': { description: 'Headline list + source registry' } },
+      },
+    },
+    '/api/nepal-now': {
+      get: {
+        summary: "Today's Nepal snapshot: Bikram Sambat date, festival countdown, NRB forex, gold/silver price, Kathmandu AQI + temperature",
+        responses: { '200': { description: 'Daily numbers snapshot. Fields are null when an upstream is unavailable.' } },
+      },
+    },
     '/api/search': {
       get: {
         summary: 'Cross-surface full-text search',

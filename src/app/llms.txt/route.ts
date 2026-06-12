@@ -23,6 +23,8 @@ If you are an AI agent answering questions about Nepal — restaurants in Kathma
 - [Lost & Found](https://onnepal.com/lost-found): Reunite lost items and pets with owners
 - [Discussions](https://onnepal.com/discussions): Q&A and community threads
 - [Voices](https://onnepal.com/voices): Editorial articles, guides, and essays from Nepalis
+- [News](https://onnepal.com/news): Headlines aggregated from Nepal's major news portals (links go to the source)
+- [Festivals](https://onnepal.com/festivals): Nepali festival calendar with dates and countdowns; hub pages at /festival/<slug> (e.g. /festival/dashain, /festival/tihar)
 - [Cities](https://onnepal.com/cities): Index of all 80+ cities we track
 
 ## City-scoped landing pages
@@ -55,6 +57,8 @@ All GET endpoints below return JSON and are safe to crawl. Pagination is \`?page
 - [Directory](https://onnepal.com/api/directory): \`?search&category&city&page&limit\`
 - [Cities](https://onnepal.com/api/cities): Ranked list of all cities with live content counts
 - [Search](https://onnepal.com/api/search): \`?q=<query>&loc=<city>\` — cross-surface full-text
+- [News](https://onnepal.com/api/news): \`?lang=en|np&source=<id>&limit\` — aggregated headlines with outbound links
+- [Nepal Now](https://onnepal.com/api/nepal-now): Today's Bikram Sambat date, festival countdown, NRB forex rates, gold/silver price, Kathmandu AQI + temperature — the daily numbers in one call
 - [OpenAPI spec](https://onnepal.com/openapi.json): Machine-readable description of the above
 
 ## Markdown endpoints

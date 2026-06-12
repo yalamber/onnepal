@@ -104,4 +104,28 @@ export default {
       throw err;
     }
   },
+
+  // Cron (see wrangler.jsonc `triggers.crons`): refresh the daily-hub caches
+  // (news RSS + forex/gold/AQI snapshot). Rather than importing the app's
+  // data layer here (worker entry is bundled separately from the Next app,
+  // so `@/` aliases don't resolve), we invoke our own API route in-process
+  // with a synthetic request. The route authenticates via the JWT_SECRET
+  // header so external callers can't trigger fetch storms.
+  async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext): Promise<void> {
+    const secret = (env as unknown as { JWT_SECRET?: string }).JWT_SECRET;
+    if (!secret) {
+      console.error('[worker] scheduled: JWT_SECRET not bound, skipping refresh');
+      return;
+    }
+    const request = new Request('https://onnepal.com/api/cron/refresh', {
+      method: 'POST',
+      headers: { 'x-cron-secret': secret },
+    });
+    try {
+      const res = await handler.fetch(request, env, ctx);
+      console.log('[worker] scheduled refresh →', res.status, await res.text());
+    } catch (err) {
+      console.error('[worker] scheduled refresh failed', err);
+    }
+  },
 };

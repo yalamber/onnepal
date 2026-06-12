@@ -11,7 +11,17 @@ import { countdownLabel } from '@/lib/festivals';
  * Degrades gracefully: any tile whose data is missing is simply omitted.
  * If literally nothing is available we render nothing at all.
  */
-export function TodayCard({ digest }: { digest: TodayDigest }) {
+export function TodayCard({
+  digest,
+  numbersSlot,
+  newsSlot,
+}: {
+  digest: TodayDigest;
+  /** Optional "Nepal Numbers" strip rendered under the band header. */
+  numbersSlot?: React.ReactNode;
+  /** Optional "From the press" digest rendered after the tiles. */
+  newsSlot?: React.ReactNode;
+}) {
   const { festival, voice, nextEvent, lostItem, newListings24h, hotCategory, dateLabel, city } = digest;
 
   const tiles: React.ReactNode[] = [];
@@ -87,8 +97,8 @@ export function TodayCard({ digest }: { digest: TodayDigest }) {
     );
   }
 
-  // If there's no festival AND no tiles, render nothing.
-  if (!festival && tiles.length === 0) return null;
+  // If there's nothing at all to show, render nothing.
+  if (!festival && tiles.length === 0 && !numbersSlot && !newsSlot) return null;
 
   return (
     <section className="today-band">
@@ -100,8 +110,10 @@ export function TodayCard({ digest }: { digest: TodayDigest }) {
           <span className="today-refresh">Refreshes daily</span>
         </header>
 
+        {numbersSlot}
+
         {festival && (
-          <Link href={`/events?search=${encodeURIComponent(festival.festival.name)}`} className="today-festival">
+          <Link href={`/festival/${festival.festival.slug}`} className="today-festival">
             <span className="today-festival-emoji" aria-hidden>{festival.festival.emoji}</span>
             <div className="today-festival-body">
               <span className={`pill ${festival.isOngoing ? 'pill-crimson' : 'pill-saffron'}`}>
@@ -112,12 +124,14 @@ export function TodayCard({ digest }: { digest: TodayDigest }) {
                 <span className="today-festival-deva">{festival.festival.nepaliName}</span>
               </h2>
               <p className="today-festival-blurb">{festival.festival.blurb}</p>
-              <span className="today-tile-meta">Find events →</span>
+              <span className="today-tile-meta">About the festival →</span>
             </div>
           </Link>
         )}
 
         {tiles.length > 0 && <div className="today-grid">{tiles}</div>}
+
+        {newsSlot}
       </div>
     </section>
   );

@@ -398,6 +398,64 @@ html { scroll-behavior: smooth; }
   font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-300);
 }
 
+/* Nepal Numbers strip */
+.nn-strip {
+  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 20px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.nn-chip {
+  flex: 0 0 auto; display: flex; flex-direction: column; gap: 2px;
+  background: #fff; border: var(--hairline); border-radius: var(--r-sm);
+  padding: 8px 14px; min-width: 92px;
+}
+.nn-chip-label {
+  font-family: var(--font-onn-mono), ui-monospace, Menlo, monospace;
+  font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500);
+  white-space: nowrap;
+}
+.nn-chip-value { font-size: 14px; font-weight: 600; color: var(--ink-900); white-space: nowrap; }
+.nn-chip-date { background: var(--saffron-100); border-color: transparent; }
+.nn-aqi-good .nn-chip-value { color: var(--evergreen-700); }
+.nn-aqi-moderate .nn-chip-value { color: var(--saffron-600); }
+.nn-aqi-bad .nn-chip-value { color: var(--crimson-700); }
+
+/* From the press */
+.press { margin-top: 28px; padding-top: 24px; border-top: var(--hairline); }
+.press-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.press-grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 4px 24px;
+}
+.press-item a {
+  display: block; padding: 12px 10px; margin: 0 -10px; border-radius: var(--r-sm);
+  text-decoration: none; color: inherit;
+  transition: background var(--dur-1, .18s) var(--ease, ease);
+}
+.press-item a:hover { background: rgba(0,0,0,0.035); }
+.press-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.press-source {
+  font-family: var(--font-onn-mono), ui-monospace, Menlo, monospace;
+  font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent);
+  font-weight: 500;
+}
+.press-title { font-size: 15px; font-weight: 600; line-height: 1.35; margin: 0; }
+.press-excerpt {
+  font-size: 13px; color: var(--ink-500); line-height: 1.45; margin: 4px 0 0;
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* /news list page */
+.news-list { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+.news-row { border-bottom: var(--hairline); }
+.news-row a {
+  display: block; padding: 18px 12px; margin: 0 -12px;
+  text-decoration: none; color: inherit; border-radius: var(--r-sm);
+  transition: background var(--dur-1, .18s) var(--ease, ease);
+}
+.news-row a:hover { background: rgba(0,0,0,0.03); }
+.news-row-title { font-size: 17px; font-weight: 600; line-height: 1.35; margin: 0; }
+
 /* Festival hero tile */
 .today-festival {
   display: flex; gap: 24px; align-items: center;
