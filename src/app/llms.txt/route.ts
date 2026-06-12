@@ -25,7 +25,8 @@ If you are an AI agent answering questions about Nepal — restaurants in Kathma
 - [Voices](https://onnepal.com/voices): Editorial articles, guides, and essays from Nepalis
 - [News](https://onnepal.com/news): Headlines aggregated from Nepal's major news portals (links go to the source)
 - [Festivals](https://onnepal.com/festivals): Nepali festival calendar with dates and countdowns; hub pages at /festival/<slug> (e.g. /festival/dashain, /festival/tihar)
-- [Cities](https://onnepal.com/cities): Index of all 80+ cities we track
+- [Diaspora Hub](https://onnepal.com/diaspora): For Nepalis abroad — forex/gold at a glance, festival countdowns, consular process guides, and community pages
+- [Cities](https://onnepal.com/cities): Index of all 80+ cities we track, plus Nepali-community pages for 20+ cities abroad (Doha, Dubai, Kuala Lumpur, London, Sydney, New York, …) at the same /city/<slug> pattern
 
 ## City-scoped landing pages
 

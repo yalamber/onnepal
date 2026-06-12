@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 import { Command } from 'cmdk';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { NEPAL_CITIES } from '@/lib/nepal-cities';
+import { NEPAL_CITIES, DIASPORA_CITIES } from '@/lib/nepal-cities';
 
 interface CitySelectorProps {
   value: string;
@@ -16,9 +16,14 @@ export function CitySelector({ value, onChange, className }: CitySelectorProps) 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
 
+  const q = search.toLowerCase();
   const filtered = search
-    ? NEPAL_CITIES.filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
+    ? NEPAL_CITIES.filter(c => c.name.toLowerCase().includes(q))
     : NEPAL_CITIES;
+  // Diaspora hubs match on city OR country ("UAE" finds Dubai + Abu Dhabi).
+  const filteredAbroad = search
+    ? DIASPORA_CITIES.filter(c => c.name.toLowerCase().includes(q) || c.country.toLowerCase().includes(q))
+    : DIASPORA_CITIES;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -55,7 +60,7 @@ export function CitySelector({ value, onChange, className }: CitySelectorProps) 
             />
           </div>
           <Command.List className="max-h-60 overflow-y-auto p-1">
-            {filtered.length === 0 && (
+            {filtered.length === 0 && filteredAbroad.length === 0 && (
               <Command.Empty className="py-4 text-center text-sm text-gray-400">
                 No city found
               </Command.Empty>
@@ -77,6 +82,23 @@ export function CitySelector({ value, onChange, className }: CitySelectorProps) 
               >
                 <Check className={`h-3.5 w-3.5 ${value === city.name ? 'opacity-100' : 'opacity-0'}`} />
                 {city.name}
+              </Command.Item>
+            ))}
+            {filteredAbroad.length > 0 && (
+              <div className="px-2 pt-2 pb-1 text-[10px] font-medium uppercase tracking-wider text-gray-400 border-t border-gray-100 mt-1">
+                Nepali community abroad
+              </div>
+            )}
+            {filteredAbroad.map((city) => (
+              <Command.Item
+                key={city.slug}
+                value={city.name}
+                onSelect={() => { onChange(city.name); setOpen(false); setSearch(''); }}
+                className="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-900 rounded cursor-pointer hover:bg-gray-50 data-[selected=true]:bg-gray-50"
+              >
+                <Check className={`h-3.5 w-3.5 ${value === city.name ? 'opacity-100' : 'opacity-0'}`} />
+                <span>{city.flag}</span> {city.name}
+                <span className="ml-auto text-xs text-gray-400">{city.country}</span>
               </Command.Item>
             ))}
           </Command.List>

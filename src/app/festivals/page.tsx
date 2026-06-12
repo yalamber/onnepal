@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { FESTIVALS, getFestivalHint, countdownLabel } from '@/lib/festivals';
+import { FESTIVALS, getFestivalHint, countdownLabel, kathmanduDayIso } from '@/lib/festivals';
 
 export const metadata: Metadata = {
   title: 'Nepali Festival Calendar — dates & countdowns',
@@ -12,7 +12,7 @@ export const revalidate = 3600;
 
 export default function FestivalsPage() {
   const now = new Date();
-  const today = now.toISOString().slice(0, 10);
+  const today = kathmanduDayIso(now);
   const hint = getFestivalHint(now, 365);
 
   // Upcoming first (ascending), then past (most recent first) greyed out.

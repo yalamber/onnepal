@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { NEPAL_CITIES } from '@/lib/nepal-cities';
+import { ALL_CITIES } from '@/lib/nepal-cities';
 
 // Whitelist of valid city names for strict equality. Stays in sync with the
 // dropdown the user picks from.
-const KNOWN_CITY_NAMES = new Set(NEPAL_CITIES.map((c) => c.name));
+// Nepal + diaspora hubs — anywhere Nepalis post content from.
+const KNOWN_CITY_NAMES = new Set(ALL_CITIES.map((c) => c.name));
 
 const requiredCity = z
   .string()
