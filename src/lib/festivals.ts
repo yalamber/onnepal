@@ -210,6 +210,19 @@ function toUtcDay(iso: string): number {
 }
 
 /**
+ * The civil date in Kathmandu for a given instant, as YYYY-MM-DD.
+ * Festival dates are Nepal dates — counting down against the viewer's (or
+ * the server's UTC) calendar day is off by one for evening users in the
+ * Americas. UTC+5:45 has no DST, but we go through Intl anyway for clarity.
+ */
+export function kathmanduDayIso(now: Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kathmandu',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(now);
+}
+
+/**
  * Return the festival to surface today, or null if none is within `windowDays`.
  * Prefers an ongoing festival; otherwise the soonest upcoming one.
  *
@@ -221,7 +234,7 @@ function toUtcDay(iso: string): number {
  *                    long-range countdown is a feature, not noise.
  */
 export function getFestivalHint(now: Date, windowDays = 120): FestivalHint | null {
-  const todayIso = now.toISOString().slice(0, 10);
+  const todayIso = kathmanduDayIso(now);
   const today = toUtcDay(todayIso);
 
   let best: FestivalHint | null = null;

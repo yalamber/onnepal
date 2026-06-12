@@ -14,6 +14,7 @@ const COLS = [
       { label: 'Events', href: '/events' },
       { label: 'News', href: '/news' },
       { label: 'Festivals', href: '/festivals' },
+      { label: 'Diaspora', href: '/diaspora' },
       { label: 'Places', href: '/places' },
       { label: 'Pros', href: '/pros' },
       { label: 'Voices', href: '/voices' },

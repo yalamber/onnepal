@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
-import { FESTIVALS, type Festival } from '@/lib/festivals';
+import { FESTIVALS, kathmanduDayIso, type Festival } from '@/lib/festivals';
 import { getEvents } from '@/lib/db/queries/events';
 import { getPublishedVoices, type VoiceListItem } from '@/lib/db/queries/voices';
 
@@ -37,7 +37,7 @@ export default async function FestivalPage({ params }: Props) {
   if (!festival) return <FestivalNotFound />;
 
   const now = new Date();
-  const today = now.toISOString().slice(0, 10);
+  const today = kathmanduDayIso(now);
   const start = festival.date;
   const end = festival.endDate ?? festival.date;
   const isOngoing = start <= today && end >= today;

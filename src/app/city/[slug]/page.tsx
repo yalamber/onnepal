@@ -12,7 +12,7 @@ import {
 } from '@/lib/db/queries/homepage';
 import { getPublishedVoices, type VoiceListItem } from '@/lib/db/queries/voices';
 import { cityFromSlug, slugFromCity } from '@/lib/helpers/city';
-import { NEPAL_CITIES } from '@/lib/nepal-cities';
+import { NEPAL_CITIES, diasporaCityBySlug } from '@/lib/nepal-cities';
 import { HeroRail } from '@/components/home/hero-rail';
 import { CategoryGrid } from '@/components/home/category-grid';
 
@@ -47,8 +47,9 @@ export default async function CityPage({ params }: Props) {
   // a 1101 exception → 500 instead of a graceful 404 page. Returning JSX
   // from this branch keeps the response a clean 200 with usable copy.
   const known = NEPAL_CITIES.find((c) => c.slug === slug);
-  if (!known) return <UnknownCity slug={slug} />;
-  const city = known.name;
+  const abroad = known ? null : diasporaCityBySlug(slug);
+  if (!known && !abroad) return <UnknownCity slug={slug} />;
+  const city = (known ?? abroad)!.name;
 
   const db = getDb(getD1Database());
   const [stats, activity, voices] = await Promise.all([
@@ -80,14 +81,15 @@ export default async function CityPage({ params }: Props) {
         <div className="hero-grid">
           <div className="hero-copy">
             <div className="t-eyebrow hero-eyebrow">
-              <span className="dot" /> Live · now in {city}
+              <span className="dot" /> {abroad ? <>Nepali community · {abroad.flag} {abroad.country}</> : <>Live · now in {city}</>}
             </div>
             <h1 className="t-display hero-title">
-              Everything in <em>{city}.</em>
+              {abroad ? <>Nepalis in <em>{city}.</em></> : <>Everything in <em>{city}.</em></>}
             </h1>
             <p className="hero-lede">
-              Listings, jobs, events, voices &mdash; the daily pulse of {city}, organized.
-              Switch cities anytime from the pin in the header.
+              {abroad
+                ? <>Nepali events, businesses, rooms, and community life in {city} — plus everything from home, one tab away. Post what&rsquo;s happening in your city.</>
+                : <>Listings, jobs, events, voices &mdash; the daily pulse of {city}, organized. Switch cities anytime from the pin in the header.</>}
             </p>
             <form action="/search" method="GET" className="hero-search" role="search">
               <div className="hs-field">

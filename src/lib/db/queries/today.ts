@@ -1,7 +1,7 @@
 import { sql, eq, desc } from 'drizzle-orm';
 import { classifieds, events, lostFound, voices, users } from '../schema';
 import type { Database } from '../index';
-import { getFestivalHint, type FestivalHint } from '@/lib/festivals';
+import { getFestivalHint, kathmanduDayIso, type FestivalHint } from '@/lib/festivals';
 
 /**
  * "Today in Nepal" — the daily homepage digest. Assembles a small,
@@ -76,7 +76,7 @@ export async function getTodayDigest(
   // seconds-epoch integer — a Date object throws D1_TYPE_ERROR.
   const cutoff24h = Math.floor((now.getTime() - 24 * 60 * 60 * 1000) / 1000);
   const cutoff7d = Math.floor((now.getTime() - 7 * 24 * 60 * 60 * 1000) / 1000);
-  const todayIso = now.toISOString().slice(0, 10); // 'YYYY-MM-DD' for events.startDate compare
+  const todayIso = kathmanduDayIso(now); // KTM civil day for events.startDate compare
 
   const cityEq = (col: ReturnType<typeof sql>) =>
     city ? sql` AND ${col} = ${city} COLLATE NOCASE` : sql``;

@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import { getCitiesWithCounts, getTopCitiesByContent, type CityCount } from '@/lib/db/queries/cities';
+import { DIASPORA_CITIES } from '@/lib/nepal-cities';
 
 export const revalidate = 300;
 
@@ -98,6 +99,28 @@ export default async function CitiesPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Nepali community abroad */}
+        <section className="mt-16">
+          <div className="t-eyebrow mb-2">Nepali community abroad</div>
+          <p className="text-[var(--ink-500)] text-sm mb-5 max-w-xl">
+            Where Nepalis live and work around the world — events, rooms, businesses, and
+            community life in each hub, plus everything from home. <Link href="/diaspora" className="text-[var(--accent)] underline underline-offset-4">Visit the diaspora hub →</Link>
+          </p>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2">
+            {DIASPORA_CITIES.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/city/${c.slug}`}
+                  className="flex items-baseline justify-between py-1.5 border-b border-[var(--ink-100)] hover:border-[var(--ink-900)] transition-colors"
+                >
+                  <span className="text-[var(--ink-900)]">{c.flag} {c.name}</span>
+                  <span className="t-meta">{c.country}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </main>

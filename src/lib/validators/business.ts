@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { subdomainSchema } from './subdomain';
-import { NEPAL_CITIES } from '@/lib/nepal-cities';
+import { ALL_CITIES } from '@/lib/nepal-cities';
 
-const KNOWN_CITY_NAMES = new Set(NEPAL_CITIES.map((c) => c.name));
+// Nepal + diaspora hubs — anywhere Nepalis post content from.
+const KNOWN_CITY_NAMES = new Set(ALL_CITIES.map((c) => c.name));
 const optionalCity = z
   .string()
   .max(100)
