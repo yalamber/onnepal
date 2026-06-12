@@ -666,3 +666,32 @@ export const passwordResetTokens = sqliteTable('password_reset_tokens', {
   index('prt_token_hash_idx').on(table.tokenHash),
   index('prt_expires_idx').on(table.expiresAt),
 ]));
+
+// ---- Daily hub caches ------------------------------------------------------
+
+// News headlines aggregated from Nepali news portal RSS feeds. Title + short
+// excerpt + outbound link only (fair-use aggregation — clicks go to the
+// portal). `link` is the natural unique key across re-fetches.
+export const newsItems = sqliteTable('news_items', {
+  link: text('link').primaryKey(),
+  source: text('source').notNull(),          // source id, e.g. 'onlinekhabar-en'
+  sourceName: text('source_name').notNull(), // display name
+  lang: text('lang', { enum: ['en', 'np'] }).notNull(),
+  title: text('title').notNull(),
+  excerpt: text('excerpt'),
+  category: text('category'),
+  publishedAt: integer('published_at', { mode: 'timestamp' }).notNull(),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ([
+  index('news_items_published_idx').on(table.publishedAt),
+  index('news_items_source_idx').on(table.source),
+  index('news_items_lang_idx').on(table.lang),
+]));
+
+// Generic JSON snapshot cache for external data (forex/gold/AQI under key
+// 'nepal-now'). Both daily-hub tables are caches — safe to truncate.
+export const dataSnapshots = sqliteTable('data_snapshots', {
+  key: text('key').primaryKey(),
+  payload: text('payload').notNull(), // JSON
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' }).notNull(),
+});

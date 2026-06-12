@@ -29,6 +29,7 @@ const NAV_LINKS = [
   { href: '/classifieds', label: 'Classifieds' },
   { href: '/jobs', label: 'Jobs' },
   { href: '/events', label: 'Events' },
+  { href: '/news', label: 'News' },
   { href: '/places', label: 'Places' },
   { href: '/pros', label: 'Pros' },
   { href: '/voices', label: 'Voices' },
