@@ -66,7 +66,8 @@ export default async function DiasporaPage() {
           <h2 className="t-eyebrow mb-4">Today&rsquo;s numbers</h2>
           <NepalNumbers snapshot={numbersSnap} bs={bs} />
           <p className="t-meta mt-2">
-            Forex: Nepal Rastra Bank official rates · Gold: FENEGOSIDA · Updated through the day.
+            Forex: Nepal Rastra Bank official rates · Gold: FENEGOSIDA · Updated through the day ·{' '}
+            <Link href="/remit" className="underline underline-offset-4 text-[var(--accent)]">All rates + 30-day trend →</Link>
           </p>
         </section>
 
@@ -105,7 +106,8 @@ export default async function DiasporaPage() {
             <h2 className="t-eyebrow mb-2">Paperwork & process guides</h2>
             <p className="text-[var(--ink-500)] text-sm mb-6 max-w-xl">
               Passport renewal, police clearance, sending money — written step by step, with
-              links to the official sources. Always verify with the embassy before you act.
+              links to the official sources. Always verify with the embassy before you act.{' '}
+              <Link href="/embassies" className="underline underline-offset-4 text-[var(--accent)]">Find your embassy →</Link>
             </p>
             <div className="today-grid">
               {guides.map((g) => (
