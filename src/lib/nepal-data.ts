@@ -122,6 +122,50 @@ export async function fetchKathmanduAir(): Promise<NepalNumbers['kathmandu']> {
   }
 }
 
+export interface ForexHistoryPoint {
+  date: string; // YYYY-MM-DD
+  buy: number;
+  sell: number;
+}
+
+/**
+ * Historical NRB reference rates for one currency over the trailing window.
+ * Fetched at request time by /remit (with route-level revalidation) — the
+ * snapshot table only keeps the latest day, and NRB's API serves history
+ * directly, so we don't store our own.
+ */
+export async function fetchForexHistory(
+  iso3: string,
+  now: Date,
+  days = 30,
+): Promise<ForexHistoryPoint[]> {
+  try {
+    const to = now.toISOString().slice(0, 10);
+    const from = new Date(now.getTime() - days * 86_400_000).toISOString().slice(0, 10);
+    const url = `https://www.nrb.org.np/api/forex/v1/rates?page=1&per_page=${days + 5}&from=${from}&to=${to}`;
+    const res = await fetch(url, withTimeout());
+    if (!res.ok) throw new Error(`NRB history ${res.status}`);
+    const data = (await res.json()) as {
+      data?: { payload?: Array<{ date: string; rates: Array<{ currency: { iso3: string }; buy: string; sell: string }> }> };
+    };
+    const days_ = data.data?.payload ?? [];
+    const points: ForexHistoryPoint[] = [];
+    for (const day of days_) {
+      const r = day.rates?.find((x) => x.currency.iso3 === iso3);
+      if (!r) continue;
+      const buy = Number(r.buy);
+      const sell = Number(r.sell);
+      if (!Number.isFinite(sell) || sell <= 0) continue;
+      points.push({ date: day.date, buy, sell });
+    }
+    points.sort((a, b) => a.date.localeCompare(b.date));
+    return points;
+  } catch (err) {
+    console.error('[nepal-data] forex history failed', err instanceof Error ? err.message : err);
+    return [];
+  }
+}
+
 export async function fetchNepalNumbers(now: Date): Promise<NepalNumbers> {
   const [forex, gold, kathmandu] = await Promise.all([
     fetchForex(now),
