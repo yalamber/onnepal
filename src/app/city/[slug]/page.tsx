@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Search, ArrowRight, MapPin } from 'lucide-react';
+import { Search, ArrowRight, MapPin, ExternalLink } from 'lucide-react';
 import { getDb } from '@/lib/db';
 import { getD1Database } from '@/lib/cloudflare';
 import {
@@ -13,6 +13,7 @@ import {
 import { getPublishedVoices, type VoiceListItem } from '@/lib/db/queries/voices';
 import { cityFromSlug, slugFromCity } from '@/lib/helpers/city';
 import { NEPAL_CITIES, diasporaCityBySlug } from '@/lib/nepal-cities';
+import { missionsForDiasporaCity, MOFA_URL } from '@/lib/embassies';
 import { HeroRail } from '@/components/home/hero-rail';
 import { CategoryGrid } from '@/components/home/category-grid';
 
@@ -52,11 +53,23 @@ export default async function CityPage({ params }: Props) {
   const city = (known ?? abroad)!.name;
 
   const db = getDb(getD1Database());
-  const [stats, activity, voices] = await Promise.all([
+  const [stats, activity, voices, guides] = await Promise.all([
     getHomepageStats(db, { city }).catch((e) => { console.error('[city] stats failed', e); return EMPTY_STATS; }),
     getRecentActivity(db, 5, city).catch((e) => { console.error('[city] activity failed', e); return [] as ActivityItem[]; }),
     getPublishedVoices(db, { city, limit: 3 }).catch((e) => { console.error('[city] voices failed', e); return [] as VoiceListItem[]; }),
+    // Consular guides only matter on diaspora city pages.
+    abroad
+      ? getPublishedVoices(db, { category: 'Guide', limit: 3 }).catch((e) => { console.error('[city] guides failed', e); return [] as VoiceListItem[]; })
+      : Promise.resolve([] as VoiceListItem[]),
   ]);
+  const missions = abroad ? missionsForDiasporaCity(abroad.slug) : [];
+
+  // Section numbering follows what actually renders: category grid is 01,
+  // then consular corner (diaspora only), voices, quick jumps.
+  const consularShown = missions.length > 0;
+  const voicesShown = voices.length > 0;
+  const voicesNo = consularShown ? '03' : '02';
+  const quickNo = `0${2 + (consularShown ? 1 : 0) + (voicesShown ? 1 : 0)}`;
 
   // Known cities always render — even with zero content they get an empty
   // hero + category grid so users can post the first listing. Cities not in
@@ -123,11 +136,73 @@ export default async function CityPage({ params }: Props) {
         }}
       />
 
+      {abroad && consularShown && (
+        <section className="section">
+          <header className="sec-head">
+            <div className="t-eyebrow">02 · Consular corner</div>
+            <h2 className="t-display sec-title">Paperwork, <em>sorted.</em></h2>
+            <p className="sec-sub">
+              The mission that serves {city}, plus our step-by-step guides for the processes
+              every Nepali abroad eventually faces. Details drift — always confirm with the
+              mission before visiting.
+            </p>
+          </header>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <div className="t-eyebrow mb-3">Your mission{missions.length > 1 ? 's' : ''}</div>
+              <ul className="space-y-3">
+                {missions.map((m) => (
+                  <li key={m.id}>
+                    <a
+                      href={m.website ?? MOFA_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start justify-between gap-3 p-4 rounded-[var(--r-md)] border border-[var(--ink-200)] bg-[var(--paper)] hover:border-[var(--ink-900)] transition-colors group"
+                    >
+                      <div>
+                        <div className="t-meta">{m.flag} {m.country}{m.type === 'consulate-general' ? ' · Consulate General' : ''}</div>
+                        <div className="t-display mt-1" style={{ fontSize: 18, lineHeight: 1.25 }}>{m.name}</div>
+                        {m.note && <p className="t-meta mt-1.5">{m.note}</p>}
+                      </div>
+                      <ExternalLink className="h-4 w-4 text-[var(--ink-300)] group-hover:text-[var(--accent)] shrink-0 mt-1 transition-colors" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <p className="t-meta mt-3">
+                <Link href="/embassies" className="underline underline-offset-4">All Nepali embassies & consulates →</Link>
+              </p>
+            </div>
+            {guides.length > 0 && (
+              <div>
+                <div className="t-eyebrow mb-3">Process guides</div>
+                <ul className="space-y-3">
+                  {guides.map((g) => (
+                    <li key={g.id}>
+                      <Link
+                        href={`/voices/${g.slug}`}
+                        className="block p-4 rounded-[var(--r-md)] border border-[var(--ink-200)] bg-[var(--paper)] hover:border-[var(--ink-900)] transition-colors"
+                      >
+                        <div className="t-display" style={{ fontSize: 18, lineHeight: 1.25 }}>{g.title}</div>
+                        {g.excerpt && <p className="t-meta mt-1.5 line-clamp-2">{g.excerpt}</p>}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <p className="t-meta mt-3">
+                  <Link href="/diaspora" className="underline underline-offset-4">All guides on the diaspora hub →</Link>
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {voices.length > 0 && (
         <section className="section-paper">
           <div className="section-inner">
             <header className="sec-head">
-              <div className="t-eyebrow">02 · Voices from {city}</div>
+              <div className="t-eyebrow">{voicesNo} · Voices from {city}</div>
               <h2 className="t-display sec-title"><em>Local writing.</em></h2>
               <p className="sec-sub">Essays and guides written by people who live here. <Link href={`/voices?city=${encodeURIComponent(city)}`} className="text-[var(--accent)] underline underline-offset-4">All {city} voices →</Link></p>
             </header>
@@ -152,7 +227,7 @@ export default async function CityPage({ params }: Props) {
 
       <section className="section">
         <header className="sec-head">
-          <div className="t-eyebrow">03 · Quick jumps</div>
+          <div className="t-eyebrow">{quickNo} · Quick jumps</div>
           <h2 className="t-display sec-title">Open <em>any list, scoped to {city}.</em></h2>
           <p className="sec-sub">Direct links to each category, with the {city} filter pre-applied.</p>
         </header>
